@@ -18,9 +18,6 @@ jobs:
       - name: Run "make github-pages"
         run: |
           make github-pages
-        with:
-          source: ./
-          destination: ./output
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
