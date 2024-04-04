@@ -19,7 +19,7 @@ $(output_dir)/%.html: $(input_dir)/%.html | $(output_dir)
 
 # For non html files
 $(output_dir)/%: $(input_dir)/% | $(output_dir)
-	@mkdir -p -- '$(dir "$@")'
+	@mkdir -p -- '$(dir $@)'
 	cp -- '$<' '$@'
 
 .PHONY: clean
