@@ -15,14 +15,17 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Run "make github-pages"
+      - name: Run "make all"
         run: |
-          make -j$(nproc) github-pages
+          make -j$(nproc) all
       - name: Fix permissions
         run: |
           chmod -c -R +rX "./output/" | while read line; do
             echo "::warning title=Invalid file permissions automatically fixed::$line"
           done
+      - name: Run "make github-pages"
+        run: |
+          make -j$(nproc) github-pages
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
