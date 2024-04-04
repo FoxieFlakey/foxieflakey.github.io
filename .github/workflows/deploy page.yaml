@@ -20,7 +20,7 @@ jobs:
           make -j$(nproc) all
       - name: Fix permissions
         run: |
-          chmod -c -R +rX "./output/" | while read line; do
+          chmod -c -R 755 "./output/" | while read line; do
             echo "::warning title=Invalid file permissions automatically fixed::$line"
           done
       - name: Run "make github-pages"
@@ -50,4 +50,4 @@ jobs:
     steps:
       - name: Deploy to GitHub pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages-artifact@v1
