@@ -20,7 +20,7 @@ $(output_dir)/%.html: $(input_dir)/%.html | $(output_dir)
 # For non html files
 $(output_dir)/%: $(input_dir)/% | $(output_dir)
 	@mkdir -p -- '$(dir "$@")'
-	cp --reflink -- '$<' '$@'
+	cp -- '$<' '$@'
 
 $(current_dir)/github-pages.tar.gz: $(files)
 	(cd -- '$(output_dir)' && tar c --dereference --hard-dereference .) | gzip > '$@'
