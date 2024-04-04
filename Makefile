@@ -23,7 +23,7 @@ $(output_dir)/%: $(input_dir)/% | $(output_dir)
 	cp -- '$<' '$@'
 
 $(current_dir)/github-pages.tar.gz: $(files)
-	(cd -- '$(output_dir)' && tar c --dereference --hard-dereference .) | gzip > '$@'
+	(cd -- '$(output_dir)' && tar c --dereference --hard-dereference *) | gzip > '$@'
 
 .PHONY: github-pages
 github-pages: $(current_dir)/github-pages.tar.gz
