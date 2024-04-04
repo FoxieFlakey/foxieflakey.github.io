@@ -26,13 +26,12 @@ jobs:
       - name: Run "make github-pages"
         run: |
           make -j$(nproc) github-pages
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
+      - name: Upload github pages artifact
+        uses: actions/upload-pages-artifact@v4
         with:
           name: "github-pages"
-          path: ./github-pages.tar.gz
+          path: ./output
           retention-days: 31
-          if-no-files-found: error
   
   # Job to deploy to GitHub pages
   deploy:
