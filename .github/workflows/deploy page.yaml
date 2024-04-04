@@ -18,16 +18,8 @@ jobs:
       - name: Run "make all"
         run: |
           make -j$(nproc) all
-      - name: Fix permissions
-        run: |
-          chmod -c -R 755 "./output/" | while read line; do
-            echo "::warning title=Invalid file permissions automatically fixed::$line"
-          done
-      - name: Run "make github-pages"
-        run: |
-          make -j$(nproc) github-pages
       - name: Upload github pages artifact
-        uses: actions/upload-pages-artifact@v4
+        uses: actions/upload-pages-artifact@v3
         with:
           name: "github-pages"
           path: ./output
