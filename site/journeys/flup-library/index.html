@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Foxie's Flup</title>
+    #include "header.inc.html"
+  </head>
+  
+  <body>
+    <details>
+      <summary><time datetime="2024-04-05">Friday, 5 April 2024</time>: Does C23 header exists?</summary>
+      <p>
+        Currently Flup unconditionally uses bundled headers which recently
+        added by C23. The unconditionally uses bundled headers is exist when
+        I was initially added the use of stdbit.h and stdckint.h because it
+        was appealing to me when I saw the draft of things C23 added. stdbit.h
+        is an easy standard header for dealing with bits so Foxie don't have
+        to implement the C23 things and use standard provided not my paw written
+        one which may be as well buggy in some edge case which this cute fox
+        couldn't thought at the time of writing.
+      </p>
+      <p>
+        My plan is to have KConfig hidden options <code>HAS_STDCKINT</code>
+        and <code>HAS_STDBIT</code> options. And then set that based on my
+        feature of shell exec as Foxie named it :3 so the KConfig in c23_support/
+        has this now.
+        <pre>
+          <code>
+menu "C23 support"
+config HAS_STDBIT
+  bool
+  default $[[$PROJECT_DIR/scripts/check_header.sh stdbit.h]]
+config HAS_STDCKINT
+  bool
+  default $[[$PROJECT_DIR/scripts/check_header.sh stdckint.h]]
+          </code>
+        </pre>
+        Where <code>$[[...]]</code> is just like shell's <code>$(...)</code>
+        but instead <code>(...)</code> Foxie used Lua's multiline syntax. It
+        basicly runs the shell and captures its output and replace it with
+        the output so if <code>check_header.sh</code> outputs "y". It will
+        be replaced with "y" so kconfig command only sees <code>default y</code>
+        and does not care about the syntax.
+      </p>
+      <p>
+        After the <code>HAS_{HAS_STDBIT,HAS_STDCKINT}</code> computed next is
+        the user selectable config whether to use bundled one or not
+        and it nicely defaults to "n" if the system already has the header
+        or "y" if the system doesn't. 
+      </p>
+      <p>
+        Next is of course the Makefile part which conditionally adds proper
+        <code>-isystem</code> flag to corresponding subdir in c23_support/
+        to match the enabled bundle.
+      </p>
+      <p>
+        And here this what Foxie has to say about the auto detect. Which is
+        nice isn't it UwU
+      </p>
+    </details>
+  </body>
+</html>

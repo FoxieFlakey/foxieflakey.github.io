@@ -1,7 +1,7 @@
 #include "common.inc.html"
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <title>Foxie's projects</title>
     #include "metadata.inc.html"
@@ -12,22 +12,24 @@
     This page contain list of my projects :3<br>
     <ol>
       <li>
-        LINK(Flup, "https://github.com/FoxieFlakey/Flup")<br>
         <details>
-          This is a POSIX 2008 compliant library for C, it contains
-          different kinds of data structures, features and functions.
-          It's currently used for deduplicating common stuffs like log
-          management, wrapper around Pthread's mutexes, conds, barriers,
-          etc as it really painful that because I can't just call
-          <code>pthread_*_destroy</code> and have it no-op if it isn't
-          initialized yet.
-          <br>
-          <br>
-          There are nice data structures such as linked list, array list,
-          queues, etc. Those data structures are abstracted too with
-          interfaces. The interfaces also tries to have as much default
-          implementation as possible to have fallback for an operation
-          if it isn't explicitly implemented even if its not optimal.
+          <summary>LINK(Flup, "https://github.com/FoxieFlakey/Flup"): An useful C library with more stuffs</summary>
+          <p>
+            This is a POSIX 2008 compliant library for C, it contains
+            different kinds of data structures, features and functions.
+            It's currently used for deduplicating common stuffs like log
+            management, wrapper around Pthread's mutexes, conds, barriers,
+            etc as it really painful that because I can't just call
+            <code>pthread_*_destroy</code> and have it no-op if it isn't
+            initialized yet.
+            <br>
+            <br>
+            There are nice data structures such as linked list, array list,
+            queues, etc. Those data structures are abstracted too with
+            interfaces. The interfaces also tries to have as much default
+            implementation as possible to have fallback for an operation
+            if it isn't explicitly implemented even if its not optimal.
+          </p>
         </details>
       </li>
     </ol>
