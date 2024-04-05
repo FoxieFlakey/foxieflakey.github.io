@@ -34,5 +34,5 @@ $(output_dir)/%: $(input_dir)/% | $(output_dir)
 clean:
 	@rm -rf -- '$(output_dir)' '$(deps_dir)'
 
-include $(wildcard $(deps_dir)/*)
+include $(wildcard $(deps_dir)/*.d)
 
