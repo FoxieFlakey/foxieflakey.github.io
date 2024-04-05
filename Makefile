@@ -3,7 +3,7 @@ MAKEFLAGS += -rR --no-print-directory
 current_dir := $(shell pwd)
 output_dir 	:= $(current_dir)/output
 input_dir 	:= $(current_dir)/site
-files 			:= $(shell find '$(input_dir)' -type f -printf '$(output_dir)/%P\n')
+files 			:= $(shell find '$(input_dir)' -type f -not -name '*.inc.html' -printf '$(output_dir)/%P\n')
 
 .DEFAULT_GOAL := all
 .PHONY: all
