@@ -19,7 +19,7 @@ $(deps_dir):
 
 # For html files
 $(output_dir)/%.html: $(input_dir)/%.html | $(output_dir) $(deps_dir)
-	@clang '-I$(input_dir)' -Wno-invalid-pp-token -E -P -MMD -MF '$(@:$(output_dir)%=$(deps_dir)%).d' -MT '$@' -xc - < '$<' > '$@'
+	@clang '-I$(input_dir)' -Wno-invalid-pp-token -E -P -CC -MMD -MP -MF '$(@:$(output_dir)%=$(deps_dir)%).d' -MT '$@' -xc - < '$<' > '$@'
 	@echo "[ CC   ] Preprocess $(@:$(output_dir)=)"
 
 # For non html files
