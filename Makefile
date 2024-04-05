@@ -19,6 +19,8 @@ $(deps_dir):
 
 # For html files
 $(output_dir)/%.html: $(input_dir)/%.html | $(output_dir) $(deps_dir)
+	@mkdir -p -- '$(dir $@)'
+	@mkdir -p -- '$(dir $(@:$(output_dir)%=$(deps_dir)%).d)'
 	@clang '-I$(input_dir)' -Wno-invalid-pp-token -E -P -CC -MMD -MP -MF '$(@:$(output_dir)%=$(deps_dir)%).d' -MT '$@' -xc - < '$<' > '$@'
 	@echo "[ CC   ] Preprocess $(@:$(output_dir)=)"
 
