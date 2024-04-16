@@ -36,6 +36,10 @@ jobs:
           name: "github-pages"
           path: ./output
           retention-days: 31
+      - name: Generate Directory Listings UwU
+        uses: jayanta525/github-pages-directory-listing@v4.0.0
+        with:
+          FOLDER: ./output
       - name: Deploy to GitHub pages
         id: deployment
         uses: actions/deploy-pages@v4
