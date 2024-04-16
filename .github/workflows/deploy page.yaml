@@ -12,23 +12,6 @@ jobs:
   # Job to build
   build:
     runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Run "make all"
-        run: |
-          make -j$(nproc) all
-      - name: Upload github pages artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          name: "github-pages"
-          path: ./output
-          retention-days: 31
-  
-  # Job to deploy to GitHub pages
-  deploy:
-    runs-on: ubuntu-latest
-    needs: build
     
     # Permission for GITHUB_TOKEN
     # to allow deploy to GitHub pages
@@ -39,6 +22,20 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Cloning recursively
+        run: |
+          git submodule update --init
+      - name: Run "make all"
+        run: |
+          make -j$(nproc) all
+      - name: Upload github pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          name: "github-pages"
+          path: ./output
+          retention-days: 31
       - name: Deploy to GitHub pages
         id: deployment
         uses: actions/deploy-pages@v4
