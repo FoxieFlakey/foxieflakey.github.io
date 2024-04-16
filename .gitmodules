@@ -1,0 +1,3 @@
+[submodule "site/alpine_ppa/foxie_repo"]
+	path = site/alpine_ppa/foxie_repo
+	url = https://github.com/FoxieFlakey/foxie_alpine_repo_built
