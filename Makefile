@@ -34,5 +34,10 @@ $(output_dir)/%: $(input_dir)/% | $(output_dir)
 clean:
 	@rm -rf -- '$(output_dir)' '$(deps_dir)'
 
+.PHONY: host
+host: all
+	@echo "[HOST  ] Locally hosting at localhost:8080 with php's builtin webserver"
+	@php -S localhost:8080 -t '$(output_dir)/'
+
 include $(wildcard $(deps_dir)/*.d)
 

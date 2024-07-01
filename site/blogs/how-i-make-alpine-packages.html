@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>How Foxie made her packages</title>
+    #include "header.inc.html"
+  </head>
+  
+  <body>
+    <h1>How Foxie made her Alpine packages</h1>
+    
+    <h2>1. Introduction</h2>
+    <p>
+      There always an inevitable need to have a seperate environment for sole of
+      building packages to avoid relying on some dependency Foxie didn't know.
+    </p>
+    
+    <h2>2. A bit about container</h2>
+    <p>
+      So Foxie decided that chroot like is the best option costing no resources when
+      she is not actively building/compiling something and easy entry by running
+      a shell script to set-up minimum necessary pseudo filesystems. First thing
+      is there not much of one simple script to install a base Alpine (atleast
+      one which Foxie liked) to a directory.
+    </p>
+    
+    <p>
+      Foxie also thinks the best way to do it is to use namespaces to create isolated
+      "container" much like Docker but simpler for the purpose of building Alpine
+      packages or you could call that "mini Docker" UwU. 
+    </p>
+    
+    <p>
+      Foxie's idea is to reserve 200 UID and GID from host to be used in the
+      container and map those correspondingly to the 0 to 1999 in the user namespace.
+    </p>
+    
+    <h2>3. Reserving resources on host</h2>
+    <p>
+      First Foxie has to reserve those UID and GID on the host before using it so
+      new packages/update on the host can't accidentally used those UID and GID.
+    </p>
+    <p>
+      There are package named <code>shadow-subids</code> which is used to maintain
+      ranges of UID and GID allocated for a user. It manage those ranges in
+      <code>/etc/subuid</code> and <code>/etc/subgid</code>. The way to activate it
+      is using <code>newuidmap</code> and <code>newgidmap</code> which sets a new
+      UID and GID map on the process with specified PID. Foxie going to use it
+      indirectly from <code>unshare</code> command. What <code>unshared</code> does
+      is run a new process with new set of namespaces
+    </p>
+    <p>
+      To reserve, Foxie need to use <code>usermod</code>'s <code>--add-subuids</code>
+      flag and <code>--add-subgids</code> flag to add both UID and GID ranges needed.
+      The command to do it is (Foxie wanted to reserved 2000 until 3999 or 2000 IDs)
+      <pre><code>#!/bin/sh
+usermod foxie --add-subuids 2000-3999 --add-subgids 2000-3999
+</code></pre>
+      To use its simply <code>unshare --map-groups=auto --map-users=auto</code> and
+      unshare will automically use first block of UID and GID which maps to namespace's
+      UID/GID 0 until the whatever amount you allocated^w^
+    </p>
+    
+    <h2>4. Some preparations</h2>
+    <p>
+      Starting namespace into empty directory surely won't achieve anything -w- So
+      lets copy our host's <code>apk.static</code> and its associated accompanying
+      signature at <code>/sbin/apk.static</code> and the signatures to <code>/etc/apk/keys</code>
+      (because APK need it to verify if the package came from trusted distributor or not)
+      to the container's temporary directory (Foxie going to get rid of it after setting
+      up because the static is not needed anymore). After that it also need few directories
+      like <code>/proc</code> and <code>/dev/pts</code> which is empty but will be
+      mounted later in the namespace and it will be hidden to anything but namespace
+      itself so don't be surprise that those empty after mounting ^w^. And there also
+      <code>/tmp</code> for temporary files and its self explanatory what it does
+    </p>
+    <p>
+      Alpine Package Keeper (APK) the package manager for Alpine needs few files to work
+      properly and they are <code>/etc/resolv.conf</code> and <code>/etc/apk/repositories</code>.
+      The <code>resolv.conf</code> file is used so APK and other network accessing
+      know where to search when they are resolving domain names. The file contains IP to
+      nameserver to search domain names which more commonly known as DNS server/resolver
+    </p>
+    <p>
+      Foxie copies the host's <code>resolv.conf</code> and generate a new <code>repositories</code>
+      filled with main, community and testing repository (I know what I'm doing with
+      testing repository lol) generated from a link
+    </p>
+    <p>
+      After this the container's directory should look like
+      <pre>rootfs_x86_64/
+├── dev
+│   └── pts
+├── etc
+│   ├── apk
+│   │   ├── respositories
+│   │   └── keys
+│   │       └── alpine-devel@lists.alpinelinux.org-6165ee59.rsa.pub
+│   └── resolv.conf
+├── proc
+├── tmp
+│   └── apk.static
+├── sbin
+└── sys
+
+7 directories, 4 files
+</pre>
+    </p>
+    
+    <h2>5. Entering the namespace</h2>
+    <p>
+      Foxie can enter the namespace using <code>unshare</code> command which
+      create new namespaces and run a command
+      <pre><code>unshare \
+  --map-root-user --map-users=auto --map-groups=auto \
+  --wd="$root_dir" --root="$root_dir" \
+   \
+  --mount --propagation=private --mount-proc=/proc \
+  --pid --fork \
+  --uts --ipc --cgroup --time \
+   \
+  &gt;whatever command&lt;
+</code></pre>
+      Thats a hug chunk of pasted code -w- So lets Foxie break it :3
+      First there <code>--map-root-user --map-users=auto --map-groups=auto</code>
+      which mentioned earlier which auto maps first blocks the current user has
+      access to and <code>--map-root-user</code> will make sure the process ran
+      by the <code>unshare</code> is a root user atleast in that user namespace
+    </p>
+    <p>
+      Next <code>--wd="$root_dir" --root="$root_dir"</code> flags automatically
+      make the namespace chdir and then chroot into that directory preventing
+      escapes to the host ^w^
+    </p>
+    <p>
+      The <code>--mount --propagation=private --mount-proc=/proc</code> prepares
+      a mount namespace in a private mode which mean any mount happening inside
+      won't be visible to others and <code>--mount-proc=/proc</code> mounts the
+      <code>/proc</code> in the container's mount namespace. You know what the
+      <code>/proc</code> for so Foxie won't explain it ^w^
+    </p>
+    <p>
+      <code>--pid --fork</code> these flags create a new PID namespace which
+      essentially like new PID tree all begin at 1 once again to the namespace
+      but on host its ordinary process and the <code>--fork</code> is needed for
+      PID namespace to work. The command will be executed as PID 1 in that namespace
+    </p>
+    <p>
+      Last but not much of detail UwU which is <code>--uts --ipc --cgroup --time</code>.
+      Those simply just create new instance of UTS, IPC, CGroup and time namespace.
+      For each of them
+      <ol>
+        <li>
+          UTS: Create a new view on the hostname and nodename
+          and stuffs related to <code>uname</code>
+        </li>
+        <li>
+          IPC: Create new namespace for System V IPC objects so progams
+          in the namespace don't know and can't talk to the host with
+          Sytstem V IPC objects such as shmem, mqueues, semaphores and etc
+        </li>
+        <li>
+          CGroup: It create new CGroup tree where the contain can further
+          divide its own available resources using CGroup without needed
+          the host's intervention to do modification to host's CGroup tree.
+        </li>
+        <li>
+          Time: It basicly just dealing with creating new view on monotonic times
+          and boot times so it looked different to the container than it is to the
+          host
+        </li>
+      </ol>
+    </p>
+    
+    <h2>6. Install the alpine-base</h2>
+    <p>
+      This is much simple, Foxie just reusing previous command and run <code>/tmp/apk.static --update-cache --no-check-certificate --initdb add alpine-base</code>.
+      <code>--update-cache</code> flag and <code>--initdb</code> simply ask the APK to
+      initialize APK databases and do update cache because there nothing -w- The last flag
+      which is <code>--no-check-certificate</code> essentially disable SSL certificates
+      checking because there is no CA certificates yet. Apparently <code>--allow-untrusted</code>
+      also needed but Foxie don't know why it didnt pick up copied signature at <code>/etc/apk/keys</code>
+    </p>
+    
+    <h2>7. Cleaning up</h2>
+    <p>
+      Cleaning up is much simple. Foxie just have to delete the host copy of apk.static
+      and its signatures as APK already installed in the container. So its done ^w^
+      Foxie has installed Alpine in container
+    </p>
+  </body>
+</html>
