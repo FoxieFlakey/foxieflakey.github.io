@@ -1,0 +1,48 @@
+<!-- Must be always present for 'error.js' work properly -->
+<div id="error_div"></div>
+
+<div id="page_header">
+  <div class="navbar" id="navbar">
+    <div data-category-target="home" class="navbar_item"><a href="/index.html">Home</a></div>
+    <div data-category-target="gallery" class="navbar_item"><a href="/gallery.html">Gallery</a></div>
+    
+    <!-- Fills the rest of empty space -->
+    <div data-ignored="true" style="flex: 1;"></div>
+  </div>
+</div>
+
+<script type="module">
+  const categoryName = document.documentElement.getAttribute("data-category-name");
+  if (categoryName == null) {
+    (await import("/js/error.js")).error("Page's HTML element does not have 'data-category-name', Navbar cannot properly highlights");
+  }
+  
+  const navbar = document.getElementById("navbar");
+  let found = false;
+  for (let i = 0; i < navbar.children.length; i++) {
+    let item = navbar.children.item(i);
+    
+    if (item.getAttribute("data-category-ignored") === "true") {
+      continue;
+    }
+    
+    if (item.getAttribute("data-category-target") === undefined) {
+      console.warn("Element in navbar does not have page target");
+      continue;
+    }
+    
+    if (item.getAttribute("data-category-target") === categoryName) {
+      item.classList.add("navbar_active");
+      found = true;
+      break;
+    }
+  }
+  
+  if (!found) {
+    (await import("/js/error.js")).error("Current category cannot be found");
+  }
+</script>
+
+<!-- Not closed here, it will be closed in page_footer.html -->
+<div id="page_content">
+
