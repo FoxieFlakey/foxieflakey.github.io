@@ -11,6 +11,7 @@ files 			:= \
 	gallery.html \
 	favicon.ico \
 	img/profile.gif \
+	js/error.js \
 	css/index.css \
 	css/navbar.css \
 	css/pages/home.css
