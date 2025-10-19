@@ -1,6 +1,7 @@
 .navbar {
   width: 100%;
   table-layout: fixed;
+  border-collapse: collapse;
 }
 
 .navbar tbody {
@@ -9,8 +10,13 @@
 
 .navbar_item {
   width: 10%;
-  padding: 10px;
   background-color: #f9a14777;
+  padding: 0%;
+}
+
+.navbar_item > * {
+  display: block;
+  padding: 10px;
 }
 
 .navbar_active {
