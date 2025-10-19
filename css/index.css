@@ -1,6 +1,6 @@
 body {
-  min-width: 700px;
-  min-height: 100dvh;
+  min-width: 200px;
+  height: 100dvh;
   margin: 0%;
   background-color: #666666;
   display: flex;
