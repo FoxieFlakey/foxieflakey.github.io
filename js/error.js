@@ -13,7 +13,7 @@ function doError(message) {
   stacktrace = stacktrace.replace(/^/gm, '    ');
   message += stacktrace.toString();
   
-  errorDiv.style.display = "";
+  errorDiv.classList.add("active");
   errorDiv.textContent += message;
 }
 

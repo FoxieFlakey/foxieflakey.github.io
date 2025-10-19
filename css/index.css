@@ -10,12 +10,17 @@ body {
 }
 
 #error_div {
+  display: none;
   white-space: pre-wrap;
   height: fit-content;
   display: none;
   width: 100dvw;
   padding: 5px;
   background-color: #cc0000;
+}
+
+#error_div.active {
+  display: unset;
 }
 
 #page_header {
