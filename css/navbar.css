@@ -34,6 +34,11 @@
   background-color: #f9a147ff;
 }
 
+.navbar_item > a, .navbar_item > a:visited, .navbar_item > a:hover, .navbar_item > a:active {
+  color: inherit;
+  text-decoration: none;
+}
+
 /* Anchor need special help from div inside it to center its content properly */
 .navbar_item > a > div {
   display: flex;
