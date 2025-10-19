@@ -1,0 +1,45 @@
+name: Deploy site UwU
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  # Job to build
+  build:
+    runs-on: ubuntu-latest
+    
+    # Permission for GITHUB_TOKEN
+    # to allow deploy to GitHub pages
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Cloning recursively
+        run: |
+          git submodule update --init
+      - name: Run "make all"
+        run: |
+          make -j$(nproc) all
+      - name: Generate Directory Listings UwU
+        uses: jayanta525/github-pages-directory-listing@v4.0.0
+        with:
+          FOLDER: ./output
+      - name: Upload github pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          name: "github-pages"
+          path: ./output
+          retention-days: 31
+      - name: Deploy to GitHub pages
+        id: deployment
+        uses: actions/deploy-pages@v4
