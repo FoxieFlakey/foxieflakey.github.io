@@ -3,8 +3,10 @@
 
 <div id="page_header">
   <table class="navbar" id="navbar">
-    <th data-category-target="home" class="navbar_item"><a href="/index.html">Home</a></th>
-    <th data-category-target="gallery" class="navbar_item"><a href="/gallery.html">Gallery</a></th>
+    <!-- Synchronize 'height' in this with one in navbar.css! -->
+    <th id="navbar_page_icon"><a href="/"><img height="60" src="/favicon.ico" /></a></th>
+    <th data-category-target="home" class="navbar_item"><a href="/"><div><div style="flex: 1;"></div>Home<div style="flex: 1;"></div></div></a></th>
+    <th data-category-target="gallery" class="navbar_item"><a href="/gallery.html"><div><div style="flex: 1;"></div>Gallery<div style="flex: 1;"></div></div></a></th>
     
     <!-- Contain absolutely nothing, it fills the rest of space -->
     <th></th>

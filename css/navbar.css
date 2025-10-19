@@ -2,10 +2,26 @@
   width: 100%;
   table-layout: fixed;
   border-collapse: collapse;
+  
+  /* Synchronize 'height' in this with one in navbar.css! */
+  height: 60px;
 }
 
-.navbar tbody {
-  width: 100%;
+.navbar > tbody, .navbar > tbody > tr, .navbar > tbody > tr > th {
+  height: 100%;
+}
+
+.navbar > tbody > tr > th {
+  padding: 0%;
+}
+
+#navbar_page_icon {
+  width: min-content;
+  padding-right: 2px;
+}
+
+#navbar_page_icon > a > img {
+  display: block;
 }
 
 .navbar_item {
@@ -14,13 +30,20 @@
   padding: 0%;
 }
 
-.navbar_item > * {
-  display: block;
-  padding: 10px;
-}
-
 .navbar_active {
   background-color: #f9a147ff;
+}
+
+/* Anchor need special help from div inside it to center its content properly */
+.navbar_item > a > div {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  padding: 5px;
+  text-align: left;
+  font-size: 25px;
 }
 
 
