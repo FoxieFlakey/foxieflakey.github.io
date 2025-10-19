@@ -1,12 +1,17 @@
 #content_my_profile {
-  display: flex;
+  table-layout: fixed;
+  border-collapse: collapse;
 }
 
-#content_my_profile > img {
+#content_profile_pic {
   padding-right: 8px;
 }
 
-#content_my_profile th {
+#content_profile_fields {
+  vertical-align: top;
+}
+
+#content_profile_fields th {
   text-align: left;
 }
 
