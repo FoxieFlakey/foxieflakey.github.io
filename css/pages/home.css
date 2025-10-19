@@ -1,9 +1,3 @@
-#content_profile_fields {
-  display: grid;
-  grid-template-columns: 2;
-  grid-template-rows: 1;
-}
-
 #content_my_profile {
   display: flex;
 }
@@ -12,11 +6,7 @@
   padding-right: 8px;
 }
 
-#content_profile_fields_field_names {
-  padding-right: 5px;
-}
-
-#content_profile_fields_field_values {
-  grid-column: 2;
+#content_my_profile th {
+  text-align: left;
 }
 
