@@ -2,13 +2,13 @@
 <div id="error_div"></div>
 
 <div id="page_header">
-  <div class="navbar" id="navbar">
-    <div data-category-target="home" class="navbar_item"><a href="/index.html">Home</a></div>
-    <div data-category-target="gallery" class="navbar_item"><a href="/gallery.html">Gallery</a></div>
+  <table class="navbar" id="navbar">
+    <th data-category-target="home" class="navbar_item"><a href="/index.html">Home</a></th>
+    <th data-category-target="gallery" class="navbar_item"><a href="/gallery.html">Gallery</a></th>
     
-    <!-- Fills the rest of empty space -->
-    <div data-ignored="true" style="flex: 1;"></div>
-  </div>
+    <!-- Contain absolutely nothing, it fills the rest of space -->
+    <th></th>
+  </table>
 </div>
 
 <script type="module">
@@ -17,14 +17,10 @@
     (await import("/js/error.js")).error("Page's HTML element does not have 'data-category-name', Navbar cannot properly highlights");
   }
   
-  const navbar = document.getElementById("navbar");
+  const navbar = document.getElementById("navbar").getElementsByClassName("navbar_item");
   let found = false;
-  for (let i = 0; i < navbar.children.length; i++) {
-    let item = navbar.children.item(i);
-    
-    if (item.getAttribute("data-category-ignored") === "true") {
-      continue;
-    }
+  for (let i = 0; i < navbar.length; i++) {
+    let item = navbar.item(i);
     
     if (item.getAttribute("data-category-target") === undefined) {
       console.warn("Element in navbar does not have page target");
