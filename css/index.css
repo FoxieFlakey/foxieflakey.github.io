@@ -38,6 +38,10 @@ body {
   justify-content: center;
 }
 
+.page_divider {
+  display: none;
+}
+
 * {
   image-rendering: pixelated;
 }
