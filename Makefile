@@ -12,6 +12,7 @@ files 			:= \
 	favicon.ico \
 	img/profile.gif \
 	img/Gallery_Icon.png \
+	img/Home_Icon.png \
 	js/error.js \
 	css/index.css \
 	css/navbar.css \
