@@ -1,9 +1,20 @@
 <?php
-$path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+# Its doesnt contain HTTP scheme or anything just bare paths
+$path = $_SERVER['REQUEST_URI'];
+$documentRoot = $_SERVER['DOCUMENT_ROOT'];
+
+if (
+  (!is_dir($documentRoot . $path) && !file_exists($documentRoot . $path)) ||
+  (is_dir($documentRoot . $path) && !file_exists($documentRoot . $path . "/index.html"))
+) {
+  http_response_code(404);
+  readfile($documentRoot . "/404.html");
+  exit;
+}
 
 if (strpos($path, '.js')) {
   header('Content-Type: text/javascript');
-  readfile(__DIR__ . $path);
+  readfile($documentRoot . $path);
   exit;
 }
 
