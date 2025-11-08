@@ -71,5 +71,7 @@ host: all
 	@echo "[HOST  ] Locally hosting at localhost:8080 with php's builtin webserver"
 	@php -S localhost:8080 -t '$(output_dir)/' router.php
 
-include $(wildcard $(deps_dir)/*.d)
+# See https://stackoverflow.com/questions/2483182/recursive-wildcards-in-gnu-make
+rwildcard=$(foreach d,$(wildcard $(1:=/*)),$(call rwildcard,$d,$2) $(filter $(subst *,%,$2),$d))
+include $(call rwildcard,$(deps_dir),*.d)
 
