@@ -1,6 +1,6 @@
 <?php
 # Its doesnt contain HTTP scheme or anything just bare paths
-$path = $_SERVER['REQUEST_URI'];
+$path = strtok(strtok($_SERVER['REQUEST_URI'], '#'), '?');
 $documentRoot = $_SERVER['DOCUMENT_ROOT'];
 
 if (
