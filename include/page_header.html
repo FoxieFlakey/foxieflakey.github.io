@@ -1,3 +1,4 @@
+#define NAVBAR_ITEM_NONE -1
 #define NAVBAR_ITEM_HOME 0
 #define NAVBAR_ITEM_GALLERY 1
 
@@ -10,6 +11,8 @@
 #elif CURRENT_NAVITEM == NAVBAR_ITEM_GALLERY
 # undef NAVBAR_ITEM1
 # define NAVBAR_ITEM1 class="navbar_item navbar_active"
+#elif NAVBAR_ITEM_NONE
+<!-- Current page does not have item associated with it -->
 #else
 # error "Unknown current navitem"
 #endif

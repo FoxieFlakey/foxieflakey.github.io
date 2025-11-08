@@ -25,7 +25,8 @@ files 			:= \
 	js/error.js \
 	css/index.css \
 	css/navbar.css \
-	css/pages/home.css
+	css/pages/home.css \
+	404.html
 deps_dir		:= $(current_dir)/file_deps
 
 .DEFAULT_GOAL := all
