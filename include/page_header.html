@@ -1,3 +1,19 @@
+#define NAVBAR_ITEM_HOME 0
+#define NAVBAR_ITEM_GALLERY 1
+
+#define NAVBAR_ITEM0 class="navbar_item"
+#define NAVBAR_ITEM1 class="navbar_item"
+
+#if CURRENT_NAVITEM == NAVBAR_ITEM_HOME
+# undef NAVBAR_ITEM0
+# define NAVBAR_ITEM0 class="navbar_item navbar_active"
+#elif CURRENT_NAVITEM == NAVBAR_ITEM_GALLERY
+# undef NAVBAR_ITEM1
+# define NAVBAR_ITEM1 class="navbar_item navbar_active"
+#else
+# error "Unknown current navitem"
+#endif
+
 <!-- Must be always present for 'error.js' work properly -->
 <div id="error_div"></div>
 
@@ -6,7 +22,7 @@
     <tr>
       <!-- Synchronize 'height' in this with one in navbar.css! -->
       <th id="navbar_page_icon"><a href=PREFIX_SITE_ROOT("/")><img height="60" src=PREFIX_SITE_ROOT("/favicon.ico") /></a></th>
-      <th data-category-target="home" class="navbar_item">
+      <th NAVBAR_ITEM1>
         <a href=PREFIX_SITE_ROOT("/")>
           <table>
             <tr>
@@ -16,7 +32,7 @@
           </table>
         </a>
       </th>
-      <th data-category-target="gallery" class="navbar_item">
+      <th NAVBAR_ITEM1>
         <a href=PREFIX_SITE_ROOT("/gallery.html")>
           <table>
             <tr>
@@ -33,35 +49,9 @@
   </table>
 </div>
 
-<script type="module">
-  const categoryName = document.documentElement.getAttribute("data-category-name");
-  if (categoryName == null) {
-    (await import(PREFIX_SITE_ROOT("/js/error.js"))).error("Page's HTML element does not have 'data-category-name', Navbar cannot properly highlights");
-  }
-  
-  const navbar = document.getElementById("navbar").getElementsByClassName("navbar_item");
-  let found = false;
-  for (let i = 0; i < navbar.length; i++) {
-    let item = navbar.item(i);
-    
-    if (item.getAttribute("data-category-target") === undefined) {
-      console.warn("Element in navbar does not have page target");
-      continue;
-    }
-    
-    if (item.getAttribute("data-category-target") === categoryName) {
-      item.classList.add("navbar_active");
-      found = true;
-      break;
-    }
-  }
-  
-  if (!found) {
-    (await import(PREFIX_SITE_ROOT("/js/error.js"))).error("Current category cannot be found");
-  }
-</script>
-
 <hr class="page_divider">
 <!-- Not closed here, it will be closed in page_footer.html -->
 <div id="page_content">
 
+#undef NAVBAR_ITEM0
+#undef NAVBAR_ITEM1
