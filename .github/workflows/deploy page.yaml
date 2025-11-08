@@ -27,6 +27,9 @@ jobs:
       - name: Cloning recursively
         run: |
           git submodule update --init
+      - name: Applying config for GitHub pages
+        run : |
+          cp github-pages-config.mk local-config.mk
       - name: Run "make all"
         run: |
           make -j$(nproc) all

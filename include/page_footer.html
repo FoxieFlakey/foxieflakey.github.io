@@ -5,9 +5,16 @@ Empty filler so the footer either stuck at bottom of viewport with empty space o
 be further
 -->
 <div style="flex: 1;"></div>
+<hr class="page_divider">
 <div id="page_footer">
-  <hr class="page_divider">
-  Site made with love by MEEE &lt;3<br>
-  Copyright 2025
+  <div>
+    Site made with love by MEEE &lt;3<br>
+    Copyright 2025<br>
+    #ifdef HOST_GITHUB_PAGES
+    Instance hosted on GitHub pages. <a href="https://docs.github.com/en/pages">Click here for info UwU</a>
+    #elif defined(HOST_SCRIPTERS_CLUB)
+    Instance hosted by people at Lua discord &lt;3 <a href="/">Click here for the site! ^w^</a>
+    #endif
+  </div>
 </div>
 
