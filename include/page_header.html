@@ -5,22 +5,22 @@
   <table class="navbar" id="navbar">
     <tr>
       <!-- Synchronize 'height' in this with one in navbar.css! -->
-      <th id="navbar_page_icon"><a href="/"><img height="60" src="/favicon.ico" /></a></th>
+      <th id="navbar_page_icon"><a href="/"><img height="60" src=PREFIX_SITE_ROOT("/favicon.ico") /></a></th>
       <th data-category-target="home" class="navbar_item">
         <a href="/">
           <table>
             <tr>
-              <th><img src="/img/Home_Icon.png" class="navbar_icon" height="50" /></th>
+              <th><img src=PREFIX_SITE_ROOT("/img/Home_Icon.png") class="navbar_icon" height="50" /></th>
               <th>Home</th>
             </tr>
           </table>
         </a>
       </th>
       <th data-category-target="gallery" class="navbar_item">
-        <a href="/gallery.html">
+        <a href=PREFIX_SITE_ROOT("/gallery.html")>
           <table>
             <tr>
-              <th><img src="/img/Gallery_Icon.png" class="navbar_icon" height="50" /></th>
+              <th><img src=PREFIX_SITE_ROOT("/img/Gallery_Icon.png") class="navbar_icon" height="50" /></th>
               <th>Gallery</th>
             </tr>
           </table>
@@ -36,7 +36,7 @@
 <script type="module">
   const categoryName = document.documentElement.getAttribute("data-category-name");
   if (categoryName == null) {
-    (await import("/js/error.js")).error("Page's HTML element does not have 'data-category-name', Navbar cannot properly highlights");
+    (await import(PREFIX_SITE_ROOT("/js/error.js"))).error("Page's HTML element does not have 'data-category-name', Navbar cannot properly highlights");
   }
   
   const navbar = document.getElementById("navbar").getElementsByClassName("navbar_item");
@@ -57,7 +57,7 @@
   }
   
   if (!found) {
-    (await import("/js/error.js")).error("Current category cannot be found");
+    (await import(PREFIX_SITE_ROOT("/js/error.js"))).error("Current category cannot be found");
   }
 </script>
 

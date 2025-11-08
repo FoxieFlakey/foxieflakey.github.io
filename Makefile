@@ -2,6 +2,8 @@ MAKEFLAGS += -rR --no-print-directory
 
 current_dir := $(shell pwd)
 output_dir 	:= $(current_dir)/output
+# This is site's root NOT root in host filesystem
+site_root		?= /./
 
 # Just current current dir either way people can see
 # on fiinal result lol
@@ -34,8 +36,10 @@ $(deps_dir):
 $(output_dir)/%.html: $(input_dir)/%.html | $(output_dir) $(deps_dir)
 	@mkdir -p -- '$(dir $@)'
 	@mkdir -p -- '$(dir $(@:$(output_dir)%=$(deps_dir)%).d)'
-	@clang '-I$(input_dir)' '-I$(input_dir)/include' -Wno-invalid-pp-token -E -P -CC -MMD -MP -MF '$(@:$(output_dir)%=$(deps_dir)%).d' -MT '$@' -xc - < '$<' > '$@'
 	@echo "[ CC   ] Preprocess $(@:$(output_dir)=)"
+	@clang '-I$(input_dir)' '-I$(input_dir)/include' '-DSITE_ROOT="$(site_root)"' -include "include/preinclude.html" -Wno-invalid-pp-token -E -P -CC -MMD -MP -MF '$(@:$(output_dir)%=$(deps_dir)%).d' -MT '$@' -xc - < '$<' > '$@.tmp'
+	@(cat '$@.tmp' | sed -E 's/"([^"]*?)"[ \t\n]"([^"]*?)"/"\1\2"/g') > '$@'
+	@rm '$@.tmp'
 
 # For non html files
 $(output_dir)/%: $(input_dir)/% | $(output_dir)
