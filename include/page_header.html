@@ -14,6 +14,22 @@
 # error "Unknown current navitem"
 #endif
 
+#define NAVBAR_EXPAND(x) x
+#define NAVBAR_CONCAT_INNER_INNER(x, y) x ## y
+#define NAVBAR_CONCAT_INNER(x, y) NAVBAR_CONCAT_INNER_INNER(x, y)
+#define NAVBAR_CONCAT(x, y) NAVBAR_CONCAT_INNER(NAVBAR_EXPAND(x), NAVBAR_EXPAND(y))
+#define NAVBAR_ITEM(kind, url, icon_url, text) \
+  <th NAVBAR_CONCAT(NAVBAR_ITEM, NAVBAR_EXPAND(kind))> \
+  <a href=url> \
+    <table> \
+      <tr> \
+        <th><img src=icon_url class="navbar_icon" height="50" /></th> \
+        <th>text</th> \
+      </tr> \
+    </table> \
+  </a>
+</th>
+
 <!-- Must be always present for 'error.js' work properly -->
 <div id="error_div"></div>
 
@@ -22,26 +38,8 @@
     <tr>
       <!-- Synchronize 'height' in this with one in navbar.css! -->
       <th id="navbar_page_icon"><a href=PREFIX_SITE_ROOT("/")><img height="60" src=PREFIX_SITE_ROOT("/favicon.ico") /></a></th>
-      <th NAVBAR_ITEM1>
-        <a href=PREFIX_SITE_ROOT("/")>
-          <table>
-            <tr>
-              <th><img src=PREFIX_SITE_ROOT("/img/Home_Icon.png") class="navbar_icon" height="50" /></th>
-              <th>Home</th>
-            </tr>
-          </table>
-        </a>
-      </th>
-      <th NAVBAR_ITEM1>
-        <a href=PREFIX_SITE_ROOT("/gallery.html")>
-          <table>
-            <tr>
-              <th><img src=PREFIX_SITE_ROOT("/img/Gallery_Icon.png") class="navbar_icon" height="50" /></th>
-              <th>Gallery</th>
-            </tr>
-          </table>
-        </a>
-      </th>
+      NAVBAR_ITEM(NAVBAR_ITEM_HOME, PREFIX_SITE_ROOT("/"), PREFIX_SITE_ROOT("/img/Home_Icon.png"), Home)
+      NAVBAR_ITEM(NAVBAR_ITEM_GALLERY, PREFIX_SITE_ROOT("/gallery.html"), PREFIX_SITE_ROOT("/img/Gallery_Icon.png"), Gallery)
       
       <!-- Contain absolutely nothing, it fills the rest of space -->
       <th style="width: 100%;"></th>
