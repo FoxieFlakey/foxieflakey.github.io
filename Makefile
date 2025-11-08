@@ -5,6 +5,12 @@ output_dir 	:= $(current_dir)/output
 # This is site's root NOT root in host filesystem
 site_root		?= /./
 
+# At here we can include local config which updated
+# to suit each needs
+ifeq ($(wildcard local-config.mk),local-config.mk)
+	include local-config.mk
+endif
+
 # Just current current dir either way people can see
 # on fiinal result lol
 input_dir 	:= $(current_dir)/

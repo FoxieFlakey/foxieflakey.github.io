@@ -1,4 +1,5 @@
 /output
 /file_deps
 /private
+/local-config.mk
 github-pages.tar.gz
