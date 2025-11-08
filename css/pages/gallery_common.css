@@ -1,0 +1,9 @@
+#art_address_bar th {
+  white-space: nowrap;
+}
+
+#art_address_bar {
+  background-color: #a0a0a0;
+  width: 100%;
+}
+

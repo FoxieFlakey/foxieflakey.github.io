@@ -17,7 +17,16 @@ endif
 input_dir 	:= $(current_dir)/
 files 			:= \
 	index.html \
-	gallery.html \
+	gallery/index.html \
+	gallery/2025/index.html \
+	gallery/2025/10/index.html \
+	gallery/2025/10/30/index.html \
+	gallery/2025/10/30/micro_foxie.html \
+	gallery/2025/10/30/micro_foxie.png \
+	gallery/2025/11/index.html \
+	gallery/2025/11/6/index.html \
+	gallery/2025/11/6/new_side_profile.html \
+	gallery/2025/11/6/new_side_profile.png \
 	favicon.ico \
 	img/profile.gif \
 	img/Gallery_Icon.png \
@@ -26,7 +35,9 @@ files 			:= \
 	css/index.css \
 	css/navbar.css \
 	css/pages/home.css \
-	404.html
+	404.html \
+	css/pages/gallery_common.css \
+	css/pages/gallery_post.css
 deps_dir		:= $(current_dir)/file_deps
 
 .DEFAULT_GOAL := all

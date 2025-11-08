@@ -1,0 +1,71 @@
+#ifndef ART_ADDR_BAR_YEAR
+# error "Missing year"
+#endif
+
+#if defined(ART_ADDR_BAR_DAY) && !defined(ART_ADDR_BAR_MONTH)
+# error "Missing month for day listing"
+#endif
+
+#if defined(ART_ADDR_BAR_TITLE) && !defined(ART_ADDR_BAR_DAY)
+# error "Missing day for art title"
+#endif
+
+#ifdef ART_ADDR_BAR_MONTH
+# if ART_ADDR_BAR_MONTH == 1
+#  define ART_ADDR_BAR_MONTH_STR Jan
+# elif ART_ADDR_BAR_MONTH == 2
+#  define ART_ADDR_BAR_MONTH_STR Feb
+# elif ART_ADDR_BAR_MONTH == 3
+#  define ART_ADDR_BAR_MONTH_STR Mar
+# elif ART_ADDR_BAR_MONTH == 4
+#  define ART_ADDR_BAR_MONTH_STR Apr
+# elif ART_ADDR_BAR_MONTH == 5
+#  define ART_ADDR_BAR_MONTH_STR May
+# elif ART_ADDR_BAR_MONTH == 6
+#  define ART_ADDR_BAR_MONTH_STR Jun
+# elif ART_ADDR_BAR_MONTH == 7
+#  define ART_ADDR_BAR_MONTH_STR Jul
+# elif ART_ADDR_BAR_MONTH == 8
+#  define ART_ADDR_BAR_MONTH_STR Aug
+# elif ART_ADDR_BAR_MONTH == 9
+#  define ART_ADDR_BAR_MONTH_STR Sep
+# elif ART_ADDR_BAR_MONTH == 10
+#  define ART_ADDR_BAR_MONTH_STR Oct
+# elif ART_ADDR_BAR_MONTH == 11
+#  define ART_ADDR_BAR_MONTH_STR Nov
+# elif ART_ADDR_BAR_MONTH == 12
+#  define ART_ADDR_BAR_MONTH_STR Dec
+# else
+#  error "Unknown month"
+# endif
+#endif
+
+#define ART_ADDR_BAR_STRINGIFY_INNER_INNER(x) #x
+#define ART_ADDR_BAR_STRINGIFY_INNER(x) ART_ADDR_BAR_STRINGIFY_INNER_INNER(x)
+#define ART_ADDR_BAR_STRINGIFY(x) ART_ADDR_BAR_STRINGIFY_INNER(x)
+
+<!-- Essentially acting like address bar of my arts -->
+<table id="art_address_bar">
+  <tr>
+    <th><a href=PREFIX_SITE_ROOT("/gallery/" ART_ADDR_BAR_STRINGIFY_INNER(ART_ADDR_BAR_YEAR) "/")>ART_ADDR_BAR_YEAR</a></th>
+    
+    #ifdef ART_ADDR_BAR_MONTH
+    <th>&gt;</th>
+    <th><a href=PREFIX_SITE_ROOT("/gallery/" ART_ADDR_BAR_STRINGIFY_INNER(ART_ADDR_BAR_YEAR) "/" ART_ADDR_BAR_STRINGIFY_INNER(ART_ADDR_BAR_MONTH) "/")>ART_ADDR_BAR_MONTH_STR</a></th>
+    #endif
+    
+    #ifdef ART_ADDR_BAR_DAY
+    <th>&gt;</th>
+    <th><a href=PREFIX_SITE_ROOT("/gallery/" ART_ADDR_BAR_STRINGIFY_INNER(ART_ADDR_BAR_YEAR) "/" ART_ADDR_BAR_STRINGIFY_INNER(ART_ADDR_BAR_MONTH) "/" ART_ADDR_BAR_STRINGIFY_INNER(ART_ADDR_BAR_DAY) "/")>ART_ADDR_BAR_DAY</a></th>
+    #endif
+    
+    #ifdef ART_ADDR_BAR_TITLE
+    <th>&gt;</th>
+    <th>ART_ADDR_BAR_TITLE</th>
+    #endif
+    <!-- Contain absolutely nothing, it fills the rest of space -->
+    <th style="width: 100%;"></th>
+  </tr>
+</table> 
+<hr>
+

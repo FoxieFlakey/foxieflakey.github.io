@@ -1,0 +1,73 @@
+#define CURRENT_NAVITEM NAVBAR_ITEM_GALLERY
+
+<!-- A listing page which lists whatever under a year/month/day -->
+#ifndef LIST_YEAR
+# error "Missing year"
+#endif
+
+#if defined(LIST_DAY) && !defined(LIST_MONTH)
+# error "Missing month for day listing"
+#endif
+
+#ifdef LIST_MONTH
+# if LIST_MONTH == 1
+#  define LIST_MONTH_STR Jan
+# elif LIST_MONTH == 2
+#  define LIST_MONTH_STR Feb
+# elif LIST_MONTH == 3
+#  define LIST_MONTH_STR Mar
+# elif LIST_MONTH == 4
+#  define LIST_MONTH_STR Apr
+# elif LIST_MONTH == 5
+#  define LIST_MONTH_STR May
+# elif LIST_MONTH == 6
+#  define LIST_MONTH_STR Jun
+# elif LIST_MONTH == 7
+#  define LIST_MONTH_STR Jul
+# elif LIST_MONTH == 8
+#  define LIST_MONTH_STR Aug
+# elif LIST_MONTH == 9
+#  define LIST_MONTH_STR Sep
+# elif LIST_MONTH == 10
+#  define LIST_MONTH_STR Oct
+# elif LIST_MONTH == 11
+#  define LIST_MONTH_STR Nov
+# elif LIST_MONTH == 12
+#  define LIST_MONTH_STR Dec
+# else
+#  error "Unknown month"
+# endif
+#endif
+
+#ifdef LIST_DAY
+# define LIST_DATE LIST_YEAR LIST_MONTH_STR LIST_DAY
+#elif defined(LIST_MONTH)
+# define LIST_DATE LIST_YEAR LIST_MONTH_STR
+#else
+# define LIST_DATE LIST_YEAR
+#endif
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Arts posted on LIST_DATE</title>
+    #include "common_metadata.html"
+    <link href=PREFIX_SITE_ROOT("/css/pages/gallery_common.css") rel="stylesheet" blocking="render" />
+  </head>
+  
+  <body>
+    #include "page_header.html"
+    #define ART_ADDR_BAR_YEAR LIST_YEAR
+    
+    #ifdef LIST_MONTH
+    # define ART_ADDR_BAR_MONTH LIST_MONTH
+    #endif
+    
+    #ifdef LIST_DAY
+    # define ART_ADDR_BAR_DAY LIST_DAY
+    #endif
+    #include "art_addr_bar.html"
+
+
+
+
