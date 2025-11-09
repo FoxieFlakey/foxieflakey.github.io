@@ -59,11 +59,6 @@
     #ifndef LIST_EMBEDDING
     # include "page_header.html"
     #endif
-    #define ART_ADDR_BAR_YEAR LIST_YEAR
-    
-    #ifdef LIST_MONTH
-    # define ART_ADDR_BAR_MONTH LIST_MONTH
-    #endif
     
     #define LIST_ITEM_START(title, pageUrl) \
       <li> \
@@ -75,6 +70,10 @@
       </li>
     
     #ifndef LIST_EMBEDDING
+    # define ART_ADDR_BAR_YEAR LIST_YEAR
+    # ifdef LIST_MONTH
+    #   define ART_ADDR_BAR_MONTH LIST_MONTH
+    # endif
     # include "art_addr_bar.html"
     #endif
 
