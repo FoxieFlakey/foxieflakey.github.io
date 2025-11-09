@@ -63,22 +63,22 @@
     #define ART_ADDR_BAR_DAY POST_DAY
     #define ART_ADDR_BAR_TITLE POST_TITLE
     #include "art_addr_bar.html"
+    <table class="button_container">
+      #ifdef POST_NEXT_LINK
+      <th><a class="button_like" href=POST_NEXT_LINK><table><th>Newer</th></table></a></th>
+      #else
+      <th><div class="button_like_disabled button_like"><table><th>Newer</th></table></div></th>
+      #endif
+      <th><a class="button_like" href=POST_IMG_URL><table><th>Original resolution</th></table></a></th>
+      #ifdef POST_PREV_LINK
+      <th><a class="button_like" href=POST_PREV_LINK><table><th>Older</th></table></a></th>
+      #else
+      <th><div class="button_like_disabled button_like"><table><th>Older</th></table></div></th>
+      #endif
+    </table>
     <div id="post">
       <img src=POST_IMG_URL height=POST_IMG_HEIGHT width=POST_IMG_WIDTH /><br>
       <div id="post_content">
-        <table class="button_container">
-          #ifdef POST_NEXT_LINK
-          <th><a class="button_like" href=POST_NEXT_LINK><table><th>Newer</th></table></a></th>
-          #else
-          <th><div class="button_like_disabled button_like"><table><th>Newer</th></table></div></th>
-          #endif
-          <th><a class="button_like" href=POST_IMG_URL><table><th>Original resolution</th></table></a></th>
-          #ifdef POST_PREV_LINK
-          <th><a class="button_like" href=POST_PREV_LINK><table><th>Older</th></table></a></th>
-          #else
-          <th><div class="button_like_disabled button_like"><table><th>Older</th></table></div></th>
-          #endif
-        </table>
         <table style="text-align: left;">
           <tr>
             <th>Title</th>
