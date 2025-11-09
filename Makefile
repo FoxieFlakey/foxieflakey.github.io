@@ -29,6 +29,7 @@ files 			:= \
 	gallery/2025/11/new_side_profile.html \
 	gallery/2025/11/new_side_profile.png \
 	favicon.ico \
+	favicon_for_opengraph.png \
 	img/profile.gif \
 	img/Gallery_Icon.png \
 	img/Home_Icon.png \
