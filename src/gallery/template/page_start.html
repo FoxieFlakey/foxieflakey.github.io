@@ -56,6 +56,19 @@
     <div id="post">
       <img src=POST_IMG_URL height=POST_IMG_HEIGHT width=POST_IMG_WIDTH /><br>
       <div id="post_content">
+        <table class="button_container">
+          #ifdef POST_NEXT_LINK
+          <th><a class="button_like" href=POST_NEXT_LINK>Newer</a></th>
+          #else
+          <th><div class="button_like_disabled button_like">Newer</div></th>
+          #endif
+          <th><a class="button_like" href=POST_IMG_URL>Original resolution</a></th>
+          #ifdef POST_PREV_LINK
+          <th><a class="button_like" href=POST_PREV_LINK>Older</a></th>
+          #else
+          <th><div class="button_like_disabled button_like">Older</div></th>
+          #endif
+        </table>
         <table style="text-align: left;">
           <tr>
             <th>Title</th>

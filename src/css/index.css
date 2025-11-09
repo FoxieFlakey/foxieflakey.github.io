@@ -64,3 +64,27 @@ body {
   image-rendering: pixelated;
 }
 
+.button_container {
+  border-collapse: collapse;
+}
+
+.button_container th > a {
+  display: block;
+}
+
+.button_like {
+  border: 1px solid white;
+  padding: 20px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  background-color: #f9a147ff;
+}
+
+.button_like:active {
+  background-color: #f9d1a8;
+}
+
+.button_like_disabled, .button_like_disabled:active {
+  background-color: #835525ff;
+}
+
