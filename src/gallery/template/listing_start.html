@@ -61,13 +61,13 @@
     #endif
     
     #define LIST_ITEM_START(title, pageUrl) \
-      <li> \
-        <details> \
-          <summary><a href=PREFIX_SITE_ROOT(pageUrl)>title</a></summary>
+      <details> \
+        <summary><a href=PREFIX_SITE_ROOT(pageUrl)>title</a></summary> \
+        <div style="padding-left: 20px;">
     
     #define LIST_ITEM_END() \
-        </details> \
-      </li>
+        </div> \
+      </details>
     
     #ifndef LIST_EMBEDDING
     # define ART_ADDR_BAR_YEAR LIST_YEAR

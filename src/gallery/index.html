@@ -13,29 +13,27 @@
     <script src=PREFIX_SITE_ROOT("/js/auto-fit-iframe.js")></script>
     
     #define ITEM_START(title, url) \
-      <li> \
-        <details> \
-          <summary><a href=PREFIX_SITE_ROOT(url)>title</a></summary>
+      <details> \
+        <summary><a href=PREFIX_SITE_ROOT(url)>title</a></summary> \
+        <div style="padding-left: 20px;">
     
-    #define ITEM_END()
-        </details>
-      </li>
+    #define ITEM_END() \
+        </div> \
+      </details>
     
     <h1>Drawings categorized by year :3</h1>
-    <ul>
-      ITEM_START(2025, "/gallery/2025/")
-      #include "2025/index_embed.html"
-      ITEM_END()
-    </ul>
+    ITEM_START(2025, "/gallery/2025/")
+    #include "2025/index_embed.html"
+    ITEM_END()
+    
     <h1>Recent drawings</h1>
-    <ul>
-      ITEM_START(Thursday 6 November 2025 - Foxie, "/gallery/2025/11/new_side_profile.html")
-      #include "2025/11/new_side_profile_embed.html"
-      ITEM_END()
-      ITEM_START(Thursday 30 October 2025 - Micro Foxie, "/gallery/2025/10/micro_foxie.html")
-      #include "2025/10/micro_foxie_embed.html"
-      ITEM_END()
-    </ul>
+    ITEM_START(Thursday 6 November 2025 - Foxie, "/gallery/2025/11/new_side_profile.html")
+    #include "2025/11/new_side_profile_embed.html"
+    ITEM_END()
+    ITEM_START(Thursday 30 October 2025 - Micro Foxie, "/gallery/2025/10/micro_foxie.html")
+    #include "2025/10/micro_foxie_embed.html"
+    ITEM_END()
+    
     #include "page_footer.html"
   </body>
 </html>
