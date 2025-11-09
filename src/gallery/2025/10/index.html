@@ -7,9 +7,11 @@
 #include "gallery/template/listing_start.html"
 
 LIST_GROUP_TITLE(Thursday 30 October 2025)
-LIST_ITEM_START(Micro Foxie, "/gallery/2025/10/micro_foxie.html")
-#include "micro_foxie.html"
-LIST_ITEM_END()
+LIST_BEGIN()
+  LIST_ITEM_START(Micro Foxie, "/gallery/2025/10/micro_foxie.html")
+  #include "micro_foxie.html"
+  LIST_ITEM_END()
+LIST_END()
 
 #include "gallery/template/listing_end.html"
 

@@ -60,17 +60,24 @@
     # include "page_header.html"
     #endif
     
+    #define LIST_BEGIN() \
+      <ul style="list-style-type: none; margin: 0px; padding: 0px;">
+    #define LIST_END() \
+      </ul>
+    
     #define LIST_GROUP_TITLE(title) \
       <strong>title</strong>
     
     #define LIST_ITEM_START(title, pageUrl) \
-      <details> \
-        <summary><a href=PREFIX_SITE_ROOT(pageUrl)>title</a></summary> \
-        <div style="padding-left: 20px;">
+      <li> \
+        <details> \
+          <summary><a href=PREFIX_SITE_ROOT(pageUrl)>title</a></summary> \
+          <div style="padding-left: 20px;">
     
     #define LIST_ITEM_END() \
-        </div> \
-      </details>
+          </div> \
+        </details> \
+      </li>
     
     #ifndef LIST_EMBEDDING
     # define ART_ADDR_BAR_YEAR LIST_YEAR

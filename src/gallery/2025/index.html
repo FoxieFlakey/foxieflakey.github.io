@@ -5,13 +5,15 @@
 
 #include "gallery/template/listing_start.html"
 
-LIST_ITEM_START(November, "/gallery/2025/11/")
-#include "11/index.html"
-LIST_ITEM_END()
+LIST_BEGIN()
+  LIST_ITEM_START(November, "/gallery/2025/11/")
+  #include "11/index.html"
+  LIST_ITEM_END()
 
-LIST_ITEM_START(October, "/gallery/2025/10/")
-#include "10/index.html"
-LIST_ITEM_END()
-
+  LIST_ITEM_START(October, "/gallery/2025/10/")
+  #include "10/index.html"
+  LIST_ITEM_END()
+LIST_END()
+  
 #include "gallery/template/listing_end.html"
 
