@@ -21,17 +21,20 @@
         </div> \
       </details>
     
+    #define POST_EMBEDDING
+    #define LIST_EMBEDDING
+    
     <h1>Drawings categorized by year :3</h1>
     ITEM_START(2025, "/gallery/2025/")
-    #include "2025/index_embed.html"
+    #include "2025/index.html"
     ITEM_END()
     
     <h1>Recent drawings</h1>
     ITEM_START(Thursday 6 November 2025 - Foxie, "/gallery/2025/11/new_side_profile.html")
-    #include "2025/11/new_side_profile_embed.html"
+    #include "2025/11/new_side_profile.html"
     ITEM_END()
     ITEM_START(Thursday 30 October 2025 - Micro Foxie, "/gallery/2025/10/micro_foxie.html")
-    #include "2025/10/micro_foxie_embed.html"
+    #include "2025/10/micro_foxie.html"
     ITEM_END()
     
     #include "page_footer.html"
