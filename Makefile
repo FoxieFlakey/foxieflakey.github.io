@@ -22,6 +22,7 @@ files 			:= \
 	index.html \
 	gallery/index.html \
 	gallery/2025/index.html \
+	gallery/2025/index_embed.html \
 	gallery/2025/10/index.html \
 	gallery/2025/10/index_embed.html \
 	gallery/2025/10/micro_foxie.html \

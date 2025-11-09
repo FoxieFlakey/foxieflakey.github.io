@@ -10,14 +10,22 @@
   
   <body>
     #include "page_header.html"
+    #define ITEM(title, url, embedUrl) \
+      <li> \
+        <details> \
+          <summary><a href=PREFIX_SITE_ROOT(url)>title</a></summary> \
+          <iframe style="width: 90%" width="700" height="500" src=PREFIX_SITE_ROOT(embedUrl) loading="lazy"></iframe> \
+        </details> \
+      </li>
+    
     <h1>Drawings categorized by year :3</h1>
     <ul>
-      <li><a href=PREFIX_SITE_ROOT("/gallery/2025/")>2025</a></li>
+      ITEM(2025, "/gallery/2025/", "/gallery/2025/index_embed.html")
     </ul>
     <h1>Recent drawings</h1>
     <ul>
-      <li>Thursday, 6 November 2025 - Foxie&apos;s Side Profile v2 (<a href=PREFIX_SITE_ROOT("/gallery/2025/11/new_side_profile.html")>Link here!</a>)</li>
-      <li>Thursday, 30 October 2025 - Micro Foxie (<a href=PREFIX_SITE_ROOT("/gallery/2025/10/micro_foxie.html")>Link here!</a>)</li>
+      ITEM(Thursday 6 November 2025 - Foxie, "/gallery/2025/11/new_side_profile.html", "/gallery/2025/11/new_side_profile_embed.html")
+      ITEM(Thursday 30 October 2025 - Micro Foxie, "/gallery/2025/10/micro_foxie.html", "/gallery/2025/10/micro_foxie_embed.html")
     </ul>
     #include "page_footer.html"
   </body>
