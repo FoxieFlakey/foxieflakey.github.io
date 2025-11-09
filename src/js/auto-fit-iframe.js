@@ -18,7 +18,10 @@ function foxie_autoFitIframe(frame) {
   var prevHeight = undefined;
   
   let doPoll = () => {
-    let newHeight = frame.contentWindow.document.body.scrollHeight;
+    let newHeight = frame.contentDocument.body.scrollHeight;
+    let computed = getComputedStyle(frame.contentDocument.body);
+    let margin = parseInt(computed.marginTop) + parseInt(computed.marginBottom);
+    newHeight += margin;
     
     // let newWidth = Math.trunc(event.data.width);
     // if (prevWidth != newWidth) {
@@ -26,8 +29,7 @@ function foxie_autoFitIframe(frame) {
     // }
     
     if (prevHeight != newHeight) {
-      frame.style.height = '';
-      frame.style.height = newHeight + 'px';
+      frame.height = newHeight;
       prevHeight = newHeight;
     }
   };
