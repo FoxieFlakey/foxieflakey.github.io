@@ -1,9 +1,11 @@
-#define POST_EMBEDDING
-#define LIST_EMBEDDING
-
 #define LIST_YEAR 2025
 
 #include "gallery/template/listing_start.html"
+
+#pragma push_macro("POST_EMBEDDING")
+#pragma push_macro("LIST_EMBEDDING")
+#define POST_EMBEDDING
+#define LIST_EMBEDDING
 
 LIST_BEGIN()
   LIST_ITEM_START(November, "/gallery/2025/11/")
@@ -14,6 +16,9 @@ LIST_BEGIN()
   #include "10/index.html"
   LIST_ITEM_END()
 LIST_END()
-  
+
+#pragma pop_macro("POST_EMBEDDING")
+#pragma pop_macro("LIST_EMBEDDING")
+
 #include "gallery/template/listing_end.html"
 
