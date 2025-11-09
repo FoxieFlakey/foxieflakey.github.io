@@ -2,14 +2,6 @@
 # error "Missing year"
 #endif
 
-#if defined(ART_ADDR_BAR_DAY) && !defined(ART_ADDR_BAR_MONTH)
-# error "Missing month for day listing"
-#endif
-
-#if defined(ART_ADDR_BAR_TITLE) && !defined(ART_ADDR_BAR_DAY)
-# error "Missing day for art title"
-#endif
-
 #ifdef ART_ADDR_BAR_MONTH
 # if ART_ADDR_BAR_MONTH == 1
 #  define ART_ADDR_BAR_MONTH_STR Jan
@@ -54,11 +46,6 @@
     #ifdef ART_ADDR_BAR_MONTH
     <th>&gt;</th>
     <th><a href=PREFIX_SITE_ROOT("/gallery/" ART_ADDR_BAR_STRINGIFY_INNER(ART_ADDR_BAR_YEAR) "/" ART_ADDR_BAR_STRINGIFY_INNER(ART_ADDR_BAR_MONTH) "/")>ART_ADDR_BAR_MONTH_STR</a></th>
-    #endif
-    
-    #ifdef ART_ADDR_BAR_DAY
-    <th>&gt;</th>
-    <th><a href=PREFIX_SITE_ROOT("/gallery/" ART_ADDR_BAR_STRINGIFY_INNER(ART_ADDR_BAR_YEAR) "/" ART_ADDR_BAR_STRINGIFY_INNER(ART_ADDR_BAR_MONTH) "/" ART_ADDR_BAR_STRINGIFY_INNER(ART_ADDR_BAR_DAY) "/")>ART_ADDR_BAR_DAY</a></th>
     #endif
     
     #ifdef ART_ADDR_BAR_TITLE

@@ -22,11 +22,11 @@ files 			:= \
 	gallery/index.html \
 	gallery/2025/index.html \
 	gallery/2025/10/index.html \
-	gallery/2025/10/30/micro_foxie.html \
-	gallery/2025/10/30/micro_foxie.png \
+	gallery/2025/10/micro_foxie.html \
+	gallery/2025/10/micro_foxie.png \
 	gallery/2025/11/index.html \
-	gallery/2025/11/6/new_side_profile.html \
-	gallery/2025/11/6/new_side_profile.png \
+	gallery/2025/11/new_side_profile.html \
+	gallery/2025/11/new_side_profile.png \
 	favicon.ico \
 	img/profile.gif \
 	img/Gallery_Icon.png \
