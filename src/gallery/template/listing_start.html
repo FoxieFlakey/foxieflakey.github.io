@@ -39,9 +39,7 @@
 # endif
 #endif
 
-#ifdef LIST_DAY
-# define LIST_DATE LIST_YEAR LIST_MONTH_STR LIST_DAY
-#elif defined(LIST_MONTH)
+#ifdef LIST_MONTH
 # define LIST_DATE LIST_YEAR LIST_MONTH_STR
 #else
 # define LIST_DATE LIST_YEAR
@@ -63,9 +61,6 @@
     # define ART_ADDR_BAR_MONTH LIST_MONTH
     #endif
     
-    #ifdef LIST_DAY
-    # define ART_ADDR_BAR_DAY LIST_DAY
-    #endif
     #include "art_addr_bar.html"
 
 
