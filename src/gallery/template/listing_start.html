@@ -54,7 +54,9 @@
   </head>
   
   <body>
-    #include "page_header.html"
+    #ifndef LIST_EMBEDDING
+    # include "page_header.html"
+    #endif
     #define ART_ADDR_BAR_YEAR LIST_YEAR
     
     #ifdef LIST_MONTH
@@ -69,7 +71,9 @@
         </details>
       </li>
     
-    #include "art_addr_bar.html"
+    #ifndef LIST_EMBEDDING
+    # include "art_addr_bar.html"
+    #endif
 
 
 
