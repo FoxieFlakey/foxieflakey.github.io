@@ -51,6 +51,15 @@
     <title>Arts posted on LIST_DATE</title>
     #include "common_metadata.html"
     <link href=PREFIX_SITE_ROOT("/css/pages/gallery_common.css") rel="stylesheet" blocking="render" />
+    
+    #ifdef LIST_EMBEDDING
+    <style>
+      html, body {
+        width: fit-content !important;
+        height: fit-content !important;
+      }
+    </style>
+    #endif
   </head>
   
   <body>
@@ -63,11 +72,13 @@
     # define ART_ADDR_BAR_MONTH LIST_MONTH
     #endif
     
+    <script src=PREFIX_SITE_ROOT("/js/auto-fit-iframe.js")></script>
+    
     #define LIST_ITEM(title, pageUrl, pageEmbedUrl) \
       <li> \
         <details> \
           <summary><a href=PREFIX_SITE_ROOT(pageUrl)>title</a></summary> \
-          <iframe style="width: 90%" width="700" height="500" src=PREFIX_SITE_ROOT(pageEmbedUrl) loading="lazy"></iframe> \
+          <iframe onload="foxie_autoFitIframe(this)" style="width: 90%" width="700" height="500" src=PREFIX_SITE_ROOT(pageEmbedUrl) loading="lazy"></iframe> \
         </details> \
       </li>
     

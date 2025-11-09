@@ -38,6 +38,7 @@ files 			:= \
 	img/Gallery_Icon.png \
 	img/Home_Icon.png \
 	js/error.js \
+	js/auto-fit-iframe.js \
 	css/index.css \
 	css/navbar.css \
 	css/pages/home.css \

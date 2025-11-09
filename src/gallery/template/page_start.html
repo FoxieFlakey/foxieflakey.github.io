@@ -53,11 +53,22 @@
     #ifdef POST_SHORT_DESCRIPTION
     <meta property="og:description" content=POST_SHORT_DESCRIPTION />
     #endif
+    
+    #ifdef POST_EMBEDDING
+    <style>
+      html, body {
+        width: fit-content !important;
+        height: fit-content !important;
+      }
+    </style>
+    #endif
   </head>
   
   <body>
 #ifndef POST_EMBEDDING
     #include "page_header.html"
+    
+    <script src=PREFIX_SITE_ROOT("/js/auto-fit-iframe.js") async></script>
     
     #define ART_ADDR_BAR_YEAR POST_YEAR
     #define ART_ADDR_BAR_MONTH POST_MONTH

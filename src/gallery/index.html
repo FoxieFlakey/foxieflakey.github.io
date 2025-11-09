@@ -10,11 +10,13 @@
   
   <body>
     #include "page_header.html"
+    <script src=PREFIX_SITE_ROOT("/js/auto-fit-iframe.js")></script>
+    
     #define ITEM(title, url, embedUrl) \
       <li> \
         <details> \
           <summary><a href=PREFIX_SITE_ROOT(url)>title</a></summary> \
-          <iframe style="width: 90%" width="700" height="500" src=PREFIX_SITE_ROOT(embedUrl) loading="lazy"></iframe> \
+          <iframe onload="foxie_autoFitIframe(this)" style="width: 90%" width="700" height="500" src=PREFIX_SITE_ROOT(embedUrl) loading="lazy"></iframe> \
         </details> \
       </li>
     
