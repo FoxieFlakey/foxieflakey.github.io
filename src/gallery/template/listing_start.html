@@ -59,6 +59,7 @@
         height: fit-content !important;
       }
     </style>
+    <base target="_blank">
     #endif
   </head>
   
@@ -73,6 +74,10 @@
     #endif
     
     <script src=PREFIX_SITE_ROOT("/js/auto-fit-iframe.js")></script>
+    
+    #ifdef LIST_EMBEDDING
+    <p>Note: Clicking links in this list will open new tab</p>
+    #endif
     
     #define LIST_ITEM(title, pageUrl, pageEmbedUrl) \
       <li> \
