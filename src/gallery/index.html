@@ -16,7 +16,7 @@
       <li> \
         <details> \
           <summary><a href=PREFIX_SITE_ROOT(url)>title</a></summary> \
-          <iframe onload="foxie_autoFitIframe(this)" style="width: 90%" width="700" height="500" src=PREFIX_SITE_ROOT(embedUrl) loading="lazy"></iframe> \
+          <iframe style="min-width: 700px; width: 90%;" width="700" height="500" src=PREFIX_SITE_ROOT(embedUrl) loading="lazy"></iframe> \
         </details> \
       </li>
     
@@ -30,5 +30,13 @@
       ITEM(Thursday 30 October 2025 - Micro Foxie, "/gallery/2025/10/micro_foxie.html", "/gallery/2025/10/micro_foxie_embed.html")
     </ul>
     #include "page_footer.html"
+    
+    <script src="https://cdn.jsdelivr.net/npm/@iframe-resizer/parent@5.5.7/index.umd.min.js"></script>
+    <script>
+      iframeResize({
+        license: "GPLv3",
+        log: "collapsed"
+      }, "iframe");
+    </script>
   </body>
 </html>

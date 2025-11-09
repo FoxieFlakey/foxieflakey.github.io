@@ -60,6 +60,7 @@
       }
     </style>
     <base target="_blank">
+    
     #endif
   </head>
   
@@ -73,8 +74,6 @@
     # define ART_ADDR_BAR_MONTH LIST_MONTH
     #endif
     
-    <script src=PREFIX_SITE_ROOT("/js/auto-fit-iframe.js")></script>
-    
     #ifdef LIST_EMBEDDING
     <p>Note: Clicking links in this list will open new tab</p>
     #endif
@@ -83,7 +82,7 @@
       <li> \
         <details> \
           <summary><a href=PREFIX_SITE_ROOT(pageUrl)>title</a></summary> \
-          <iframe onload="foxie_autoFitIframe(this)" style="min-width: 700px; width: 90%" width="700" height="500" src=PREFIX_SITE_ROOT(pageEmbedUrl) loading="lazy"></iframe> \
+          <iframe width="700" height="500" src=PREFIX_SITE_ROOT(pageEmbedUrl) loading="lazy"></iframe> \
         </details> \
       </li>
     
