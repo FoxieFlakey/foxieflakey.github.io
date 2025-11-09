@@ -82,7 +82,11 @@
     </table>
 #endif
     <div id="post">
+      #ifdef POST_EMBEDDING
+      <img loading="lazy" src=POST_IMG_URL height=POST_IMG_HEIGHT width=POST_IMG_WIDTH /><br>
+      #else
       <img src=POST_IMG_URL height=POST_IMG_HEIGHT width=POST_IMG_WIDTH /><br>
+      #endif
       <div id="post_content">
         <table style="text-align: left;">
           <tr>
