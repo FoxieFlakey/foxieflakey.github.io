@@ -61,6 +61,14 @@
     # define ART_ADDR_BAR_MONTH LIST_MONTH
     #endif
     
+    #define LIST_ITEM(title, pageUrl, pageEmbedUrl) \
+      <li> \
+        <details> \
+          <summary><a href=PREFIX_SITE_ROOT(pageUrl)>title</a></summary> \
+          <iframe style="width: 90%" width="700" height="500" src=PREFIX_SITE_ROOT(pageEmbedUrl) loading="lazy"></iframe>
+        </details>
+      </li>
+    
     #include "art_addr_bar.html"
 
 
