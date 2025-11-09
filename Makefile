@@ -5,6 +5,8 @@ output_dir 	:= $(current_dir)/output
 # This is site's root NOT root in host filesystem
 site_root		?= /./
 preprocess_flags ?=
+giscus_category_name ?= Giscus thing for localhost:8080/
+giscus_category_id	?= DIC_kwDOLoNF_M4CxmCj
 
 # At here we can include local config which updated
 # to suit each needs
@@ -56,7 +58,7 @@ $(output_dir)/%.js: $(input_dir)/%.js | $(output_dir) $(deps_dir)
 	@mkdir -p -- '$(dir $@)'
 	@mkdir -p -- '$(dir $(@:$(output_dir)%=$(deps_dir)%).d)'
 	@echo "[ CC   ] Preprocess $(@:$(output_dir)=)"
-	@clang '-I$(input_dir)' '-I$(input_dir)/include' '-DSITE_ROOT="$(site_root)"' -include "include/preinclude.html" -Wno-invalid-pp-token -E -P -CC -MMD -MP -MF '$(@:$(output_dir)%=$(deps_dir)%).d' -MT '$@' $(preprocess_flags) -xc - < '$<' > '$@.tmp'
+	@clang '-I$(input_dir)' '-I$(input_dir)/include' '-DGISCUS_CATEGORY_ID="$(giscus_category_id)"' '-DGISCUS_CATEGORY_NAME="$(giscus_category_name)"' '-DSITE_ROOT="$(site_root)"' -include "include/preinclude.html" -Wno-invalid-pp-token -E -P -CC -MMD -MP -MF '$(@:$(output_dir)%=$(deps_dir)%).d' -MT '$@' $(preprocess_flags) -xc - < '$<' > '$@.tmp'
 	@( \
 		cat '$@.tmp' | \
 		sed -E 's/"([^"]*?)"[ \t\n]"([^"]*?)"/"\1\2"/g' | \
@@ -79,7 +81,7 @@ $(output_dir)/%.html: $(input_dir)/%.html | $(output_dir) $(deps_dir)
 	@mkdir -p -- '$(dir $@)'
 	@mkdir -p -- '$(dir $(@:$(output_dir)%=$(deps_dir)%).d)'
 	@echo "[ CC   ] Preprocess $(@:$(output_dir)=)"
-	@clang '-I$(input_dir)' '-I$(input_dir)/include' '-DSITE_ROOT="$(site_root)"' -include "include/preinclude.html" -Wno-invalid-pp-token -E -P -CC -MMD -MP -MF '$(@:$(output_dir)%=$(deps_dir)%).d' -MT '$@' $(preprocess_flags) -xc - < '$<' > '$@.tmp'
+	@clang '-I$(input_dir)' '-I$(input_dir)/include' '-DGISCUS_CATEGORY_ID="$(giscus_category_id)"' '-DGISCUS_CATEGORY_NAME="$(giscus_category_name)"' '-DSITE_ROOT="$(site_root)"' -include "include/preinclude.html" -Wno-invalid-pp-token -E -P -CC -MMD -MP -MF '$(@:$(output_dir)%=$(deps_dir)%).d' -MT '$@' $(preprocess_flags) -xc - < '$<' > '$@.tmp'
 	@( \
 		cat '$@.tmp' | \
 		sed -E 's/"([^"]*?)"[ \t\n]"([^"]*?)"/"\1\2"/g' | \
