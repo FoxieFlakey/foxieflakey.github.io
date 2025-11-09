@@ -16,7 +16,7 @@ endif
 
 # Just current current dir either way people can see
 # on fiinal result lol
-input_dir 	:= $(current_dir)/
+input_dir 	:= $(current_dir)/src
 files 			:= \
 	index.html \
 	gallery/index.html \
