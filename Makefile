@@ -57,7 +57,7 @@ $(output_dir)/%.js: $(input_dir)/%.js | $(output_dir) $(deps_dir)
 	@mkdir -p -- '$(dir $@)'
 	@mkdir -p -- '$(dir $(@:$(output_dir)%=$(deps_dir)%).d)'
 	@echo "[ CC   ] Preprocess $(@:$(output_dir)=)"
-	@clang '-I$(input_dir)' '-I$(input_dir)/include' '-DSITE_HOST_ROOT="$(site_host_root)"' '-DGISCUS_CATEGORY_ID="$(giscus_category_id)"' '-DGISCUS_CATEGORY_NAME="$(giscus_category_name)"' '-DSITE_ROOT="$(site_root)"' -include "include/preinclude.html" -Wno-invalid-pp-token -E -P -CC -MMD -MP -MF '$(@:$(output_dir)%=$(deps_dir)%).d' -MT '$@' $(preprocess_flags) -xc - < '$<' > '$@.tmp'
+	@clang '-I$(input_dir)' '-I$(input_dir)/include' '-DSITE_HOST_ROOT="$(site_host_root)"' '-DGISCUS_CATEGORY_ID="$(giscus_category_id)"' '-DGISCUS_CATEGORY_NAME="$(giscus_category_name)"' '-DSITE_ROOT="$(site_root)"' -include "include/preinclude.html" -Wno-invalid-pp-token -E -P -CC -MMD -MP -MF '$(@:$(output_dir)%=$(deps_dir)%).d' -MT '$@' $(preprocess_flags) -xc '$<' -o '$@.tmp'
 	@( \
 		cat '$@.tmp' | \
 		sed -E 's/"([^"]*?)"[ \t\n]"([^"]*?)"/"\1\2"/g' | \
@@ -80,7 +80,7 @@ $(output_dir)/%.html: $(input_dir)/%.html | $(output_dir) $(deps_dir)
 	@mkdir -p -- '$(dir $@)'
 	@mkdir -p -- '$(dir $(@:$(output_dir)%=$(deps_dir)%).d)'
 	@echo "[ CC   ] Preprocess $(@:$(output_dir)=)"
-	@clang '-I$(input_dir)' '-I$(input_dir)/include' '-DSITE_HOST_ROOT="$(site_host_root)"' '-DGISCUS_CATEGORY_ID="$(giscus_category_id)"' '-DGISCUS_CATEGORY_NAME="$(giscus_category_name)"' '-DSITE_ROOT="$(site_root)"' -include "include/preinclude.html" -Wno-invalid-pp-token -E -P -CC -MMD -MP -MF '$(@:$(output_dir)%=$(deps_dir)%).d' -MT '$@' $(preprocess_flags) -xc - < '$<' > '$@.tmp'
+	@clang '-I$(input_dir)' '-I$(input_dir)/include' '-DSITE_HOST_ROOT="$(site_host_root)"' '-DGISCUS_CATEGORY_ID="$(giscus_category_id)"' '-DGISCUS_CATEGORY_NAME="$(giscus_category_name)"' '-DSITE_ROOT="$(site_root)"' -include "include/preinclude.html" -Wno-invalid-pp-token -E -P -CC -MMD -MP -MF '$(@:$(output_dir)%=$(deps_dir)%).d' -MT '$@' $(preprocess_flags) -xc '$<' -o '$@.tmp'
 	@( \
 		cat '$@.tmp' | \
 		sed -E 's/"([^"]*?)"[ \t\n]"([^"]*?)"/"\1\2"/g' | \
