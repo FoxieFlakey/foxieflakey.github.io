@@ -25,6 +25,10 @@ files 			:= \
 	gallery/2025/10/index.html \
 	gallery/2025/10/micro_foxie.html \
 	gallery/2025/10/micro_foxie.png \
+	gallery/2025/10/wink_foxie.html \
+	gallery/2025/10/wink_foxie.png \
+	gallery/2025/10/sofa_foxie.html \
+	gallery/2025/10/sofa_foxie.png \
 	gallery/2025/11/index.html \
 	gallery/2025/11/new_side_profile.html \
 	gallery/2025/11/new_side_profile.png \

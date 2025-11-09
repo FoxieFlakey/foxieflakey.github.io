@@ -82,6 +82,7 @@
       #endif
     </table>
 #endif
+    
     <div id="post">
       #ifdef POST_EMBEDDING
       <img loading="lazy" src=POST_IMG_URL height=POST_IMG_HEIGHT width=POST_IMG_WIDTH /><br>
@@ -138,6 +139,14 @@
 
 #ifdef POST_SHORT_DESCRIPTION
 # undef POST_SHORT_DESCRIPTION
+#endif
+
+#ifdef POST_PREV_LINK
+# undef POST_PREV_LINK
+#endif
+
+#ifdef POST_NEXT_LINK
+# undef POST_NEXT_LINK
 #endif
 
 #undef POST_DATE
