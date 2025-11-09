@@ -45,26 +45,17 @@
 # define LIST_DATE LIST_YEAR
 #endif
 
+#ifndef LIST_EMBEDDING
 <!DOCTYPE html>
 <html>
   <head>
     <title>Arts posted on LIST_DATE</title>
     #include "common_metadata.html"
     <link href=PREFIX_SITE_ROOT("/css/pages/gallery_common.css") rel="stylesheet" blocking="render" />
-    
-    #ifdef LIST_EMBEDDING
-    <style>
-      html, body {
-        width: fit-content !important;
-        height: fit-content !important;
-      }
-    </style>
-    <base target="_blank">
-    
-    #endif
   </head>
   
   <body>
+#endif
     #ifndef LIST_EMBEDDING
     # include "page_header.html"
     #endif
@@ -74,15 +65,12 @@
     # define ART_ADDR_BAR_MONTH LIST_MONTH
     #endif
     
-    #ifdef LIST_EMBEDDING
-    <p>Note: Clicking links in this list will open new tab</p>
-    #endif
-    
-    #define LIST_ITEM(title, pageUrl, pageEmbedUrl) \
+    #define LIST_ITEM_START(title, pageUrl) \
       <li> \
         <details> \
-          <summary><a href=PREFIX_SITE_ROOT(pageUrl)>title</a></summary> \
-          <iframe width="700" height="500" src=PREFIX_SITE_ROOT(pageEmbedUrl) loading="lazy"></iframe> \
+          <summary><a href=PREFIX_SITE_ROOT(pageUrl)>title</a></summary>
+    
+    #define LIST_ITEM_END() \
         </details> \
       </li>
     
@@ -90,6 +78,19 @@
     # include "art_addr_bar.html"
     #endif
 
+#ifdef LIST_YEAR
+# undef LIST_YEAR
+#endif
 
+#ifdef LIST_MONTH
+# undef LIST_MONTH
+#endif
+
+#ifdef LIST_DAY
+# undef LIST_DAY
+#endif
+
+#undef LIST_MONTH_STR
+#undef LIST_DATE
 
 

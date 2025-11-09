@@ -37,6 +37,7 @@
 #define POST_STRINGIFY_INNER(x) #x
 #define POST_STRINGIFY(x) POST_STRINGIFY_INNER(x)
 
+#ifndef POST_EMBEDDING
 <!DOCTYPE html>
 <html>
   <head>
@@ -54,19 +55,9 @@
     #ifdef POST_SHORT_DESCRIPTION
     <meta property="og:description" content=POST_SHORT_DESCRIPTION />
     #endif
-    
-    #ifdef POST_EMBEDDING
-    <style>
-      html, body {
-        width: fit-content !important;
-        height: fit-content !important;
-      }
-    </style>
-    #endif
   </head>
   
   <body>
-#ifndef POST_EMBEDDING
     #include "page_header.html"
     
     <script src=PREFIX_SITE_ROOT("/js/auto-fit-iframe.js") async></script>
@@ -107,4 +98,43 @@
             <td>Foxie Flakey!</td>
           </tr>
         </table>
+
+#ifdef POST_YEAR
+# undef POST_YEAR
+#endif
+
+#ifdef POST_MONTH
+# undef POST_MONTH
+#endif
+
+#ifdef POST_DAY
+# undef POST_DAY
+#endif
+
+#ifdef POST_TITLE
+# undef POST_TITLE
+#endif
+
+#ifdef POST_IMG_URL
+# undef POST_IMG_URL
+#endif
+
+#ifdef POST_IMG_WIDTH
+# undef POST_IMG_WIDTH
+#endif
+
+#ifdef POST_IMG_HEIGHT
+# undef POST_IMG_HEIGHT
+#endif
+
+#ifdef POST_PREV_LINK
+# undef POST_PREV_LINK
+#endif
+
+#ifdef POST_SHORT_DESCRIPTION
+# undef POST_SHORT_DESCRIPTION
+#endif
+
+#undef POST_DATE
+#undef POST_MONTH_STR
 

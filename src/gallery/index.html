@@ -12,31 +12,30 @@
     #include "page_header.html"
     <script src=PREFIX_SITE_ROOT("/js/auto-fit-iframe.js")></script>
     
-    #define ITEM(title, url, embedUrl) \
+    #define ITEM_START(title, url) \
       <li> \
         <details> \
-          <summary><a href=PREFIX_SITE_ROOT(url)>title</a></summary> \
-          <iframe style="min-width: 700px; width: 90%;" width="700" height="500" src=PREFIX_SITE_ROOT(embedUrl) loading="lazy"></iframe> \
-        </details> \
+          <summary><a href=PREFIX_SITE_ROOT(url)>title</a></summary>
+    
+    #define ITEM_END()
+        </details>
       </li>
     
     <h1>Drawings categorized by year :3</h1>
     <ul>
-      ITEM(2025, "/gallery/2025/", "/gallery/2025/index_embed.html")
+      ITEM_START(2025, "/gallery/2025/")
+      #include "2025/index_embed.html"
+      ITEM_END()
     </ul>
     <h1>Recent drawings</h1>
     <ul>
-      ITEM(Thursday 6 November 2025 - Foxie, "/gallery/2025/11/new_side_profile.html", "/gallery/2025/11/new_side_profile_embed.html")
-      ITEM(Thursday 30 October 2025 - Micro Foxie, "/gallery/2025/10/micro_foxie.html", "/gallery/2025/10/micro_foxie_embed.html")
+      ITEM_START(Thursday 6 November 2025 - Foxie, "/gallery/2025/11/new_side_profile.html")
+      #include "2025/11/new_side_profile_embed.html"
+      ITEM_END()
+      ITEM_START(Thursday 30 October 2025 - Micro Foxie, "/gallery/2025/10/micro_foxie.html")
+      #include "2025/10/micro_foxie_embed.html"
+      ITEM_END()
     </ul>
     #include "page_footer.html"
-    
-    <script src="https://cdn.jsdelivr.net/npm/@iframe-resizer/parent@5.5.7/index.umd.min.js"></script>
-    <script>
-      iframeResize({
-        license: "GPLv3",
-        log: "collapsed"
-      }, "iframe");
-    </script>
   </body>
 </html>

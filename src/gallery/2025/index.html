@@ -3,8 +3,11 @@
 #include "gallery/template/listing_start.html"
 
 <ul>
-  LIST_ITEM(November, "/gallery/2025/11/", "/gallery/2025/11/index_embed.html")
-  LIST_ITEM(October, "/gallery/2025/10/", "/gallery/2025/10/index_embed.html")
+  LIST_ITEM_START(November, "/gallery/2025/11/")
+  #include "11/index_embed.html"
+  LIST_ITEM_END()
+  
+  
 </ul>
 
 #include "gallery/template/listing_end.html"
