@@ -57,80 +57,67 @@ files 			:= \
 	404.html \
 	css/pages/gallery_common.css \
 	css/pages/gallery_post.css
-deps_dir		:= $(current_dir)/file_deps
+deps_dir		:= $(output_dir)/file_deps
+web_dir			:= $(output_dir)/web
 
 .DEFAULT_GOAL := all
 .PHONY: all
-all: $(addprefix $(output_dir)/,$(files))
+all: create_dirs .WAIT $(addprefix $(web_dir)/,$(files))
 	@true
 
-$(output_dir):
-	@mkdir -- '$@'
+.PHONY: create_dirs
+create_dirs:
+	@mkdir -p -- "$(web_dir)"
+	@mkdir -p -- "$(deps_dir)"
 
-$(deps_dir):
-	@mkdir -- '$@'
+define make_dirs
+	@mkdir -p -- '$(dir $@)'
+	@mkdir -p -- '$(dir $(@:$(web_dir)%=$(deps_dir)%))'
+endef
+
+define preprocess
+	$(make_dirs)
+	@echo "[ CC   ] Preprocess $(@:$(web_dir)=)"
+	@clang '-I$(input_dir)' '-I$(input_dir)/include' '-DSITE_HOST_ROOT="$(site_host_root)"' '-DGISCUS_CATEGORY_ID="$(giscus_category_id)"' '-DGISCUS_CATEGORY_NAME="$(giscus_category_name)"' '-DSITE_ROOT="$(site_root)"' -include "include/preinclude.html" -Wno-invalid-pp-token -E -P -CC -MMD -MP -MF '$(@:$(web_dir)%=$(deps_dir)%).d' -MT '$@' $(preprocess_flags) -xc '$<' -o '$@.tmp'
+	@( \
+		cat '$@.tmp' | \
+		sed -E 's/"([^"]*?)"[ \t\n]"([^"]*?)"/"\1\2"/g' | \
+		sed -E 's/"([^"]*?)"[ \t\n]"([^"]*?)"/"\1\2"/g' | \
+		sed -E 's/"([^"]*?)"[ \t\n]"([^"]*?)"/"\1\2"/g' | \
+		sed -E 's/"([^"]*?)"[ \t\n]"([^"]*?)"/"\1\2"/g' | \
+		sed -E 's/"([^"]*?)"[ \t\n]"([^"]*?)"/"\1\2"/g' | \
+		sed -E 's/"([^"]*?)"[ \t\n]"([^"]*?)"/"\1\2"/g' | \
+		sed -E 's/"([^"]*?)"[ \t\n]"([^"]*?)"/"\1\2"/g' | \
+		sed -E 's/"([^"]*?)"[ \t\n]"([^"]*?)"/"\1\2"/g' | \
+		sed -E 's/"([^"]*?)"[ \t\n]"([^"]*?)"/"\1\2"/g' | \
+		sed -E 's/"([^"]*?)"[ \t\n]"([^"]*?)"/"\1\2"/g' | \
+		sed -E 's/"([^"]*?)"[ \t\n]"([^"]*?)"/"\1\2"/g' | \
+		sed -E 's/"([^"]*?)"[ \t\n]"([^"]*?)"/"\1\2"/g' | \
+		sed -E 's/"([^"]*?)"[ \t\n]"([^"]*?)"/"\1\2"/g' \
+	) > '$@'
+	@rm '$@.tmp'
+endef
 
 # For some files
-$(output_dir)/%.js: $(input_dir)/%.js | $(output_dir) $(deps_dir)
-	@mkdir -p -- '$(dir $@)'
-	@mkdir -p -- '$(dir $(@:$(output_dir)%=$(deps_dir)%).d)'
-	@echo "[ CC   ] Preprocess $(@:$(output_dir)=)"
-	@clang '-I$(input_dir)' '-I$(input_dir)/include' '-DSITE_HOST_ROOT="$(site_host_root)"' '-DGISCUS_CATEGORY_ID="$(giscus_category_id)"' '-DGISCUS_CATEGORY_NAME="$(giscus_category_name)"' '-DSITE_ROOT="$(site_root)"' -include "include/preinclude.html" -Wno-invalid-pp-token -E -P -CC -MMD -MP -MF '$(@:$(output_dir)%=$(deps_dir)%).d' -MT '$@' $(preprocess_flags) -xc '$<' -o '$@.tmp'
-	@( \
-		cat '$@.tmp' | \
-		sed -E 's/"([^"]*?)"[ \t\n]"([^"]*?)"/"\1\2"/g' | \
-		sed -E 's/"([^"]*?)"[ \t\n]"([^"]*?)"/"\1\2"/g' | \
-		sed -E 's/"([^"]*?)"[ \t\n]"([^"]*?)"/"\1\2"/g' | \
-		sed -E 's/"([^"]*?)"[ \t\n]"([^"]*?)"/"\1\2"/g' | \
-		sed -E 's/"([^"]*?)"[ \t\n]"([^"]*?)"/"\1\2"/g' | \
-		sed -E 's/"([^"]*?)"[ \t\n]"([^"]*?)"/"\1\2"/g' | \
-		sed -E 's/"([^"]*?)"[ \t\n]"([^"]*?)"/"\1\2"/g' | \
-		sed -E 's/"([^"]*?)"[ \t\n]"([^"]*?)"/"\1\2"/g' | \
-		sed -E 's/"([^"]*?)"[ \t\n]"([^"]*?)"/"\1\2"/g' | \
-		sed -E 's/"([^"]*?)"[ \t\n]"([^"]*?)"/"\1\2"/g' | \
-		sed -E 's/"([^"]*?)"[ \t\n]"([^"]*?)"/"\1\2"/g' | \
-		sed -E 's/"([^"]*?)"[ \t\n]"([^"]*?)"/"\1\2"/g' | \
-		sed -E 's/"([^"]*?)"[ \t\n]"([^"]*?)"/"\1\2"/g' \
-	) > '$@'
-	@rm '$@.tmp'
-
-$(output_dir)/%.html: $(input_dir)/%.html | $(output_dir) $(deps_dir)
-	@mkdir -p -- '$(dir $@)'
-	@mkdir -p -- '$(dir $(@:$(output_dir)%=$(deps_dir)%).d)'
-	@echo "[ CC   ] Preprocess $(@:$(output_dir)=)"
-	@clang '-I$(input_dir)' '-I$(input_dir)/include' '-DSITE_HOST_ROOT="$(site_host_root)"' '-DGISCUS_CATEGORY_ID="$(giscus_category_id)"' '-DGISCUS_CATEGORY_NAME="$(giscus_category_name)"' '-DSITE_ROOT="$(site_root)"' -include "include/preinclude.html" -Wno-invalid-pp-token -E -P -CC -MMD -MP -MF '$(@:$(output_dir)%=$(deps_dir)%).d' -MT '$@' $(preprocess_flags) -xc '$<' -o '$@.tmp'
-	@( \
-		cat '$@.tmp' | \
-		sed -E 's/"([^"]*?)"[ \t\n]"([^"]*?)"/"\1\2"/g' | \
-		sed -E 's/"([^"]*?)"[ \t\n]"([^"]*?)"/"\1\2"/g' | \
-		sed -E 's/"([^"]*?)"[ \t\n]"([^"]*?)"/"\1\2"/g' | \
-		sed -E 's/"([^"]*?)"[ \t\n]"([^"]*?)"/"\1\2"/g' | \
-		sed -E 's/"([^"]*?)"[ \t\n]"([^"]*?)"/"\1\2"/g' | \
-		sed -E 's/"([^"]*?)"[ \t\n]"([^"]*?)"/"\1\2"/g' | \
-		sed -E 's/"([^"]*?)"[ \t\n]"([^"]*?)"/"\1\2"/g' | \
-		sed -E 's/"([^"]*?)"[ \t\n]"([^"]*?)"/"\1\2"/g' | \
-		sed -E 's/"([^"]*?)"[ \t\n]"([^"]*?)"/"\1\2"/g' | \
-		sed -E 's/"([^"]*?)"[ \t\n]"([^"]*?)"/"\1\2"/g' | \
-		sed -E 's/"([^"]*?)"[ \t\n]"([^"]*?)"/"\1\2"/g' | \
-		sed -E 's/"([^"]*?)"[ \t\n]"([^"]*?)"/"\1\2"/g' | \
-		sed -E 's/"([^"]*?)"[ \t\n]"([^"]*?)"/"\1\2"/g' \
-	) > '$@'
-	@rm '$@.tmp'
+$(web_dir)/%.js: $(input_dir)/%.js
+	$(preprocess)
+$(web_dir)/%.html: $(input_dir)/%.html
+	$(preprocess)
 
 # For files that don't need to be preprocessed
-$(output_dir)/%: $(input_dir)/% | $(output_dir)
-	@mkdir -p -- '$(dir $@)'
+$(web_dir)/%: $(input_dir)/%
+	$(make_dirs)
 	@cp -- '$<' '$@'
-	@echo "[ COPY ] Updating $(@:$(output_dir)=)"
+	@echo "[ COPY ] Updating $(@:$(web_dir)=)"
 
 .PHONY: clean
 clean:
-	@rm -rf -- '$(output_dir)' '$(deps_dir)'
+	@rm -rf -- '$(output_dir)'
 
 .PHONY: host
 host: all
 	@echo "[HOST  ] Locally hosting at localhost:8080 with php's builtin webserver"
-	@php -S localhost:8080 -t '$(output_dir)/' router.php
+	@php -S localhost:8080 -t '$(web_dir)/' router.php
 
 # See https://stackoverflow.com/questions/2483182/recursive-wildcards-in-gnu-make
 rwildcard=$(foreach d,$(wildcard $(1:=/*)),$(call rwildcard,$d,$2) $(filter $(subst *,%,$2),$d))

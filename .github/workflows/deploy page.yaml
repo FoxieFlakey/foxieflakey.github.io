@@ -36,12 +36,12 @@ jobs:
       - name: Generate Directory Listings UwU
         uses: jayanta525/github-pages-directory-listing@v4.0.0
         with:
-          FOLDER: ./output
+          FOLDER: ./output/web
       - name: Upload github pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
           name: "github-pages"
-          path: ./output
+          path: ./output/web
           retention-days: 31
       - name: Deploy to GitHub pages
         id: deployment
