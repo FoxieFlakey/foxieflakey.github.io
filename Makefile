@@ -21,6 +21,15 @@ input_dir 	:= $(current_dir)/src
 deps_dir		:= $(output_dir)/file_deps
 web_dir			:= $(output_dir)/web
 
+# Intermediate directories containing half complete data
+# 0 mean its the content is closer to the input
+# while larger is closer to the output
+intermediate_dir0 := $(output_dir)/intermediate/0
+intermediate_dir1 := $(output_dir)/intermediate/1
+intermediate_dir2 := $(output_dir)/intermediate/2
+intermediate_dir3 := $(output_dir)/intermediate/3
+intermediate_dir4 := $(output_dir)/intermediate/4
+
 export deps_dir
 export web_dir
 export current_dir
@@ -80,18 +89,48 @@ all: create_dirs .WAIT $(addprefix $(web_dir)/,$(files))
 create_dirs:
 	@mkdir -p -- "$(web_dir)"
 	@mkdir -p -- "$(deps_dir)"
+	@mkdir -p -- "$(intermediate_dir0)"
+	@mkdir -p -- "$(intermediate_dir1)"
+	@mkdir -p -- "$(intermediate_dir2)"
+	@mkdir -p -- "$(intermediate_dir3)"
+	@mkdir -p -- "$(intermediate_dir4)"
 
 define make_dirs
 	@mkdir -p -- '$(dir $@)'
-	@mkdir -p -- '$(dir $(@:$(web_dir)%=$(deps_dir)%))'
+	@mkdir -p -- '$(dir $(@:$(output_dir)%=$(deps_dir)%))'
+	@mkdir -p -- '$(dir $(@:$(web_dir)%=$(intermediate_dir0)%))'
+	@mkdir -p -- '$(dir $(@:$(web_dir)%=$(intermediate_dir1)%))'
+	@mkdir -p -- '$(dir $(@:$(web_dir)%=$(intermediate_dir2)%))'
+	@mkdir -p -- '$(dir $(@:$(web_dir)%=$(intermediate_dir4)%))'
 endef
 
 define preprocess
 	$(make_dirs)
-	@echo "[ CC   ] Preprocess $(@:$(web_dir)=)"
-	@clang '-I$(input_dir)' '-I$(input_dir)/include' '-DSITE_HOST_ROOT="$(site_host_root)"' '-DGISCUS_CATEGORY_ID="$(giscus_category_id)"' '-DGISCUS_CATEGORY_NAME="$(giscus_category_name)"' '-DSITE_ROOT="$(site_root)"' -include "include/preinclude.html" -Wno-invalid-pp-token -E -P -CC -MMD -MP -MF '$(@:$(web_dir)%=$(deps_dir)%).d' -MT '$@' $(preprocess_flags) -xc '$<' -o '$@.tmp'
+	@echo "[ CC   ] Preprocess $(@:$(intermediate_dir0)=)"
+	@clang '-I$(input_dir)' \
+		'-I$(input_dir)/include' \
+		'-DSITE_HOST_ROOT="$(site_host_root)"' \
+		'-DGISCUS_CATEGORY_ID="$(giscus_category_id)"' \
+		'-DGISCUS_CATEGORY_NAME="$(giscus_category_name)"' \
+		'-DSITE_ROOT="$(site_root)"' \
+		-include "include/preinclude.html" \
+		-Wno-invalid-pp-token \
+		-E \
+		-P \
+		-CC \
+		-MMD \
+		-MP \
+		-MF '$(@:$(output_dir)%=$(deps_dir)%).d' \
+		-MT \
+		'$@' \
+		$(preprocess_flags) \
+		-xc '$<' -o '$@'
+endef
+
+define merge_string
+	$(make_dirs)
 	@( \
-		cat '$@.tmp' | \
+		cat '$<' | \
 		sed -E 's/"([^"]*?)"[ \t\n]"([^"]*?)"/"\1\2"/g' | \
 		sed -E 's/"([^"]*?)"[ \t\n]"([^"]*?)"/"\1\2"/g' | \
 		sed -E 's/"([^"]*?)"[ \t\n]"([^"]*?)"/"\1\2"/g' | \
@@ -106,20 +145,48 @@ define preprocess
 		sed -E 's/"([^"]*?)"[ \t\n]"([^"]*?)"/"\1\2"/g' | \
 		sed -E 's/"([^"]*?)"[ \t\n]"([^"]*?)"/"\1\2"/g' \
 	) > '$@'
-	@rm '$@.tmp'
 endef
 
-# For some files
-$(web_dir)/%.js: $(input_dir)/%.js
+# Move along the data for intermediate directory
+.NOTINTERMEDIATE:
+$(intermediate_dir0)/%: $(input_dir)/%
+	$(make_dirs)
+	@ln -f '$<' '$@'
+$(intermediate_dir1)/%: $(intermediate_dir0)/%
+	$(make_dirs)
+	@ln -f '$<' '$@'
+$(intermediate_dir2)/%: $(intermediate_dir1)/%
+	$(make_dirs)
+	@ln -f '$<' '$@'
+$(intermediate_dir3)/%: $(intermediate_dir2)/%
+	$(make_dirs)
+	@ln -f '$<' '$@'
+$(intermediate_dir4)/%: $(intermediate_dir3)/%
+	$(make_dirs)
+	@ln -f '$<' '$@'
+
+# Finally on output do copy to ensure symlink resolved
+$(web_dir)/%: $(intermediate_dir4)/%
+	$(make_dirs)
+	@cp --dereference -- '$<' '$@'
+
+# Merge the strings
+$(intermediate_dir4)/%.js: $(intermediate_dir3)/%.js
+	$(merge_string)
+$(intermediate_dir4)/%.html: $(intermediate_dir3)/%.html
+	$(merge_string)
+
+# Preprocess the JS and HTML
+$(intermediate_dir0)/%.js: $(input_dir)/%.js
 	$(preprocess)
-$(web_dir)/%.html: $(input_dir)/%.html
+$(intermediate_dir0)/%.html: $(input_dir)/%.html
 	$(preprocess)
 
 # For files that don't need to be preprocessed
-$(web_dir)/%: $(input_dir)/%
+$(intermediate_dir0)/%: $(input_dir)/%
 	$(make_dirs)
 	@cp -- '$<' '$@'
-	@echo "[ COPY ] Updating $(@:$(web_dir)=)"
+	@echo "[ COPY ] Updating $(@:$(intermediate_dir0)=)"
 
 .PHONY: clean
 clean:
