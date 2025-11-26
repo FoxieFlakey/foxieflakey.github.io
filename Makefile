@@ -77,8 +77,13 @@ files 			:= \
 	css/navbar.css \
 	css/pages/home.css \
 	404.html \
+	gallery/2025/10/a_lil_website_test.html \
 	css/pages/gallery_common.css \
 	css/pages/gallery_post.css
+
+export input_dir
+export output_dir
+export site_root
 
 .DEFAULT_GOAL := all
 .PHONY: all
@@ -106,7 +111,7 @@ endef
 
 define preprocess
 	$(make_dirs)
-	@echo "[ CC   ] Preprocess $(@:$(intermediate_dir0)=)"
+	@echo "[ CC   ] Preprocess $(@:$(output_dir)%=%)"
 	@clang '-I$(input_dir)' \
 		'-I$(input_dir)/include' \
 		'-DSITE_HOST_ROOT="$(site_host_root)"' \
@@ -181,6 +186,21 @@ $(intermediate_dir0)/%.js: $(input_dir)/%.js
 	$(preprocess)
 $(intermediate_dir0)/%.html: $(input_dir)/%.html
 	$(preprocess)
+
+# Preprocess some files that is specifically ended with .unpreprocessed
+$(intermediate_dir2)/%.html.strings_unmerged: $(intermediate_dir1)/%.html.unpreprocessed
+	$(preprocess)
+
+# Merge the strings
+$(intermediate_dir3)/%.html: $(intermediate_dir2)/%.html.strings_unmerged
+	$(merge_string)
+
+# Generator for gallery posts
+# TODO: Generate the .post file from single /gallery/drawings.lua
+$(intermediate_dir1)/gallery/%.html.unpreprocessed: $(intermediate_dir0)/gallery/%.post
+	$(make_dirs)
+	@echo '[ GEN  ] Generating $(@:$(output_dir)%=%)'
+	@lua5.4 -- '$(input_dir)/gallery/post_generator.lua' '$<' '$@'
 
 # For files that don't need to be preprocessed
 $(intermediate_dir0)/%: $(input_dir)/%
