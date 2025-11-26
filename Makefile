@@ -18,7 +18,11 @@ endif
 # Just current current dir either way people can see
 # on fiinal result lol
 input_dir 	:= $(current_dir)/src
+deps_dir		:= $(output_dir)/file_deps
+web_dir			:= $(output_dir)/web
 
+export deps_dir
+export web_dir
 export current_dir
 export input_dir
 export output_dir
@@ -66,8 +70,6 @@ files 			:= \
 	404.html \
 	css/pages/gallery_common.css \
 	css/pages/gallery_post.css
-deps_dir		:= $(output_dir)/file_deps
-web_dir			:= $(output_dir)/web
 
 .DEFAULT_GOAL := all
 .PHONY: all
