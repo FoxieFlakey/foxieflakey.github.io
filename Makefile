@@ -18,6 +18,15 @@ endif
 # Just current current dir either way people can see
 # on fiinal result lol
 input_dir 	:= $(current_dir)/src
+
+export current_dir
+export input_dir
+export output_dir
+export site_root
+export site_host_root
+export giscus_category_name
+export giscus_category_id
+
 files 			:= \
 	index.html \
 	gallery/index.html \
