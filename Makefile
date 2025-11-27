@@ -42,19 +42,37 @@ export giscus_category_id
 
 files 			:= \
 	index.html \
-	gallery/2025/10/animation_slurrrp.html \
-	gallery/2025/10/a_lil_website.html \
-	gallery/2025/10/animation_hiiii.html \
-	gallery/2025/10/micro_foxie.png \
-	gallery/2025/10/wink_foxie.png \
-	gallery/2025/10/sofa_foxie.png \
-	gallery/2025/10/animation_slurrrp.gif \
-	gallery/2025/10/sometime_idk.png \
-	gallery/2025/10/a_lil_website.png \
-	gallery/2025/10/animation_hiiii.gif \
-	gallery/2025/11/new_side_profile.png \
-	gallery/2025/11/triangle_hungry_blank.png \
+	\
+	gallery/2025/11/door_mat_foxie.html \
 	gallery/2025/11/door_mat_foxie.png \
+	\
+	gallery/2025/11/triangle_hungry_blank.html \
+	gallery/2025/11/triangle_hungry_blank.png \
+	\
+	gallery/2025/11/new_side_profile.html \
+	gallery/2025/11/new_side_profile.png \
+	\
+	gallery/2025/10/micro_foxie.html \
+	gallery/2025/10/micro_foxie.png \
+	\
+	gallery/2025/10/wink_foxie.html \
+	gallery/2025/10/wink_foxie.png \
+	\
+	gallery/2025/10/sofa_foxie.html \
+	gallery/2025/10/sofa_foxie.png \
+	\
+	gallery/2025/10/animation_slurrrp.html \
+	gallery/2025/10/animation_slurrrp.gif \
+	\
+	gallery/2025/10/sometime_idk.html \
+	gallery/2025/10/sometime_idk.png \
+	\
+	gallery/2025/10/a_lil_website.html \
+	gallery/2025/10/a_lil_website.png \
+	\
+	gallery/2025/10/animation_hiiii.html \
+	gallery/2025/10/animation_hiiii.gif \
+	\
 	favicon.ico \
 	favicon_for_opengraph.png \
 	img/profile.gif \

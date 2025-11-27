@@ -71,9 +71,6 @@ end
 assert(arg[1], "Input filename must be given");
 assert(arg[2], "Output filename must be given");
 
-print("Input "..arg[1])
-print("Output "..arg[2])
-
 -- Output would be looked like
 -- $(output_dir)/intermediate/<n>/gallery/2025/10/micro_foxie.html.unpreprocessed
 local year, month, page_basename = arg[2]:match("([0-9]+)/([0-9]+)/([^/]+)$")
@@ -103,7 +100,7 @@ end
 local nextDraw = DRAWINGS[foundIdx - 1]
 local prevDraw = DRAWINGS[foundIdx + 1]
 
-local output = io.open(arg[2], "a")
+local output = io.open(arg[2], "w")
 writePage(foundDrawing, function(str)
   output:write(str)
 end, nextDraw, prevDraw)
