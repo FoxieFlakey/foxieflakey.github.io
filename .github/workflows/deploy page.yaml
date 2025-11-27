@@ -41,6 +41,11 @@ jobs:
       - name: Extract Lua 5.4.8
         run: |
           tar xf v5.4.8.tar.gz
+      - name: Disable libreadline
+        run: |
+          cd lua-5.4.8
+          cp makefile makefile.2
+          cat makefile.2 | sed "s/-DLUA_USE_READLINE//g" > makefile
       - name: Compile Lua 5.4.8
         run: |
           cd lua-5.4.8
