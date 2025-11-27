@@ -45,7 +45,7 @@ jobs:
         run: |
           cd lua-5.4.8
           cp makefile makefile.2
-          cat makefile.2 | sed "s/-DLUA_USE_READLINE//g" > makefile
+          cat makefile.2 | sed "s/-lreadline//g" | sed "s/-DLUA_USE_READLINE//g" > makefile
       - name: Compile Lua 5.4.8
         run: |
           cd lua-5.4.8
