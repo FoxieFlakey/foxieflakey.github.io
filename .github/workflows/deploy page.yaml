@@ -66,7 +66,7 @@ jobs:
           cp github-pages-config.mk local-config.mk
       - name: Setup tmate session
         uses: mxschmitt/action-tmate@v3
-        if: ${{ github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.turn_on_shell_ssh }}
         with:
           limit-access-to-actor: true
       - name: Run "make all"
