@@ -24,6 +24,17 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Download Make 4.4.1
+        run: |
+          wget https://ftp.gnu.org/gnu/make/make-4.4.1.tar.gz
+      - name: Extract Make 4.4.1
+        run: |
+          tar xf make-4.4.1.tar.gz
+      - name: Compile Make 4.4.1
+        run: |
+          cd make-4.4.1
+          ./configure
+          make -j$(nproc)
       - name: Cloning recursively
         run: |
           git submodule update --init
@@ -32,7 +43,7 @@ jobs:
           cp github-pages-config.mk local-config.mk
       - name: Run "make all"
         run: |
-          make -j$(nproc) all
+          ./make-4.4.1/make -j$(nproc) all
       - name: Generate Directory Listings UwU
         uses: jayanta525/github-pages-directory-listing@v4.0.0
         with:
