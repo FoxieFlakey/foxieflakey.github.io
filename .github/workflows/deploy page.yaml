@@ -41,6 +41,7 @@ jobs:
           cd make-4.4.1
           ./configure
           make -j$(nproc)
+          echo "PATH=$(pwd)/:$PATH" >> $GITHUB_ENV
       - name: Download Lua 5.4.8
         run: |
           wget https://github.com/lua/lua/archive/refs/tags/v5.4.8.tar.gz
@@ -57,7 +58,7 @@ jobs:
           cd lua-5.4.8
           make -j$(nproc)
           ln -s lua lua5.4
-          echo "PATH=$(pwd)/lua-5.4.8/:$PATH" >> $GITHUB_ENV
+          echo "PATH=$(pwd)/:$PATH" >> $GITHUB_ENV
       - name: Cloning recursively
         run: |
           git submodule update --init
