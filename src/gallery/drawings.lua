@@ -26,7 +26,7 @@ return {
   },
   {
     date = {2025, 11, 6},
-    title = "Foxie's Side Profile v2",
+    title = "Foxie''s Side Profile v2",
     page_basename = "new_side_profile",
     image_url = "/gallery/2025/11/new_side_profile.png",
     width = 304,
