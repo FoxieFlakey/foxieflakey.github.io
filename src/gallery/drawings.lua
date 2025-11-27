@@ -89,9 +89,9 @@ return {
   },
   {
     date = { 2025, 10, 23 },
-    title = "[Animation] Slurrrp",
+    title = "Some time I dont know Why",
     page_basename = "sometime_idk",
-    image_url = "/gallery/2025/10/sometime_idk.gif",
+    image_url = "/gallery/2025/10/sometime_idk.png",
     width = 667,
     height = 791,
     short_description = "it feels hurt but i dont know why but cant feel much otherr",
