@@ -1,6 +1,5 @@
-# Generator for gallery posts
-# TODO: Generate the .post file from single /gallery/drawings.lua
-$(intermediate_dir1)/gallery/%.html.unpreprocessed: $(intermediate_dir0)/gallery/%.post
+# Generate post from drawings.lua
+$(intermediate_dir1)/gallery/%.html.unpreprocessed: $(input_dir)/gallery/drawings.lua
 	$(make_dirs)
 	@echo '[ GEN  ] Generating $(@:$(output_dir)%=%)'
 	@lua5.4 -- '$(input_dir)/gallery/post_generator.lua' '$<' '$@'

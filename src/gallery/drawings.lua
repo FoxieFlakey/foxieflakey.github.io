@@ -2,6 +2,7 @@ return {
   {
     date = { 2025, 10, 28 },
     title = "[Animation] Slurrrp",
+    page_basename = "animation_slurrrp",
     image_url = "/gallery/2025/10/animation_slurrrp.gif",
     width = 500,
     height = 500,
@@ -13,6 +14,7 @@ return {
   {
     date = {2025, 10, 20},
     title = "A Little Website",
+    page_basename = "a_lil_website",
     image_url = "/gallery/2025/10/a_lil_website.png",
     short_description = "An animation",
     width = 1912,
@@ -29,6 +31,7 @@ return {
   {
     date = {2025, 10, 15},
     title = "[Animation] Hiii :3",
+    page_basename = "animation_hiiii",
     image_url = "/gallery/2025/10/animation_hiiii.gif",
     width = 500,
     height = 500,
