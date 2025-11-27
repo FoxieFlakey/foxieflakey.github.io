@@ -4,11 +4,11 @@ on:
     branches: ["main"]
   workflow_dispatch:
     inputs:
-    turn_on_shell_ssh:
-      type: boolean
-      description: 'Want to turn on SSD'
-      required: false
-      default: false
+      turn_on_shell_ssh:
+        type: boolean
+        description: 'Want to turn on SSD'
+        required: false
+        default: false
 
 concurrency:
   group: "pages"
