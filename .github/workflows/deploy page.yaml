@@ -3,6 +3,12 @@ on:
   push:
     branches: ["main"]
   workflow_dispatch:
+    inputs:
+    turn_on_shell_ssh:
+      type: boolean
+      description: 'Want to turn on SSD'
+      required: false
+      default: false
 
 concurrency:
   group: "pages"
@@ -58,6 +64,11 @@ jobs:
       - name: Applying config for GitHub pages
         run : |
           cp github-pages-config.mk local-config.mk
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
+        with:
+          limit-access-to-actor: true
       - name: Run "make all"
         run: |
           ./make-4.4.1/make -j$(nproc) all
