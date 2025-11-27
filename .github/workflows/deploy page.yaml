@@ -38,6 +38,9 @@ jobs:
       - name: Download Lua 5.4.8
         run: |
           wget https://github.com/lua/lua/archive/refs/tags/v5.4.8.tar.gz
+      - name: Extract Lua 5.4.8
+        run: |
+          tar xf v5.4.8.tar.gz
       - name: Compile Lua 5.4.8
         run: |
           cd lua-5.4.8
