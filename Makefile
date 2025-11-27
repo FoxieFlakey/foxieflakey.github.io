@@ -187,20 +187,7 @@ $(intermediate_dir0)/%.js: $(input_dir)/%.js
 $(intermediate_dir0)/%.html: $(input_dir)/%.html
 	$(preprocess)
 
-# Preprocess some files that is specifically ended with .unpreprocessed
-$(intermediate_dir2)/%.html.strings_unmerged: $(intermediate_dir1)/%.html.unpreprocessed
-	$(preprocess)
-
-# Merge the strings
-$(intermediate_dir3)/%.html: $(intermediate_dir2)/%.html.strings_unmerged
-	$(merge_string)
-
-# Generator for gallery posts
-# TODO: Generate the .post file from single /gallery/drawings.lua
-$(intermediate_dir1)/gallery/%.html.unpreprocessed: $(intermediate_dir0)/gallery/%.post
-	$(make_dirs)
-	@echo '[ GEN  ] Generating $(@:$(output_dir)%=%)'
-	@lua5.4 -- '$(input_dir)/gallery/post_generator.lua' '$<' '$@'
+include $(input_dir)/gallery/Makefile
 
 # For files that don't need to be preprocessed
 $(intermediate_dir0)/%: $(input_dir)/%
