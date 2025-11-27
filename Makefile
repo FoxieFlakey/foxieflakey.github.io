@@ -79,6 +79,8 @@ files 			:= \
 	\
 	gallery/2025/index.html \
 	\
+	gallery/index.html \
+	\
 	favicon.ico \
 	favicon_for_opengraph.png \
 	img/profile.gif \

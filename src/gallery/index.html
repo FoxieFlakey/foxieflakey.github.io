@@ -1,0 +1,34 @@
+#define CURRENT_NAVITEM NAVBAR_ITEM_GALLERY
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Foxie's Gallery</title>
+    #include "common_metadata.html"
+    #include "include/default_opengraph.html"
+  </head>
+  
+  <body>
+    #include "page_header.html"
+    
+    #define ITEM_START(title, url) \
+      <details> \
+        <summary><a href=PREFIX_SITE_ROOT(url)>title</a></summary> \
+        <div style="padding-left: 20px;">
+    
+    #define ITEM_END() \
+        </div> \
+      </details>
+    
+    #define POST_EMBEDDING
+    #define LIST_EMBEDDING
+    
+    <h1>Drawings categorized by year :3</h1>
+    $INSERT_YEAR_CATEGORY_HERE$
+    
+    <h1>Recent drawings</h1>
+    $INSERT_ALL_DRAWINGS_HERE$
+    
+    #include "page_footer.html"
+  </body>
+</html>
