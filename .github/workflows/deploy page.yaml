@@ -51,6 +51,7 @@ jobs:
           cd lua-5.4.8
           make -j$(nproc)
           ln -s lua lua5.4
+          echo "PATH=$(pwd)/lua-5.4.8/" >> $GITHUB_ENV
       - name: Cloning recursively
         run: |
           git submodule update --init
@@ -59,7 +60,7 @@ jobs:
           cp github-pages-config.mk local-config.mk
       - name: Run "make all"
         run: |
-          PATH="$(pwd)/lua-5.4.8/" ./make-4.4.1/make -j$(nproc) all
+          ./make-4.4.1/make -j$(nproc) all
       - name: Generate Directory Listings UwU
         uses: jayanta525/github-pages-directory-listing@v4.0.0
         with:
