@@ -52,6 +52,8 @@ files 			:= \
 	gallery/2025/11/new_side_profile.html \
 	gallery/2025/11/new_side_profile.png \
 	\
+	gallery/2025/11/index.html \
+	\
 	gallery/2025/10/micro_foxie.html \
 	gallery/2025/10/micro_foxie.png \
 	\
@@ -72,6 +74,10 @@ files 			:= \
 	\
 	gallery/2025/10/animation_hiiii.html \
 	gallery/2025/10/animation_hiiii.gif \
+	\
+	gallery/2025/10/index.html \
+	\
+	gallery/2025/index.html \
 	\
 	favicon.ico \
 	favicon_for_opengraph.png \
