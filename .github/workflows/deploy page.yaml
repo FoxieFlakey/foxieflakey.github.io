@@ -57,7 +57,7 @@ jobs:
           cd lua-5.4.8
           make -j$(nproc)
           ln -s lua lua5.4
-          echo "PATH=$(pwd)/lua-5.4.8/" >> $GITHUB_ENV
+          echo "PATH=$(pwd)/lua-5.4.8/:$PATH" >> $GITHUB_ENV
       - name: Cloning recursively
         run: |
           git submodule update --init
