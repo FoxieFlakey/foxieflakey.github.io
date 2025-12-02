@@ -1,5 +1,17 @@
 return {
   {
+    date = {2025, 12, 1},
+    title = "A Silly Wish to be Muted",
+    page_basename = "muted_wish",
+    image_url = "/gallery/2025/12/muted_wish.png",
+    width = 1556,
+    height = 1754,
+    short_description = "A Foxie thinks she wants to be muted",
+    description = [[
+      Foxie kind of dont know what to choose and ended up choosing to be muted because its interesting
+    ]]
+  },
+  {
     date = {2025, 11, 18},
     title = "Door Mat Foxie",
     page_basename = "door_mat_foxie",

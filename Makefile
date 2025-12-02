@@ -43,6 +43,11 @@ export giscus_category_id
 files 			:= \
 	index.html \
 	\
+	gallery/2025/12/muted_wish.html \
+	gallery/2025/12/muted_wish.png \
+	\
+	gallery/2025/12/index.html \
+	\
 	gallery/2025/11/door_mat_foxie.html \
 	gallery/2025/11/door_mat_foxie.png \
 	\
