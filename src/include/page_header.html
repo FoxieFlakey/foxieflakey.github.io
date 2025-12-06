@@ -1,9 +1,11 @@
 #define NAVBAR_ITEM_NONE -1
 #define NAVBAR_ITEM_HOME 0
 #define NAVBAR_ITEM_GALLERY 1
+#define NAVBAR_ITEM_CREATIONS 2
 
 #define NAVBAR_ITEM0 class="navbar_item"
 #define NAVBAR_ITEM1 class="navbar_item"
+#define NAVBAR_ITEM2 class="navbar_item"
 
 #if CURRENT_NAVITEM == NAVBAR_ITEM_HOME
 # undef NAVBAR_ITEM0
@@ -11,6 +13,9 @@
 #elif CURRENT_NAVITEM == NAVBAR_ITEM_GALLERY
 # undef NAVBAR_ITEM1
 # define NAVBAR_ITEM1 class="navbar_item navbar_active"
+#elif CURRENT_NAVITEM == NAVBAR_ITEM_CREATIONS
+# undef NAVBAR_ITEM2
+# define NAVBAR_ITEM2 class="navbar_item navbar_active"
 #elif NAVBAR_ITEM_NONE
 <!-- Current page does not have item associated with it -->
 #else
@@ -43,6 +48,7 @@
       <th id="navbar_page_icon"><a href=PREFIX_SITE_ROOT("/")><img height="60" src=PREFIX_SITE_ROOT("/favicon.ico") /></a></th>
       NAVBAR_ITEM(NAVBAR_ITEM_HOME, PREFIX_SITE_ROOT("/"), PREFIX_SITE_ROOT("/img/Home_Icon.png"), Home)
       NAVBAR_ITEM(NAVBAR_ITEM_GALLERY, PREFIX_SITE_ROOT("/gallery/"), PREFIX_SITE_ROOT("/img/Gallery_Icon.png"), Gallery)
+      NAVBAR_ITEM(NAVBAR_ITEM_CREATIONS, PREFIX_SITE_ROOT("/creations/"), PREFIX_SITE_ROOT("/img/Gallery_Icon.png"), Creations)
       
       <!-- Contain absolutely nothing, it fills the rest of space -->
       <th style="width: 100%;"></th>
@@ -56,3 +62,4 @@
 
 #undef NAVBAR_ITEM0
 #undef NAVBAR_ITEM1
+#undef NAVBAR_ITEM2

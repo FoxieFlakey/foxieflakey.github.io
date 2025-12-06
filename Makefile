@@ -98,7 +98,38 @@ files 			:= \
 	css/pages/home.css \
 	404.html \
 	css/pages/gallery_common.css \
-	css/pages/gallery_post.css
+	css/pages/gallery_post.css \
+	 \
+	creations/index.html \
+	 \
+	creations/InteraksiManusiaKomputer_ServerDashboard/index.html \
+	creations/InteraksiManusiaKomputer_ServerDashboard/img/favicon.png \
+	creations/InteraksiManusiaKomputer_ServerDashboard/img/green_button.png \
+	creations/InteraksiManusiaKomputer_ServerDashboard/img/red_button.png \
+	creations/InteraksiManusiaKomputer_ServerDashboard/img/save_icon.png \
+	creations/InteraksiManusiaKomputer_ServerDashboard/img/plus_icon.png \
+	creations/InteraksiManusiaKomputer_ServerDashboard/img/checkmark_inactive.png \
+	creations/InteraksiManusiaKomputer_ServerDashboard/img/checkmark_active.png \
+	creations/InteraksiManusiaKomputer_ServerDashboard/img/foxie_icon.png \
+	creations/InteraksiManusiaKomputer_ServerDashboard/img/x_icon.png \
+	creations/InteraksiManusiaKomputer_ServerDashboard/img/question_icon.png \
+	creations/InteraksiManusiaKomputer_ServerDashboard/img/ServerCluster_Failed.png \
+	creations/InteraksiManusiaKomputer_ServerDashboard/img/ServerCluster_Warning.png \
+	creations/InteraksiManusiaKomputer_ServerDashboard/img/ServerRack_Failed.png \
+	creations/InteraksiManusiaKomputer_ServerDashboard/img/ServerRack_Warning.png \
+	creations/InteraksiManusiaKomputer_ServerDashboard/img/ServerRack.png \
+	creations/InteraksiManusiaKomputer_ServerDashboard/img/ServerCluster.png \
+	creations/InteraksiManusiaKomputer_ServerDashboard/img/ServiceStatus_Warning.png \
+	creations/InteraksiManusiaKomputer_ServerDashboard/img/ServiceStatus_Failed.png \
+	creations/InteraksiManusiaKomputer_ServerDashboard/img/CPU_Chart.svg \
+	creations/InteraksiManusiaKomputer_ServerDashboard/img/Network_Chart.svg \
+	creations/InteraksiManusiaKomputer_ServerDashboard/img/Restart.png \
+	creations/InteraksiManusiaKomputer_ServerDashboard/img/Shutdown.png \
+	creations/InteraksiManusiaKomputer_ServerDashboard/img/AdminPfp.png \
+	creations/InteraksiManusiaKomputer_ServerDashboard/img/Edit.png \
+	creations/InteraksiManusiaKomputer_ServerDashboard/img/Placeholder.png \
+	creations/InteraksiManusiaKomputer_ServerDashboard/css/global.css \
+	creations/InteraksiManusiaKomputer_ServerDashboard/css/font.ttf
 
 export input_dir
 export output_dir

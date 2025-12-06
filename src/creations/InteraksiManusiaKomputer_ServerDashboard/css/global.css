@@ -1,0 +1,99 @@
+@font-face {
+  font-family: 'Foxie Custom';
+  src: url("font.ttf");
+}
+
+* {
+  image-rendering: pixelated;
+  font-family: 'Foxie Custom';
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  background-color: #666666;
+  margin: 0px;
+}
+
+#sidepane {
+  min-width: 200px;
+  flex: 1;
+  border-right: 4px solid black;
+  padding-right: 10px;
+  padding-left: 10px;
+  background-color: #777777;
+  
+  display: flex;
+  flex-direction: column;
+}
+
+#server_info {
+  min-width: 500px;
+  flex: 3;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+}
+
+#main {
+  border-top: 4px solid black;
+  display: flex;
+  flex-direction: row;
+  min-height: 100vh;
+  width: 100%;
+}
+
+#toolbar th {
+  border-right: 2px solid black;
+  min-width: 150px;
+  padding-right: 10px;
+}
+
+#clusters_list ul {
+  margin: 0px;
+  list-style-type: none;
+  padding-left: 20px;
+}
+
+.navbar_item {
+  min-width: 120px;
+  background-color: #444444;
+  border-top: 2px solid black;
+  border-right: 2px solid black;
+  border-bottom: 2px solid black;
+  padding: 5px;
+}
+
+#navbar {
+  padding-left: 0px;
+  list-style-type: none;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 0px;
+}
+
+.active_navbar_item {
+  background-color: #777777;
+  border-bottom: 0px;
+}
+
+#navbar_inner_item {
+  background-color: #777777;
+  border-right: 2px solid black;
+  border-left: 2px solid black;
+  border-bottom: 2px solid black;
+  padding: 10px;
+}
+
+#logout_button {
+  background-image: url("/img/red_button.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-color: transparent;
+  border: 0px;
+  aspect-ratio: 2.5;
+  height: 34px;
+  width: 85px;
+}
+
