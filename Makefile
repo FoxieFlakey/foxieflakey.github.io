@@ -91,6 +91,8 @@ files 			:= \
 	img/profile.gif \
 	img/Gallery_Icon.png \
 	img/Home_Icon.png \
+	img/parasitic_popup/left_arrow.png \
+	img/parasitic_popup/right_arrow.png \
 	js/error.js \
 	js/auto-fit-iframe.js \
 	css/index.css \
@@ -99,6 +101,7 @@ files 			:= \
 	404.html \
 	css/pages/gallery_common.css \
 	css/pages/gallery_post.css \
+	css/parasitic_popup.css \
 	 \
 	creations/index.html \
 	 \

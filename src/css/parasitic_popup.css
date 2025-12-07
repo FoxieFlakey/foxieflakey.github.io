@@ -1,0 +1,35 @@
+.parasitic_popup_simple {
+  display: flex;
+  padding: 10px;
+  background-color: #555555;
+  width: fit-content;
+}
+
+.parasitic_popup_simple > summary {
+  list-style: none;
+  white-space: nowrap;
+}
+
+.parasitic_popup_simple > summary > .parasitic_popup_no_css_message {
+  display: none;
+}
+
+.parasitic_popup_simple[open] > summary {
+  padding-right: 10px;
+}
+
+.parasitic_popup_simple[open] > summary > .parasitic_popup_activate_button {
+  display: none;
+}
+
+.parasitic_popup_simple:not([open]) > summary > .parasitic_popup_deactivate_button {
+  display: none;
+}
+
+/* Additional modification, customize for per parasitic_popup */
+.parasitic_popup_arrow {
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
