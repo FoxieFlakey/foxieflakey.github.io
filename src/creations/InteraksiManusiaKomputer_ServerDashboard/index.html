@@ -97,7 +97,10 @@
             Role: Administrator
             <div style="flex: 1"></div>
             <div style="display: flex; flex-direction: row;">
-              <button id="logout_button">Sign out</button>
+              <button id="logout_button">
+                <img style="z-index: 1;" hidden id="logout_button_img" src=PREFIX_ROOT_TO_HERE("img/red_button.png") />
+                <span style="position: relative; z-index: 2;">Sign out</span>
+              </button>
               <div style="flex: 1;"></div>
               <img style="display: block;" height="34" src=PREFIX_ROOT_TO_HERE("img/Edit.png") />
             </div>

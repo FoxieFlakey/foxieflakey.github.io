@@ -119,6 +119,7 @@ files 			:= \
 	creations/InteraksiManusiaKomputer_ServerDashboard/img/checkmark_inactive.png \
 	creations/InteraksiManusiaKomputer_ServerDashboard/img/checkmark_active.png \
 	creations/InteraksiManusiaKomputer_ServerDashboard/img/foxie_icon.png \
+	creations/InteraksiManusiaKomputer_ServerDashboard/img/red_button.png \
 	creations/InteraksiManusiaKomputer_ServerDashboard/img/x_icon.png \
 	creations/InteraksiManusiaKomputer_ServerDashboard/img/question_icon.png \
 	creations/InteraksiManusiaKomputer_ServerDashboard/img/ServerCluster_Failed.png \

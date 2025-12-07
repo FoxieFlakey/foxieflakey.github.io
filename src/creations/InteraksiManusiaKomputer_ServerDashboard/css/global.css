@@ -87,13 +87,20 @@ body {
 }
 
 #logout_button {
-  background-image: url("/img/red_button.png");
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-color: transparent;
+  position: relative;
   border: 0px;
   aspect-ratio: 2.5;
   height: 34px;
   width: 85px;
+  background-color: transparent;
+}
+
+#logout_button_img {
+  display: block;
+  position: absolute;
+  height: 34px;
+  width: 85px;
+  top: 0px;
+  left: 0px;
 }
 
