@@ -102,6 +102,11 @@ files 			:= \
 	 \
 	creations/index.html \
 	 \
+	creations/CSS_animation/index.html \
+	creations/CSS_animation/popup.css \
+	creations/CSS_animation/img/left_arrow.png \
+	creations/CSS_animation/img/right_arrow.png \
+	 \
 	creations/InteraksiManusiaKomputer_ServerDashboard/index.html \
 	creations/InteraksiManusiaKomputer_ServerDashboard/img/favicon.png \
 	creations/InteraksiManusiaKomputer_ServerDashboard/img/green_button.png \

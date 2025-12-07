@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>CSS Animation</title>
+    #include "include/default_opengraph.html"
+    <link  rel="stylesheet" />
+    <link href=PREFIX_SITE_ROOT("/creations/CSS_animation/popup.css") rel="stylesheet" blocking="render" />
+  </head>
+  
+  <body style="background-color: gray; width: fit-content;">
+    Hello this is page content uwuw
+    
+    <br>
+    
+    <div class="popup" style="display: flex; position: fixed; right: 0px; width: 400px;">
+      <div class="popup_content">
+        <details open>
+          <summary>
+            <div class="popup_activate_button" style="height: 100px;">
+              <div class="arrow">
+                <img width="32" height="32" src=PREFIX_SITE_ROOT("/creations/CSS_animation/img/left_arrow.png") />
+              </div>
+            </div>
+            <div class="popup_deactivate_button" style="height: 100px;">
+              <div class="arrow">
+                <img width="32" height="32" src=PREFIX_SITE_ROOT("/creations/CSS_animation/img/right_arrow.png") />
+              </div>
+            </div>
+          </summary>
+        </details>
+        
+        <div>
+          This is Foxie's stuffs website :3<br>
+          I made it myself<br>
+          
+          The primary at <a href="https://foxieflakey.github.io/">https://foxieflakey.github.io/</a><br>
+          And is the most up to date :3
+        </div>
+      </div>
+    </div>
+    
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <hr>
+    
+    <details open class="popup_simple" style="position: fixed; right: 0px; top: 200px; height: 100px;">
+      <summary>
+        <span class="popup_no_css_message">This is a popup box, but CSS isn't enabled</span>
+        <span class="arrow popup_activate_button" hidden>
+          <img width="32" height="32" src=PREFIX_SITE_ROOT("/creations/CSS_animation/img/left_arrow.png") />
+        </span>
+        <span class="arrow popup_deactivate_button" hidden>
+          <img width="32" height="32" src=PREFIX_SITE_ROOT("/creations/CSS_animation/img/right_arrow.png") />
+        </span>
+      </summary>
+      
+      This is Foxie's stuffs website :3<br>
+      I made it myself<br>
+      
+      The primary at <a href="https://foxieflakey.github.io/">https://foxieflakey.github.io/</a><br>
+      And is the most up to date :3
+    </details>
+    
+    <br>
+    <br>
+    <br>
+    <hr>
+    <details>
+      <summary>Header</summary>
+      Content
+    </details>
+  </body>
+</html>
