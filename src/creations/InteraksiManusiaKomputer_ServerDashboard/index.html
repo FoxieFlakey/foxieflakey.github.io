@@ -1,11 +1,10 @@
-#undef PREFIX_SITE_ROOT
-#define PREFIX_SITE_ROOT(x) SITE_ROOT "/creations/InteraksiManusiaKomputer_ServerDashboard/" x
+#define PREFIX_ROOT_TO_HERE(x) SITE_ROOT "/creations/InteraksiManusiaKomputer_ServerDashboard/" x)
 
 <!DOCTYPE html>
 <html>
   <head>
     <title>Server Dashboard</title>
-    <link href=PREFIX_SITE_ROOT("css/global.css") rel="stylesheet" blocking="render" />
+    <link href=PREFIX_ROOT_TO_HERE("css/global.css") rel="stylesheet" blocking="render" />
     #include "include/default_opengraph.html"
   </head>
   
@@ -14,7 +13,7 @@
       <table id="toolbar">
         <th>
           <div>
-            <img width="40" style="image-rendering: initial; vertical-align: middle;" src=PREFIX_SITE_ROOT("img/ServerCluster.png") />Server Management
+            <img width="40" style="image-rendering: initial; vertical-align: middle;" src=PREFIX_ROOT_TO_HERE("img/ServerCluster.png") />Server Management
           </div>
         </th>
         <th>
@@ -41,46 +40,46 @@
       <div id="sidepane">
         <h1>Server Clusters</h1>
         <details>
-          <summary><img width="30" style="vertical-align: middle; image-rendering: initial;" src=PREFIX_SITE_ROOT("img/ServerCluster_Warning.png") />Indonesia</summary>
+          <summary><img width="30" style="vertical-align: middle; image-rendering: initial;" src=PREFIX_ROOT_TO_HERE("img/ServerCluster_Warning.png") />Indonesia</summary>
           <ul>
-            <li><img width="30" style="vertical-align: middle; image-rendering: initial;" src=PREFIX_SITE_ROOT("img/ServerRack.png") />Web Frontend 1</li>
-            <li><img width="30" style="vertical-align: middle; image-rendering: initial;" src=PREFIX_SITE_ROOT("img/ServerRack_Failed.png") />Web Frontend 2</li>
-            <li><img width="30" style="vertical-align: middle; image-rendering: initial;" src=PREFIX_SITE_ROOT("img/ServerRack.png") />API 1</li>
-            <li><img width="30" style="vertical-align: middle; image-rendering: initial;" src=PREFIX_SITE_ROOT("img/ServerRack_Warning.png") />API 2</li>
-            <li style="background-color: #aaaaaa;"><img width="30" style="vertical-align: middle; image-rendering: initial;" src=PREFIX_SITE_ROOT("img/ServerRack_Failed.png") />Minecraft Lobby #1</li>
-            <li><img width="30" style="vertical-align: middle; image-rendering: initial;" src=PREFIX_SITE_ROOT("img/ServerRack_Warning.png") />Minecraft Lobby #2</li>
-            <li><img width="30" style="vertical-align: middle; image-rendering: initial;" src=PREFIX_SITE_ROOT("img/ServerRack_Failed.png") />Minecraft Lobby #3</li>
-            <li><img width="30" style="vertical-align: middle; image-rendering: initial;" src=PREFIX_SITE_ROOT("img/ServerRack.png") />Minecraft Bedwar Game #1</li>
-            <li><img width="30" style="vertical-align: middle; image-rendering: initial;" src=PREFIX_SITE_ROOT("img/ServerRack_Failed.png") />Minecraft Bedwar Game #2</li>
-            <li><img width="30" style="vertical-align: middle; image-rendering: initial;" src=PREFIX_SITE_ROOT("img/ServerRack.png") />Minecraft Bedwar Game #3</li>
-            <li><img width="30" style="vertical-align: middle; image-rendering: initial;" src=PREFIX_SITE_ROOT("img/ServerRack.png") />Minecraft Skyblock Game #1</li>
-            <li><img width="30" style="vertical-align: middle; image-rendering: initial;" src=PREFIX_SITE_ROOT("img/ServerRack.png") />Minecraft Skyblock Game #2</li>
+            <li><img width="30" style="vertical-align: middle; image-rendering: initial;" src=PREFIX_ROOT_TO_HERE("img/ServerRack.png") />Web Frontend 1</li>
+            <li><img width="30" style="vertical-align: middle; image-rendering: initial;" src=PREFIX_ROOT_TO_HERE("img/ServerRack_Failed.png") />Web Frontend 2</li>
+            <li><img width="30" style="vertical-align: middle; image-rendering: initial;" src=PREFIX_ROOT_TO_HERE("img/ServerRack.png") />API 1</li>
+            <li><img width="30" style="vertical-align: middle; image-rendering: initial;" src=PREFIX_ROOT_TO_HERE("img/ServerRack_Warning.png") />API 2</li>
+            <li style="background-color: #aaaaaa;"><img width="30" style="vertical-align: middle; image-rendering: initial;" src=PREFIX_ROOT_TO_HERE("img/ServerRack_Failed.png") />Minecraft Lobby #1</li>
+            <li><img width="30" style="vertical-align: middle; image-rendering: initial;" src=PREFIX_ROOT_TO_HERE("img/ServerRack_Warning.png") />Minecraft Lobby #2</li>
+            <li><img width="30" style="vertical-align: middle; image-rendering: initial;" src=PREFIX_ROOT_TO_HERE("img/ServerRack_Failed.png") />Minecraft Lobby #3</li>
+            <li><img width="30" style="vertical-align: middle; image-rendering: initial;" src=PREFIX_ROOT_TO_HERE("img/ServerRack.png") />Minecraft Bedwar Game #1</li>
+            <li><img width="30" style="vertical-align: middle; image-rendering: initial;" src=PREFIX_ROOT_TO_HERE("img/ServerRack_Failed.png") />Minecraft Bedwar Game #2</li>
+            <li><img width="30" style="vertical-align: middle; image-rendering: initial;" src=PREFIX_ROOT_TO_HERE("img/ServerRack.png") />Minecraft Bedwar Game #3</li>
+            <li><img width="30" style="vertical-align: middle; image-rendering: initial;" src=PREFIX_ROOT_TO_HERE("img/ServerRack.png") />Minecraft Skyblock Game #1</li>
+            <li><img width="30" style="vertical-align: middle; image-rendering: initial;" src=PREFIX_ROOT_TO_HERE("img/ServerRack.png") />Minecraft Skyblock Game #2</li>
           </ul>
         </details>
         
         <details>
-          <summary><img width="30" style="vertical-align: middle; image-rendering: initial;" src=PREFIX_SITE_ROOT("img/ServerCluster.png") />Japan</summary>
+          <summary><img width="30" style="vertical-align: middle; image-rendering: initial;" src=PREFIX_ROOT_TO_HERE("img/ServerCluster.png") />Japan</summary>
         </details>
         
         <details>
-          <summary><img width="30" style="vertical-align: middle; image-rendering: initial;" src=PREFIX_SITE_ROOT("img/ServerCluster_Warning.png") />Singapore</summary>
+          <summary><img width="30" style="vertical-align: middle; image-rendering: initial;" src=PREFIX_ROOT_TO_HERE("img/ServerCluster_Warning.png") />Singapore</summary>
         </details>
         
         <h1>Online Users (<a href="/blahblah">Manage</a>)</h1>
         <div style="padding-bottom: 10px;">
-          <img style="border: 1px solid black; vertical-align: middle;" width="64" height="64" src=PREFIX_SITE_ROOT("/img/AdminPfp.png") />
+          <img style="border: 1px solid black; vertical-align: middle;" width="64" height="64" src=PREFIX_ROOT_TO_HERE("/img/AdminPfp.png") />
           Foxie Flakey <span style="color: #f9a147;">(You)</span> <span style="color: red;">(Admin)</span>
         </div>
         <div style="padding-bottom: 10px;">
-          <img style="border: 1px solid black; vertical-align: middle;" width="64" height="64" src=PREFIX_SITE_ROOT("/img/Placeholder.png") />
+          <img style="border: 1px solid black; vertical-align: middle;" width="64" height="64" src=PREFIX_ROOT_TO_HERE("/img/Placeholder.png") />
           Katie
         </div>
         <div style="padding-bottom: 10px;">
-          <img style="border: 1px solid black; vertical-align: middle;" width="64" height="64" src=PREFIX_SITE_ROOT("/img/Placeholder.png") />
+          <img style="border: 1px solid black; vertical-align: middle;" width="64" height="64" src=PREFIX_ROOT_TO_HERE("/img/Placeholder.png") />
           Frox <span style="color: blue;">(Network Admin)</span>
         </div>
         <div style="padding-bottom: 10px;">
-          <img style="border: 1px solid black; vertical-align: middle;" width="64" height="64" src=PREFIX_SITE_ROOT("/img/Placeholder.png") />
+          <img style="border: 1px solid black; vertical-align: middle;" width="64" height="64" src=PREFIX_ROOT_TO_HERE("/img/Placeholder.png") />
           Fex <span style="color: yellow;">(Billing)</span>
         </div>
         
@@ -89,7 +88,7 @@
         <div style="flex: 1;"></div>
         
         <div style="bottom: 10px; margin: 10px; padding: 10px; border: 2px solid black; background-color: #666666; display: flex; gap: 5px;">
-          <img style="border: 1px solid black; vertical-align: middle;" width="100" src=PREFIX_SITE_ROOT("img/AdminPfp.png") />
+          <img style="border: 1px solid black; vertical-align: middle;" width="100" src=PREFIX_ROOT_TO_HERE("img/AdminPfp.png") />
           <div style="display: flex; flex-direction: column; width: 100%;">
             Foxie Flakey<br>
             Role: Administrator
@@ -97,7 +96,7 @@
             <div style="display: flex; flex-direction: row;">
               <button id="logout_button">Sign out</button>
               <div style="flex: 1;"></div>
-              <img style="display: block;" height="34" src=PREFIX_SITE_ROOT("img/Edit.png") />
+              <img style="display: block;" height="34" src=PREFIX_ROOT_TO_HERE("img/Edit.png") />
             </div>
           </div>
         </div>
@@ -115,22 +114,22 @@
         <div id="navbar_inner_item">
           <div style="display: flex; width: 100%;">
             <h1>
-              <img src=PREFIX_SITE_ROOT("img/ServiceStatus_Failed.png") width="64" height="64" style="vertical-align: middle;" /> Server has fatal issue
+              <img src=PREFIX_ROOT_TO_HERE("img/ServiceStatus_Failed.png") width="64" height="64" style="vertical-align: middle;" /> Server has fatal issue
             </h1>
             <div style="flex: 1;"></div>
             <div>
-              <img width="64" style="margin-top: 21.44px;" src=PREFIX_SITE_ROOT("img/Restart.png") />
-              <img width="64" style="margin-top: 21.44px;" src=PREFIX_SITE_ROOT("img/Shutdown.png") />
+              <img width="64" style="margin-top: 21.44px;" src=PREFIX_ROOT_TO_HERE("img/Restart.png") />
+              <img width="64" style="margin-top: 21.44px;" src=PREFIX_ROOT_TO_HERE("img/Shutdown.png") />
             </div>
           </div>
           <div style="display: flex; flex-direction: row;">
             <div style="flex: 1;">
               <h2 style="margin-top: 0px; text-align: center;">CPU</h2>
-              <img style="width: 98%;" src=PREFIX_SITE_ROOT("img/CPU_Chart.svg") />
+              <img style="width: 98%;" src=PREFIX_ROOT_TO_HERE("img/CPU_Chart.svg") />
             </div>
             <div style="flex: 1;">
               <h2 style="margin-top: 0px; text-align: center;">Network</h2>
-              <img style="width: 98%;" src=PREFIX_SITE_ROOT("img/Network_Chart.svg") />
+              <img style="width: 98%;" src=PREFIX_ROOT_TO_HERE("img/Network_Chart.svg") />
             </div>
           </div>
           <p>
@@ -153,7 +152,7 @@
         <div style="display: flex; width: 100%; padding: 10px; margin-top: 10px; background-color: #777777;">
           <div style="flex: 1;"></div>
           <div>
-            Made with &lt;3 by <img style="vertical-align: middle;" height="48" src=PREFIX_SITE_ROOT("img/foxie_icon.png") />
+            Made with &lt;3 by <img style="vertical-align: middle;" height="48" src=PREFIX_ROOT_TO_HERE("img/foxie_icon.png") />
           </div>
           <div style="flex: 1;"></div>
         </div>
