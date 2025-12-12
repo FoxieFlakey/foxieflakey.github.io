@@ -140,6 +140,7 @@ files 			:= \
 	creations/InteraksiManusiaKomputer_ServerDashboard/css/global.css \
 	creations/InteraksiManusiaKomputer_ServerDashboard/css/font.ttf \
 	\
+	college_stuff/css/global.css \
 	college_stuff/img/favicon.png \
 	college_stuff/img/foxie_icon.png \
 	college_stuff/img/cookie_window.png \
