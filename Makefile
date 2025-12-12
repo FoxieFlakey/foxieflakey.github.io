@@ -138,7 +138,19 @@ files 			:= \
 	creations/InteraksiManusiaKomputer_ServerDashboard/img/Edit.png \
 	creations/InteraksiManusiaKomputer_ServerDashboard/img/Placeholder.png \
 	creations/InteraksiManusiaKomputer_ServerDashboard/css/global.css \
-	creations/InteraksiManusiaKomputer_ServerDashboard/css/font.ttf
+	creations/InteraksiManusiaKomputer_ServerDashboard/css/font.ttf \
+	\
+	college_stuff/favicon.png \
+	college_stuff/foxie_icon.png \
+	college_stuff/cookie_window.png \
+	college_stuff/question_icon.png \
+	college_stuff/x_icon.png \
+	college_stuff/checkmark_active.png \
+	college_stuff/save_icon.png \
+	college_stuff/plus_icon.png \
+	college_stuff/green_button.png \
+	college_stuff/red_button.png \
+	college_stuff/checkmark_inactive.png
 
 export input_dir
 export output_dir
