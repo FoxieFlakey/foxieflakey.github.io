@@ -140,17 +140,17 @@ files 			:= \
 	creations/InteraksiManusiaKomputer_ServerDashboard/css/global.css \
 	creations/InteraksiManusiaKomputer_ServerDashboard/css/font.ttf \
 	\
-	college_stuff/favicon.png \
-	college_stuff/foxie_icon.png \
-	college_stuff/cookie_window.png \
-	college_stuff/question_icon.png \
-	college_stuff/x_icon.png \
-	college_stuff/checkmark_active.png \
-	college_stuff/save_icon.png \
-	college_stuff/plus_icon.png \
-	college_stuff/green_button.png \
-	college_stuff/red_button.png \
-	college_stuff/checkmark_inactive.png
+	college_stuff/img/favicon.png \
+	college_stuff/img/foxie_icon.png \
+	college_stuff/img/cookie_window.png \
+	college_stuff/img/question_icon.png \
+	college_stuff/img/x_icon.png \
+	college_stuff/img/checkmark_active.png \
+	college_stuff/img/save_icon.png \
+	college_stuff/img/plus_icon.png \
+	college_stuff/img/green_button.png \
+	college_stuff/img/red_button.png \
+	college_stuff/img/checkmark_inactive.png
 
 export input_dir
 export output_dir

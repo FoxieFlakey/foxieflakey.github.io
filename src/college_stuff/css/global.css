@@ -1,0 +1,147 @@
+* {
+  image-rendering: pixelated;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  background-color: #666666;
+  margin: 0px;
+  min-height: 100vh;
+}
+
+#page_header, #page_content {
+  margin: 8px;
+}
+
+#page_content {
+  flex-grow: 1;
+}
+
+#page_footer {
+  text-align: center;
+  padding: 20px;
+  background-color: #444444;
+}
+
+button:hover {
+  filter: brightness(1.2);
+}
+
+button:active {
+  filter: brightness(2);
+}
+
+/* Cookie stuffs */
+
+#cookie_window_content > button {
+  background-size: cover;
+  width: 120px;
+  height: 48px;
+  border: none;
+  font-size: 18px;
+  background-color: transparent;
+  /* border: 2px solid #666666;
+  border-radius: 10px; */
+}
+
+button#cookie_acknowledge {
+  background-image: url("/img/green_button.png");
+  /* background-color: #00720e; */
+}
+
+button#cookie_dismiss {
+  background-image: url("/img/red_button.png");
+  /* background-color: #820800; */
+}
+
+button#cookie_close {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background-color: transparent;
+  border: none;
+  padding: 5px;
+}
+
+#cookie_window {
+  position: fixed;
+  width: 500px;
+  height: 208px;
+  bottom: 10px;
+  right: 10px;
+}
+
+#cookie_window_content {
+  background-image: url("/img/cookie_window.png");
+  background-size: cover;
+  background-repeat: no-repeat;
+  padding: 20px;
+  padding-left: 35px;
+  position: relative;
+}
+
+#cookie_window_content > p {
+  margin-top: 25px;
+  margin-bottom: 7px;
+}
+
+/* The page content */
+
+#toolbar {
+  display: flex;
+  flex-direction: row;
+  column-gap: 5px;
+  box-sizing: border-box;
+  width: 100vw;
+  
+  background-color: #444444;
+  padding: 10px;
+}
+
+#toolbar > button {
+  font-size: 20px;
+}
+
+#toolbar > button > img {
+  margin-right: 10px;
+}
+
+#toolbar > button {
+  display: flex;
+  align-items: center;
+  text-align: left;
+  width: fit-content;
+  border: none;
+  background-color: transparent;
+  padding-right: 10px;
+}
+
+#todo_list_sections {
+  list-style-type: none;
+  padding: 0px;
+}
+
+#todo_list > li > input {
+  width: 16px;
+  height: 16px;
+  appearance: none;
+  
+  background-image: url("/img/checkmark_inactive.png");
+}
+
+#todo_list > li > input:checked {
+  background-image: url("/img/checkmark_active.png");
+}
+
+.section_name {
+  display: inline-flex;
+  flex-direction: row;
+  width: fit-content;
+}
+
+.section_name > .complete_count {
+  min-width: 60px;
+}
+
+
