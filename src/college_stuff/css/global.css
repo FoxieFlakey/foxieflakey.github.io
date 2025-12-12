@@ -46,12 +46,12 @@ button:active {
 }
 
 button#cookie_acknowledge {
-  background-image: url("/img/green_button.png");
+  background-image: url("https://foxieflakey.github.io/college_stuff/img/green_button.png");
   /* background-color: #00720e; */
 }
 
 button#cookie_dismiss {
-  background-image: url("/img/red_button.png");
+  background-image: url("https://foxieflakey.github.io/college_stuff/img/red_button.png");
   /* background-color: #820800; */
 }
 
@@ -73,7 +73,7 @@ button#cookie_close {
 }
 
 #cookie_window_content {
-  background-image: url("/img/cookie_window.png");
+  background-image: url("https://foxieflakey.github.io/college_stuff/img/cookie_window.png");
   background-size: cover;
   background-repeat: no-repeat;
   padding: 20px;
@@ -127,11 +127,11 @@ button#cookie_close {
   height: 16px;
   appearance: none;
   
-  background-image: url("/img/checkmark_inactive.png");
+  background-image: url("https://foxieflakey.github.io/college_stuff/img/checkmark_inactive.png");
 }
 
 #todo_list > li > input:checked {
-  background-image: url("/img/checkmark_active.png");
+  background-image: url("https://foxieflakey.github.io/college_stuff/img/checkmark_active.png");
 }
 
 .section_name {
