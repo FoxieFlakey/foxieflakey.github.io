@@ -151,6 +151,7 @@ files 			:= \
 	college_stuff/img/plus_icon.png \
 	college_stuff/img/green_button.png \
 	college_stuff/img/red_button.png \
+	college_stuff/img/news.png \
 	college_stuff/img/checkmark_inactive.png
 
 export input_dir
