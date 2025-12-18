@@ -42,6 +42,7 @@ export giscus_category_id
 
 files 			:= \
 	index.html \
+        robots.txt \
         \
         googlece00914e0cd14977.html \
 	\
