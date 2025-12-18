@@ -42,6 +42,8 @@ export giscus_category_id
 
 files 			:= \
 	index.html \
+        \
+        googlece00914e0cd14977.html \
 	\
 	gallery/2025/12/muted_wish.html \
 	gallery/2025/12/muted_wish.png \
