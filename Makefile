@@ -264,6 +264,12 @@ $(intermediate_dir0)/%.html: $(input_dir)/%.html
 
 include $(input_dir)/gallery/Makefile
 
+# Raw html, don't preprocess or do any processing
+$(intermediate_dir4)/%.html: $(intermediate_dir3)/%.html-raw
+	$(make_dirs)
+	@ln -f '$<' '$@'
+	@echo "[ COPY ] Copy raw HTML $(@:$(intermediate_dir4)=)"
+
 # For files that don't need to be preprocessed
 $(intermediate_dir0)/%: $(input_dir)/%
 	$(make_dirs)
