@@ -1,5 +1,151 @@
 return {
   {
+    date = {2026, 1, 4},
+    title = "New Skirt!",
+    page_basename = "goober_new_foxie_skirt",
+    image_url = "/gallery/2026/1/goober_new_foxie_skirt.png",
+    width = 600,
+    height = 600,
+    short_description = "NEW SKIRT",
+    description = [[
+      Silly thing I made for goober too which is into my new skirt!
+    ]]
+  },
+  {
+    date = {2026, 1, 4},
+    title = "Mail Goober the Vulpix",
+    page_basename = "mail_goober_the_vulpix",
+    image_url = "/gallery/2026/1/mail_goober_the_vulpix.png",
+    width = 600,
+    height = 600,
+    short_description = "So my friend, request to turn them into mail!",
+    description = [[
+      So my friend, request to turn them into mail!
+    ]]
+  },
+  {
+    date = {2026, 1, 2},
+    title = "Happy new Year 2026!",
+    page_basename = "happy_new_year_2026_from_blankface_foxie",
+    image_url = "/gallery/2026/1/happy_new_year_2026_from_blankface_foxie.png",
+    width = 453,
+    height = 350,
+    short_description = "Happy New Year 2026",
+    description = [[
+      Happy New Year 2026
+    ]]
+  },
+  {
+    date = {2026, 1, 2},
+    title = "Perma Grin Foxie",
+    page_basename = "perma_grin_foxie",
+    image_url = "/gallery/2026/1/perma_grin_foxie.png",
+    width = 300,
+    height = 300,
+    short_description = "Stuck forever grinning silly and stupid",
+    description = [[
+      foxie probably shouldnt have drank the pooltoy grin potion and now her mouth stuck like that without actually being pooltoy owo
+    ]]
+  },
+  {
+    date = {2025, 12, 29},
+    title = "Null Foxie :3 or furball Foxie",
+    page_basename = "catto_angelico_and_foxie_flakey_introduction",
+    image_url = "/gallery/2025/12/catto_angelico_and_foxie_flakey_introduction.png",
+    width = 570,
+    height = 500,
+    short_description = "Say hi to Catto Angelico!",
+    description = [[
+      so i created new OC, named Catto Angelico<br>
+      he is Foxie's friend, he usually helps Foxie get out from random situation she find herself in :3<br>
+      he helps not because he is angel, more of he cares for Foxie <3 
+    ]]
+  },
+  {
+    date = {2025, 12, 27},
+    title = "Null Foxie :3 or furball Foxie",
+    page_basename = "furball_foxie",
+    image_url = "/gallery/2025/12/furball_foxie.png",
+    width = 300,
+    height = 300,
+    short_description = "So she continued erased herself.. until only furball left",
+    description = [[
+      So she continued erased herself.. until only furball left
+    ]]
+  },
+  {
+    date = {2025, 12, 27},
+    title = "Erased Face Foxie/Null",
+    page_basename = "erased_face_foxie",
+    image_url = "/gallery/2025/12/erased_face_foxie.png",
+    width = 300,
+    height = 300,
+    short_description = "Foxie erased her face",
+    description = [[
+      Foxie erased her face 
+    ]]
+  },
+  {
+    date = {2025, 12, 26},
+    title = "Gift Foxie: Merry Christmas!",
+    page_basename = "gift_box_foxie",
+    image_url = "/gallery/2025/12/gift_box_foxie.png",
+    width = 500,
+    height = 500,
+    short_description = "a tad bit late but Merry Christmas everyone! ",
+    description = [[
+      a tad bit late but Merry Christmas everyone! 
+    ]]
+  },
+  {
+    date = {2025, 12, 25},
+    title = "Emote: >~<",
+    page_basename = "spooked_foxie",
+    image_url = "/gallery/2025/12/spooked_foxie.png",
+    width = 400,
+    height = 400,
+    short_description = "O~O",
+    description = [[
+      O~O
+    ]]
+  },
+  {
+    date = {2025, 12, 20},
+    title = "Statue Foxie",
+    page_basename = "statue_foxie",
+    image_url = "/gallery/2025/12/statue_foxie.png",
+    width = 1000,
+    height = 400,
+    short_description = "...",
+    description = [[
+      ...
+    ]]
+  },
+  {
+    date = {2025, 12, 19},
+    title = "Beachball Foxie",
+    page_basename = "beachball_foxie",
+    image_url = "/gallery/2025/12/beachball_foxie.png",
+    width = 500,
+    height = 500,
+    short_description = "other thing, Foxie would drink any random potion she find hehe and this time it turned her into squeaky beach ball ",
+    description = [[
+      other thing, Foxie would drink any random potion she find hehe and this time it turned her into squeaky beach ball 
+    ]]
+  },
+  {
+    date = {2025, 12, 19},
+    title = "Waffle Foxie",
+    page_basename = "waffle_foxie",
+    image_url = "/gallery/2025/12/waffle_foxie.png",
+    width = 500,
+    height = 1000,
+    short_description = "WAFFLE wawaffle? waffffleeee.. ",
+    description = [[
+      WAFFLE wawaffle? waffffleeee.. 
+    ]]
+  },
+  {
     date = {2025, 12, 1},
     title = "A Silly Wish to be Muted",
     page_basename = "muted_wish",

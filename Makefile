@@ -46,6 +46,35 @@ files 			:= \
         \
         googlece00914e0cd14977.html \
 	\
+	gallery/2026/1/goober_new_foxie_skirt.html \
+	gallery/2026/1/goober_new_foxie_skirt.png \
+	gallery/2026/1/mail_goober_the_vulpix.html \
+	gallery/2026/1/mail_goober_the_vulpix.png \
+	gallery/2026/1/happy_new_year_2026_from_blankface_foxie.html \
+	gallery/2026/1/happy_new_year_2026_from_blankface_foxie.png \
+	gallery/2026/1/perma_grin_foxie.html \
+	gallery/2026/1/perma_grin_foxie.png \
+	\
+	gallery/2026/1/index.html \
+	\
+	gallery/2026/index.html \
+	\
+	gallery/2025/12/catto_angelico_and_foxie_flakey_introduction.html \
+	gallery/2025/12/catto_angelico_and_foxie_flakey_introduction.png \
+	gallery/2025/12/furball_foxie.html \
+	gallery/2025/12/furball_foxie.png \
+	gallery/2025/12/erased_face_foxie.html \
+	gallery/2025/12/erased_face_foxie.png \
+	gallery/2025/12/gift_box_foxie.html \
+	gallery/2025/12/gift_box_foxie.png \
+	gallery/2025/12/spooked_foxie.html \
+	gallery/2025/12/spooked_foxie.png \
+	gallery/2025/12/statue_foxie.html \
+	gallery/2025/12/statue_foxie.png \
+	gallery/2025/12/beachball_foxie.html \
+	gallery/2025/12/beachball_foxie.png \
+	gallery/2025/12/waffle_foxie.html \
+	gallery/2025/12/waffle_foxie.png \
 	gallery/2025/12/muted_wish.html \
 	gallery/2025/12/muted_wish.png \
 	\
