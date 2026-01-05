@@ -6,6 +6,7 @@
     <title>Foxie's Gallery</title>
     #include "common_metadata.html"
     #include "include/default_opengraph.html"
+    <link href=PREFIX_SITE_ROOT("/css/gallery.css") rel="stylesheet" blocking="render" />
   </head>
   
   <body>
@@ -25,6 +26,52 @@
     
     <h1>Drawings categorized by year :3</h1>
     $INSERT_YEAR_CATEGORY_HERE$
+    
+    <div id="javascript_spoiler" hidden>
+      <p>
+        Here a button to open/close all drawings at once, if you want to doomscroll my arts for<br>
+        some unknown reason uwu.<br>
+      </p>
+      <button id="toggle_button" onclick="toggle_all_drawings_at_once()">Open *ALL* drawings at once &gt;:3</button>
+    </div>
+    
+    <script defer>
+      document.getElementById("javascript_spoiler").hidden = false;
+      
+      let state = false;
+      function toggle_all_drawings_at_once() {
+        state = !state;
+        
+        let drawings = document.getElementById("all_drawings_list");
+        let button = document.getElementById("toggle_button");
+        
+        if (state) {
+          button.innerHTML = "Close *ALL* drawings at once &gt;:3";
+        } else {
+          button.innerHTML = "Open *ALL* drawings at once &gt;:3";
+        }
+        
+        for (const child of drawings.children) {
+          if (!child.tagName.toUpperCase() == "DETAILS") {
+            continue;
+          }
+          
+          if (state) {
+            child.setAttribute("open", "");
+          } else {
+            child.removeAttribute("open");
+          }
+        }
+      }
+    </script>
+    
+    <noscript>
+      <p>
+        Javascript is not enabled button to open/close all drawings at once are not available.<br>
+        Site will remain functional without Javascript. Javascript only used for convenience<br>
+        and not for critical functions &gt;3
+      </p>
+    </noscript>
     
     <h1>Recent drawings</h1>
     $INSERT_ALL_DRAWINGS_HERE$

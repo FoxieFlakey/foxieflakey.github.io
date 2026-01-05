@@ -486,6 +486,7 @@ files 			:= \
 	js/auto-fit-iframe.js \
 	css/index.css \
 	css/navbar.css \
+	css/gallery.css \
 	css/pages/home.css \
 	404.html \
 	css/pages/gallery_common.css \
