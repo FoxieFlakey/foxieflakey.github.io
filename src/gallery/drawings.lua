@@ -49,7 +49,7 @@ return {
   },
   {
     date = {2025, 12, 29},
-    title = "Null Foxie :3 or furball Foxie",
+    title = "Introducing Catto Angelico!",
     page_basename = "catto_angelico_and_foxie_flakey_introduction",
     image_url = "/gallery/2025/12/catto_angelico_and_foxie_flakey_introduction.png",
     width = 570,
