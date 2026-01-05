@@ -18,7 +18,6 @@ local output = assert(io.open(arg[2], "w"))
 local DRAWINGS<const> = dofile(arg[3])
 
 local YEARLY_CATEGORY = "<ul>"
-local ALL_TIME_LIST = "<ul>"
 
 local current = 1
 local currentYear
@@ -33,7 +32,6 @@ while DRAWINGS[current] do
 end
 
 YEARLY_CATEGORY = YEARLY_CATEGORY.."</ul>"
-ALL_TIME_LIST = ALL_TIME_LIST.."</ul>"
 
 local MONTHS_LOOKUP = {
   "January",
@@ -97,11 +95,15 @@ function writePage(post, writer)
   writer("#include \""..PAGE_TEMPLATE_END_PATH.."\"\n")
 end
 
+local ALL_TIME_LIST = "<ul>"
+
 for _, drawing in ipairs(DRAWINGS) do
   ALL_TIME_LIST = ALL_TIME_LIST.."ITEM_START("..drawing.date[3].." "..MONTHS_LOOKUP[drawing.date[2]].." "..drawing.date[1].." - "..drawing.title..", \""..createUrl(drawing).."\")\n"
   writePage(drawing, function(str) ALL_TIME_LIST = ALL_TIME_LIST..str end)
   ALL_TIME_LIST = ALL_TIME_LIST.."ITEM_END()\n"
 end
+
+ALL_TIME_LIST = ALL_TIME_LIST.."</ul>"
 
 template = template:gsub("[$]INSERT_YEAR_CATEGORY_HERE[$]", YEARLY_CATEGORY)
 template = template:gsub("[$]INSERT_ALL_DRAWINGS_HERE[$]", ALL_TIME_LIST)
