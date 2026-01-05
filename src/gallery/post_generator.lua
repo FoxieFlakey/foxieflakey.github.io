@@ -49,7 +49,7 @@ function writePage(post, writer, optionalNext, optionalPrev)
   writer("#define POST_IMG_URL \""..SITE_ROOT..post.image_url.."\"\n")
   writer("#define POST_IMG_WIDTH \""..post.width.."\"\n")
   writer("#define POST_IMG_HEIGHT \""..post.height.."\"\n")
-  writer("#define POST_SHORT_DESCRIPTION "..post.short_description.."\n")
+  writer("#define POST_SHORT_DESCRIPTION "..string.format("%q", post.short_description).."\n")
   
   if optionalNext then
     writer("#define POST_NEXT_LINK \""..createUrl(optionalNext).."\"\n")
