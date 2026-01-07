@@ -54,11 +54,25 @@
         output.addEventListener("mouseup", e => e.preventDefault());
         output.addEventListener("mousemove", e => e.preventDefault());
         
+        let scale = 0.4;
+        const urlParams = new URLSearchParams(window.location.search);
+        let scaleArg = urlParams.get("scale");
+        if (scaleArg != null) {
+          let maybeScale = Number.parseFloat(scaleArg);
+          if (Number.isNaN(maybeScale)) {
+            alert("Scaling given in URL parameter is not valid number '" + scaleArg + "'. Game will continue at default scaling");
+          } else if (!Number.isFinite(maybeScale)) {
+            alert("Scaling given in URL parameter is not valid number '" + scaleArg + "'. Game will continue at default scaling");
+          }
+          
+          scale = maybeScale;
+        }
+        
         await cheerpjInit({
           version: 17
         });
         cheerpjCreateDisplay(-1, -1, output);
-        await cheerpjRunJar("/app/" GAME_JAR, "fullscreen", "double_buffering");
+        await cheerpjRunJar("/app/" GAME_JAR, "fullscreen", "double_buffering", "scaling=" + scale);
       }
     </script>
     <script onload="main()" async defer src="https://cjrtnc.leaningtech.com/4.2/loader.js"></script>
