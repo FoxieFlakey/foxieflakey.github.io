@@ -500,6 +500,10 @@ files 			:= \
 	creations/CSS_animation/img/left_arrow.png \
 	creations/CSS_animation/img/right_arrow.png \
 	 \
+	creations/RPGGameCollege/index.html \
+	creations/RPGGameCollege/rpg-college-0.1.0.jar \
+	 \
+	 \
 	creations/InteraksiManusiaKomputer_ServerDashboard/index.html \
 	creations/InteraksiManusiaKomputer_ServerDashboard/img/favicon.png \
 	creations/InteraksiManusiaKomputer_ServerDashboard/img/green_button.png \

@@ -1,0 +1,66 @@
+#define GAME_JAR PREFIX_SITE_ROOT("creations/RPGGameCollege/rpg-college-0.1.0.jar")
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>RPG Java AWT Game :3</title>
+    #include "common_metadata.html"
+    #include "include/default_opengraph.html"
+    #include "include/popup_to_primary/header.html"
+    <link rel="preload" href="https://cjrtnc.leaningtech.com/4.2/loader.js" as="script">
+  </head>
+  
+  <body style="overflow: hidden;">
+    <div id="game_output" style="overflow: hidden; width: 100dvw; height: 100dvh;"></div>
+    
+    <noscript>
+      Javascript is REQUIRED! How else the game gonna run -w-<br>
+    </noscript>
+    
+    <div style="display: none;">
+      CSS is REQUIRED too<br>
+    </div>
+    
+    #include "include/popup_to_primary/popup.html"
+    <details open class="parasitic_popup_simple" style="
+        position: fixed;
+        left: 0px;
+        top: 20px;
+        max-width: 400px;
+        border: 2px solid white;
+      ">
+      <summary>
+        <span class="parasitic_popup_no_css_message">This is a popup box, but CSS isn't enabled</span>
+        <span class="parasitic_popup_arrow parasitic_popup_activate_button" hidden>
+          <img width="32" height="32" src=PREFIX_SITE_ROOT("/img/parasitic_popup/right_arrow.png") />
+        </span>
+        <span class="parasitic_popup_arrow parasitic_popup_deactivate_button" hidden>
+          <img width="32" height="32" src=PREFIX_SITE_ROOT("/img/parasitic_popup/left_arrow.png") />
+        </span>
+      </summary>
+      
+      You can click <a href=GAME_JAR>here</a> to download the game jar (It requires no dependency)
+    </details>
+    
+    <!-- The game -->
+    <script defer>
+      async function main() {
+        // Prevents default inputs
+        let output = document.getElementById("game_output");
+        output.addEventListener("click", e => e.preventDefault());
+        output.addEventListener("keydown", e => e.preventDefault());
+        output.addEventListener("keyup", e => e.preventDefault());
+        output.addEventListener("mousedown", e => e.preventDefault());
+        output.addEventListener("mouseup", e => e.preventDefault());
+        output.addEventListener("mousemove", e => e.preventDefault());
+        
+        await cheerpjInit({
+          version: 17
+        });
+        cheerpjCreateDisplay(-1, -1, output);
+        await cheerpjRunJar("/app/" GAME_JAR, "fullscreen", "double_buffering");
+      }
+    </script>
+    <script onload="main()" async defer src="https://cjrtnc.leaningtech.com/4.2/loader.js"></script>
+  </body>
+</html>
