@@ -482,8 +482,6 @@ files 			:= \
 	img/Home_Icon.png \
 	img/parasitic_popup/left_arrow.png \
 	img/parasitic_popup/right_arrow.png \
-	js/error.js \
-	js/auto-fit-iframe.js \
 	css/index.css \
 	css/navbar.css \
 	css/gallery.css \
