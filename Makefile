@@ -675,6 +675,11 @@ host: all
 	@echo "[HOST  ] Locally hosting at localhost:8080 with php's builtin webserver"
 	@php -S localhost:8080 -t '$(web_dir)/' router.php
 
+.PHONY: host-python
+host-python: all
+	@echo "[HOST  ] Locally hosting at localhost:8080 with Python's HTTP module"
+	@cd '$(web_dir)/'; python -m http.server 8080
+
 # See https://stackoverflow.com/questions/2483182/recursive-wildcards-in-gnu-make
 rwildcard=$(foreach d,$(wildcard $(1:=/*)),$(call rwildcard,$d,$2) $(filter $(subst *,%,$2),$d))
 include $(call rwildcard,$(deps_dir),*.d)
