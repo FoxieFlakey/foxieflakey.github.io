@@ -3,7 +3,7 @@ return {
     date = {2026, 01, 9},
     title = "Coned Foxie",
     page_basename = "coned_foxie",
-    image_url = "/gallery/2026/01/coned_foxie.png",
+    image_url = "/gallery/2026/1/coned_foxie.png",
     width = 400,
     height = 379,
     short_description = "So Foxie gets the cone of shame...",
