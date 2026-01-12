@@ -100,7 +100,7 @@ while true do
   end
   
   -- Only include ourself
-  if not line:match("[/]sitemap[.]xml$") then
+  if not line:match("[/]sitemap[.]xml$") and not line:match("[/]sitemap-url[.]xml$") then
     local is_sitemap = line:match("[/]"..EXTRA_SITEMAP_MATCH.."$") ~= nil
       
     if is_sitemap then
