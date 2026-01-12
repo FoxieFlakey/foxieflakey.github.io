@@ -13,8 +13,11 @@ function openOutput(name)
   
   if f then
     local marker = f:read()
-    if marker and marker ~= MARKER then
-      return nil
+    if marker and marker ~= "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" then
+      marker = f:read()
+      if marker and marker ~= MARKER then
+        return nil
+      end
     end
     
     f:close()
@@ -54,8 +57,8 @@ function writeLine(str)
   OUTPUT_FILE:write("\n")
 end
 
-writeLine(MARKER)
 writeLine("<?xml version=\"1.0\" encoding=\"UTF-8\"?>")
+writeLine(MARKER)
 writeLine("<sitemapindex xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">")
 writeLine("  <sitemap>")
 writeLine("    <loc>"..FULL_URL_TO_DIR.."/sitemap-url.xml</loc>")
@@ -81,9 +84,13 @@ writeLine("</sitemapindex>")
 OUTPUT_FILE:close()
 OUTPUT_FILE = OUTPUT_FILE_FOR_URLSET
 
+if OUTPUT_FILE == nil then
+  error("sitemap-url.xml cannot be overriden")
+end
+
 -- https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap?hl=en#xml
-writeLine(MARKER)
 writeLine("<?xml version=\"1.0\" encoding=\"UTF-8\"?>")
+writeLine(MARKER)
 writeLine("<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">")
 
 while true do
