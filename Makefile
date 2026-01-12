@@ -544,7 +544,13 @@ files 			:= \
 	college_stuff/img/green_button.png \
 	college_stuff/img/red_button.png \
 	college_stuff/img/news.png \
-	college_stuff/img/checkmark_inactive.png
+	college_stuff/img/checkmark_inactive.png 
+
+# Ignore some directories
+files += \
+	img/sitemap.xml \
+	css/sitemap.xml \
+	college_stuff/sitemap.xml
 
 export input_dir
 export output_dir
@@ -553,6 +559,8 @@ export site_root
 .DEFAULT_GOAL := all
 .PHONY: all
 all: create_dirs .WAIT $(addprefix $(web_dir)/,$(files))
+	@echo "[ SITEMAP ] Generating sitemaps"
+	@lua5.4 scripts/generate-sitemap.lua "$(web_dir)" "$(site_host_root)" "$(web_dir)/sitemap.xml"
 	@true
 
 .PHONY: create_dirs
