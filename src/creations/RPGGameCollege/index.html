@@ -69,7 +69,11 @@
         }
         
         await cheerpjInit({
-          version: 17
+          version: 17,
+          clipboardMode: "permission",
+          overrideShortcuts: function (e) {
+            return true;
+          }
         });
         cheerpjCreateDisplay(-1, -1, output);
         await cheerpjRunJar("/app/" GAME_JAR, "fullscreen", "double_buffering", "scaling=" + scale);
