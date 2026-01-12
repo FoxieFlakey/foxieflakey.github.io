@@ -545,7 +545,8 @@ files 			:= \
 	college_stuff/img/green_button.png \
 	college_stuff/img/red_button.png \
 	college_stuff/img/news.png \
-	college_stuff/img/checkmark_inactive.png 
+	college_stuff/img/checkmark_inactive.png \
+	.nojekyll
 
 # Ignore some directories
 files += \
