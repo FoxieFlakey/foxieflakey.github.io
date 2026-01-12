@@ -13,7 +13,11 @@ function openOutput(name)
   
   if f then
     local marker = f:read()
-    if marker and marker ~= "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" then
+    if marker then
+      if marker ~= "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" then
+        return nil
+      end
+      
       marker = f:read()
       if marker and marker ~= MARKER then
         return nil
