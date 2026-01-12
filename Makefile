@@ -473,6 +473,7 @@ files 			:= \
 	gallery/2023/7/my_oc.html \
 	gallery/2023/7/my_oc.png \
 	\
+	gallery/sitemap.xml \
 	gallery/index.html \
 	\
 	favicon.ico \

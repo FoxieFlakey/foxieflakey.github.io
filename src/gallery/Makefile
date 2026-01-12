@@ -24,3 +24,9 @@ $(intermediate_dir1)/gallery/%.html.strings_unmerged: $(intermediate_dir0)/galle
 $(intermediate_dir2)/gallery/%.html: $(intermediate_dir1)/gallery/%.html.strings_unmerged
 	$(merge_string)
 
+# Generate sitemap for gallery stuffs
+$(intermediate_dir0)/gallery/sitemap.xml: $(input_dir)/gallery/drawings.lua $(input_dir)/gallery/sitemap.lua
+	$(make_dirs)
+	@echo '[ SITEMAP ] Generating $(@:$(output_dir)%=%)'
+	@lua5.4 -- '$(input_dir)/gallery/sitemap.lua' '$@' '$(input_dir)/gallery/drawings.lua'
+
