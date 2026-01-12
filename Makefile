@@ -675,6 +675,12 @@ $(intermediate_dir0)/%: $(input_dir)/%
 	@cp -- '$<' '$@'
 	@echo "[ COPY ] Updating $(@:$(intermediate_dir0)=)"
 
+# Append sitemap to robots.txt
+$(intermediate_dir0)/robots.txt: $(input_dir)/robots.txt
+	@echo "[ UPDATE ] Updating robots.txt"
+	@cp -- '$<' '$@'
+	@echo "Sitemap: $(site_host_root)/sitemap.xml" >> '$@'
+
 .PHONY: clean
 clean:
 	@rm -rf -- '$(output_dir)'
