@@ -1,5 +1,5 @@
 #!/usr/bin/lua5.4
-if #arg ~= 2 and #arg ~= 3 then
+if #arg ~= 2 then
   error("Invalid number of arguments")
 end
 
@@ -31,7 +31,8 @@ local EXTRA_SITEMAP_MATCH = "sitemap[.][-A-Za-z0-9_$#\"\'@]+[.]xml"
 local CRAWLER_FILES<const> = io.popen(string.format("find %q -mindepth 1 -maxdepth 1 -type f", DIR_TO_INDEX))
 local CRAWLER_DIRS<const> = io.popen(string.format("find %q -mindepth 1 -maxdepth 1 -type d", DIR_TO_INDEX))
 
-local OUTPUT_FILE<close> = openOutput(arg[3])
+local OUTPUT_FILE = openOutput(arg[1].."/sitemap.xml")
+local OUTPUT_FILE_FOR_URLSET<close> = openOutput(arg[1].."/sitemap-url.xml")
 if OUTPUT_FILE == nil then
   -- The sitemap file was manually made, do nothing other than crawling into deeper dirs
   while true do
@@ -43,7 +44,7 @@ if OUTPUT_FILE == nil then
     local is_sitemap = line:match(EXTRA_SITEMAP_MATCH) ~= nil
     local url = line:gsub(replace_path, FULL_URL_TO_DIR)
     
-    os.execute(("scripts/generate-sitemap.lua %q %q %q"):format(line, url, line.."/sitemap.xml"))
+    os.execute(("scripts/generate-sitemap.lua %q %q"):format(line, url, line.."/sitemap.xml"))
   end
   return
 end
@@ -52,6 +53,33 @@ function writeLine(str)
   OUTPUT_FILE:write(str)
   OUTPUT_FILE:write("\n")
 end
+
+writeLine(MARKER)
+writeLine("<?xml version=\"1.0\" encoding=\"UTF-8\"?>")
+writeLine("<sitemapindex xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">")
+writeLine("  <sitemap>")
+writeLine("    <loc>"..FULL_URL_TO_DIR.."/sitemap-url.xml</loc>")
+writeLine("  </sitemap>")
+
+while true do
+  local line = CRAWLER_DIRS:read()
+  if not line then
+    break
+  end
+  
+  local path = line:gsub(replace_path, "")
+  local url = FULL_URL_TO_DIR..path
+  
+  writeLine("  <sitemap>")
+  writeLine("    <loc>"..url.."/sitemap.xml</loc>")
+  writeLine("  </sitemap>")
+  
+  os.execute(("scripts/generate-sitemap.lua %q %q"):format(line, url))
+end
+writeLine("</sitemapindex>")
+
+OUTPUT_FILE:close()
+OUTPUT_FILE = OUTPUT_FILE_FOR_URLSET
 
 -- https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap?hl=en#xml
 writeLine(MARKER)
@@ -79,25 +107,6 @@ while true do
     end
   end
 end
-
-writeLine("  <!-- Extra stuffs for directories -->")
-
-while true do
-  local line = CRAWLER_DIRS:read()
-  if not line then
-    break
-  end
-  
-  local path = line:gsub(replace_path, "")
-  local url = FULL_URL_TO_DIR..path
-  
-  writeLine("  <sitemap>")
-  writeLine("    <loc>"..url.."/sitemap.xml</loc>")
-  writeLine("  </sitemap>")
-  
-  os.execute(("scripts/generate-sitemap.lua %q %q %q"):format(line, url, line.."/sitemap.xml"))
-end
-
 writeLine("</urlset>")
 
 

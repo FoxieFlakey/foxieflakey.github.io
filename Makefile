@@ -561,7 +561,7 @@ export site_root
 .PHONY: all
 all: create_dirs .WAIT $(addprefix $(web_dir)/,$(files))
 	@echo "[ SITEMAP ] Generating sitemaps"
-	@lua5.4 scripts/generate-sitemap.lua "$(web_dir)" "$(site_host_root)" "$(web_dir)/sitemap.xml"
+	@lua5.4 scripts/generate-sitemap.lua "$(web_dir)" "$(site_host_root)"
 	@true
 
 .PHONY: create_dirs
