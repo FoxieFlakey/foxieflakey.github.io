@@ -50,6 +50,8 @@ files 			:= \
 	\
 	gallery/2026/1/index.html \
 	\
+	gallery/2026/1/coned_foxie.html \
+	gallery/2026/1/pancake_foxie.html \
 	gallery/2026/1/goober_new_foxie_skirt.html \
 	gallery/2026/1/goober_new_foxie_skirt.png \
 	gallery/2026/1/mail_goober_the_vulpix.html \

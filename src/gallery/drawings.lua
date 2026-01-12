@@ -1,5 +1,29 @@
 return {
   {
+    date = {2026, 01, 9},
+    title = "Coned Foxie",
+    page_basename = "coned_foxie",
+    image_url = "/gallery/2026/01/coned_foxie.png",
+    width = 400,
+    height = 379,
+    short_description = "So Foxie gets the cone of shame...",
+    description = [[
+      So she hurt herself and now Catto put her in cone, so she doesnt hurt herself more
+    ]]
+  },
+  {
+    date = {2026, 1, 9},
+    title = "Pancake Foxie!",
+    page_basename = "pancake_foxie",
+    image_url = "/gallery/2026/1/pancake_foxie.png",
+    width = 461,
+    height = 622,
+    short_description = "hmmm tasty!",
+    description = [[
+      Catto is hungry but Foxie wanna help, so she ended up being the pancake :3
+    ]]
+  },
+  {
     date = {2026, 1, 4},
     title = "New Skirt!",
     page_basename = "goober_new_foxie_skirt",
