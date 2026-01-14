@@ -1,5 +1,42 @@
 return {
   {
+    date = {2026, 1, 13},
+    title = "Flattened Foxie",
+    page_basename = "flattened_foxie",
+    image_url = "/gallery/2026/1/flattened_foxie.png",
+    width = 820,
+    height = 820,
+    short_description = "Hiding behind door isnt brightest choice",
+    description = [[
+      Foxie shouldn't have hidden behind door -w- now she is flattened
+      when Catto tries to find here
+    ]]
+  },
+  {
+    date = {2026, 1, 13},
+    title = "Hammock Goober",
+    page_basename = "hammock_goober",
+    image_url = "/gallery/2026/1/hammock_goober.png",
+    width = 600,
+    height = 600,
+    short_description = "Sleeping place!",
+    description = [[
+      Made this for Goober :3 And Foxie slept on him
+    ]]
+  },
+  {
+    date = {2026, 1, 13},
+    title = "Boots Foxie",
+    page_basename = "boots_foxie",
+    image_url = "/gallery/2026/1/boots_foxie.png",
+    width = 258,
+    height = 258,
+    short_description = "Comfy!",
+    description = [[
+      Foxie turned herself into a pair of nice boots!
+    ]]
+  },
+  {
     date = {2026, 01, 9},
     title = "Coned Foxie",
     page_basename = "coned_foxie",

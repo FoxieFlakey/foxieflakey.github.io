@@ -50,6 +50,12 @@ files 			:= \
 	\
 	gallery/2026/1/index.html \
 	\
+	gallery/2026/1/flattened_foxie.html \
+	gallery/2026/1/flattened_foxie.png \
+	gallery/2026/1/hammock_goober.html \
+	gallery/2026/1/hammock_goober.png \
+	gallery/2026/1/boots_foxie.html \
+	gallery/2026/1/boots_foxie.png \
 	gallery/2026/1/coned_foxie.html \
 	gallery/2026/1/coned_foxie.png \
 	gallery/2026/1/pancake_foxie.html \
