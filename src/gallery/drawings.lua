@@ -1,5 +1,17 @@
 return {
   {
+    date = {2026, 1, 22},
+    title = "New Year 2026? not sure :3 but Catto pats Me!",
+    page_basename = "new_year_2026",
+    image_url = "/gallery/2026/1/new_year_2026.png",
+    width = 400,
+    height = 565,
+    short_description = "Catto pats Foxie",
+    description = [[
+      Catto pats Foxie
+    ]]
+  },
+  {
     date = {2026, 1, 13},
     title = "Flattened Foxie",
     page_basename = "flattened_foxie",
