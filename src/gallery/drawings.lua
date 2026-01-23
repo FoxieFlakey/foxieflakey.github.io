@@ -1,5 +1,19 @@
 return {
   {
+    date = {2026, 1, 23},
+    title = "Patching a hole dont mind me! Uwu",
+    page_basename = "patching_hole",
+    image_url = "/gallery/2026/1/patching_hole.png",
+    width = 1280,
+    height = 720,
+    short_description = "Patching a whole and also flat foxie",
+    description = [[
+      So I did more Minecraft rendering with Blender and I think<br>
+      I like this flat Foxie. The best one so far the attempt of<br>
+      trying to make Foxie in Blender
+    ]]
+  },
+  {
     date = {2026, 1, 22},
     title = "New Year 2026? not sure :3 but Catto pats Me!",
     page_basename = "new_year_2026",
