@@ -50,6 +50,10 @@ files 			:= \
 	\
 	gallery/2026/1/index.html \
 	\
+	gallery/2026/1/bar_foxie.html \
+	gallery/2026/1/bar_foxie.png \
+	gallery/2026/1/sitting_calmly.html \
+	gallery/2026/1/sitting_calmly.png \
 	gallery/2026/1/patching_hole.html \
 	gallery/2026/1/patching_hole.png \
 	gallery/2026/1/new_year_2026.html \

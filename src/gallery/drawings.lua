@@ -1,5 +1,31 @@
 return {
   {
+    date = {2026, 1, 29},
+    title = "Bar Shaped Foxie",
+    page_basename = "bar_foxie",
+    image_url = "/gallery/2026/1/bar_foxie.png",
+    width = 1280,
+    height = 720,
+    short_description = "Foxie but Bar Shaped",
+    description = [[
+      Bar shaped Uwu
+    ]]
+  },
+  {
+    date = {2026, 1, 26},
+    title = "Sitting Calmy",
+    page_basename = "sitting_calmly",
+    image_url = "/gallery/2026/1/sitting_calmly.png",
+    width = 1280,
+    height = 720,
+    short_description = "Im kinda enjoying sitting?",
+    description = [[
+      Another flat Foxie in Minecraft and tuned the
+      lighting settings just right for the vibe im
+      looking uwu
+    ]]
+  },
+  {
     date = {2026, 1, 23},
     title = "Patching a hole dont mind me! Uwu",
     page_basename = "patching_hole",
