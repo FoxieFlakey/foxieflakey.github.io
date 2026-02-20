@@ -48,6 +48,19 @@ files 			:= \
 	\
 	gallery/2026/index.html \
 	\
+	gallery/2026/2/index.html \
+	\
+	gallery/2026/2/drawer_foxie_3d.html \
+	gallery/2026/2/drawer_foxie_3d.png \
+	gallery/2026/2/drawer_foxie.html \
+	gallery/2026/2/drawer_foxie.png \
+	gallery/2026/2/lucky_dice.html \
+	gallery/2026/2/lucky_dice.png \
+	gallery/2026/2/fursuit_foxie.html \
+	gallery/2026/2/fursuit_foxie.png \
+	gallery/2026/2/sleeping_in_house.html \
+	gallery/2026/2/sleeping_in_house.png \
+	\
 	gallery/2026/1/index.html \
 	\
 	gallery/2026/1/bar_foxie.html \

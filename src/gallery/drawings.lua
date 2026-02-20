@@ -1,5 +1,65 @@
 return {
   {
+    date = {2026, 2, 12},
+    title = "Filing Cabinet or Drawer Foxie (Blender)",
+    page_basename = "drawer_foxie_3d",
+    image_url = "/gallery/2026/2/drawer_foxie_3d.png",
+    width = 1366,
+    height = 768,
+    short_description = "SO i feeling like being good filing cabinet but in Blender",
+    description = [[
+      SO i feeling like being good filing cabinet but in Blender
+    ]]
+  },
+  {
+    date = {2026, 2, 12},
+    title = "Drawer Foxie once Again!",
+    page_basename = "drawer_foxie",
+    image_url = "/gallery/2026/2/drawer_foxie.png",
+    width = 400,
+    height = 400,
+    short_description = "SO i feeling like being good filing cabinet",
+    description = [[
+      SO i feeling like being good filing cabinet
+    ]]
+  },
+  {
+    date = {2026, 2, 10},
+    title = "Dice Lucky :3",
+    page_basename = "lucky_dice",
+    image_url = "/gallery/2026/2/lucky_dice.png",
+    width = 366,
+    height = 319,
+    short_description = "Dicey Dice Lucky",
+    description = [[
+      Dicey Dice Lucky
+    ]]
+  },
+  {
+    date = {2026, 2, 7},
+    title = "So I became a fursuit",
+    page_basename = "fursuit_foxie",
+    image_url = "/gallery/2026/2/fursuit_foxie.png",
+    width = 819,
+    height = 580,
+    short_description = "Am i comfy fursuit",
+    description = [[
+      Am I comfy fursuit
+    ]]
+  },
+  {
+    date = {2026, 2, 4},
+    title = "Foxie Sleeping in house (Minecraft + Blender)",
+    page_basename = "sleeping_in_house",
+    image_url = "/gallery/2026/2/sleeping_in_house.png",
+    width = 1366,
+    height = 768,
+    short_description = "cozy sleep Uwu",
+    description = [[
+      cozy sleep Uwu
+    ]]
+  },
+  {
     date = {2026, 1, 29},
     title = "Bar Shaped Foxie",
     page_basename = "bar_foxie",
