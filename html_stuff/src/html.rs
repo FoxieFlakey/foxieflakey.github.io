@@ -688,10 +688,10 @@ pub fn parse<'a>(string: &'a str) -> Result<Vec<RootElement<'a>>, ParseError<'a>
             break;
         }
 
-        let opening_pos = state.cur_location;
         state
             .check_char('<')
             .map_err(|x| x.context(&mut state, "Parsing child element/comment of root"))?;
+        let opening_pos = state.cur_location;
         let (second_opening_pos, second_opening_char) = state.next_char().ok_or_else(|| {
             ParseError::new(&mut state, "Expecting '!' or any identifier for element")
         })?;
@@ -703,14 +703,14 @@ pub fn parse<'a>(string: &'a str) -> Result<Vec<RootElement<'a>>, ParseError<'a>
             '!' => {
                 let (span, comment) = state
                     .parse_comment()
-                    .map_err(|x| x.context(&mut state, "Parsing comment in root"))?;
+                    .map_err(|x| x.context_with_location(&mut state, opening_pos, "Parsing comment in root"))?;
                 elements.push(RootElement::Comment(span, comment));
             }
 
             // Must be normal element
             _ => {
                 elements.push(RootElement::Element(state.parse_element().map_err(
-                    |x| x.context(&mut state, "Parsing child element of root"),
+                    |x| x.context_with_location(&mut state, opening_pos, "Parsing child element of root"),
                 )?))
             }
         }
@@ -795,11 +795,11 @@ impl<'a> ParseError<'a> {
         let all_lines = self.span.source.lines().collect::<Vec<_>>();
         let context_length = 3;
 
-        let first_line_to_print = usize::try_from(self.span.start.line)
+        let first_line_to_print = usize::try_from(cmp::min(self.span.start.line, self.at.line))
             .unwrap()
             .saturating_sub(context_length + 2);
         let last_line_to_print = cmp::min(
-            usize::try_from(self.span.end.line).unwrap() + context_length + 1,
+            usize::try_from(cmp::max(self.span.end.line, self.at.line)).unwrap() + context_length + 1,
             all_lines.len(),
         );
 
