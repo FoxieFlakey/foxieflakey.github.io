@@ -5,7 +5,11 @@ mod prefix_writer;
 fn main() {
     let result = html::parse(
         r#"<  ${abc  aa}   >
-            <div >
+            <div style="
+            div {
+                kgdb
+            }
+            " >
                 Hello Foxie here
                 <!--
                 <  div>

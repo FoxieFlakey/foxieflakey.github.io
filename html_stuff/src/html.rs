@@ -65,6 +65,8 @@ pub enum Attribute<'a> {
         this_span: Span<'a>,
         key_span: Span<'a>,
         value_span: Span<'a>,
+        key: &'a str,
+        value: &'a str
     },
 }
 
@@ -235,6 +237,35 @@ impl<'a> State<'a> {
         }
     }
     
+    // Accepts either "" or ''
+    fn parse_string(&mut self) -> Result<(Span<'a>, &'a str), ParseError<'a>> {
+        self.push_position();
+        let string_type = self.next_char().ok_or_else(|| ParseError::new(self, "expected ' or \" got EOF"))?.1;
+        if string_type != '"' && string_type != '\'' {
+            return Err(ParseError::new(self, format!("expected \" or ' got {}", string_type.escape_default())));
+        }
+        
+        let mut content_start = None;
+        loop {
+            let (pos, char) = self.next_char().ok_or_else(|| {
+                ParseError::new(self, "expected more character got EOF")
+            })?;
+            
+            if content_start.is_none() {
+                content_start = Some(pos)
+            }
+            
+            if char == string_type {
+                // Terminate
+                if let Some(content_start) = content_start {
+                    return Ok((self.pop_position(), &self.source[content_start.byte_offset..pos.byte_offset]));
+                } else {
+                    return Ok((self.pop_position(), ""));
+                }
+            }
+        }
+    }
+    
     // This strictly ignores whitespaces, and terminates when its not valid identifier character
     fn parse_identifier(&mut self) -> Result<(Span<'a>, &'a str), ParseError<'a>> {
         let mut start = None;
@@ -324,13 +355,52 @@ impl<'a> State<'a> {
             .map_err(|x| x.context(self, "Reading identifier"))?;
         self.skip_whitespace();
         
+        let mut attributes = Vec::new();
+        loop {
+            let (_, char) = self.peek().ok_or_else(|| {
+                ParseError::new(self, "expected / or > or attributes or comment when parsing for attributes")
+            })?;
+            
+            if char == '/' || char == '>' {
+                break
+            }
+            
+            // Parse the key part of attribute
+            self.skip_whitespace();
+            let start = self.cur_location;
+            let key = self.parse_identifier().map_err(|x| x.context(self, "Parsing key of attribute"))?;
+            self.skip_whitespace();
+            
+            // Check for '=' sign
+            self.check_char('=')?;
+            self.skip_whitespace();
+            
+            // Parse the value part which is a string
+            let value = self.parse_string().map_err(|x| x.context(self, format!("Parsing value of '{}' attribute", key.1)))?;
+            attributes.push(Attribute::Parsed {
+                this_span: Span {
+                    start,
+                    end: value.0.end,
+                    source: self.source
+                },
+                key_span: key.0,
+                key: key.1,
+                value_span: value.0,
+                value: value.1
+            });
+            
+            self.skip_whitespace();
+        }
+        
+        let attributes = attributes;
+        
         if self.peek().ok_or_else(|| ParseError::new(self, "Expected /> for void tag or > for normal tag got EOF"))?.1 == '/' {
             self.check_char('/')?;
             self.check_char('>')?;
             
             // Void tag like <img />
             return Ok(Element {
-                attributes: Vec::new(),
+                attributes,
                 content: Vec::new(),
                 name: identifier,
                 this_span: self.pop_position()
@@ -448,7 +518,7 @@ impl<'a> State<'a> {
         }
 
         Ok(Element {
-            attributes: Vec::new(),
+            attributes,
             content,
             name: identifier,
             this_span: self.pop_position(),

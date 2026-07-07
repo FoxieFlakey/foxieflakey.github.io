@@ -46,6 +46,30 @@ fn print_element<W: Write + ?Sized>(
     writeln!(f, " {header_prefix} Element '{}'", DisplayIdentifier(&element.name))?;
     let mut f = PrefixWriter::new(format!(" {content_prefix} "), f);
     
+    writeln!(f, "Attributes: (count {})", element.attributes.len())?;
+    for (idx, attribute) in element.attributes.iter().enumerate() {
+        let header_prefix;
+        
+        // Print the header, like name of element
+        if idx == element.content.len() - 1 {
+            header_prefix = DOWN_RIGHT;
+        } else {
+            header_prefix = DOWN_BRANCH_RIGHT;
+        }
+        
+        match attribute {
+            html::Attribute::Parsed { key, value, .. } => {
+                writeln!(f, " {header_prefix} '{key}'='{}'", value.escape_default())?;
+            }
+            html::Attribute::Replacer(replacer) => {
+                writeln!(f, " {header_prefix} Replacer: '{}'", DisplayReplacer(replacer))?;
+            },
+            html::Attribute::Comment(_, comment) => {
+                writeln!(f, " {header_prefix} Comment: '{}'", comment.escape_default())?;
+            },
+        }
+    }
+    
     writeln!(f, "Content: (count {})", element.content.len())?;
     for (idx, child) in element.content.iter().enumerate() {
         let header_prefix;
