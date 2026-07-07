@@ -286,7 +286,7 @@ impl<'a> State<'a> {
                 .next_char()
                 .ok_or_else(|| ParseError::new(self, "Expected any character or '<' got EOF"))?;
             
-            if chr == '<' {
+            if chr == '<' || chr == '$' {
                 let child_location = self.cur_location;
                 
                 // Current text portions are ended, save it, if exists
@@ -302,28 +302,47 @@ impl<'a> State<'a> {
                     ));
                 }
                 start_text = None;
-
-                // Lets see if its ending
-                let (_, chr) = self.peek().ok_or_else(|| {
-                    ParseError::new(self, "Expected identifier chars or '/' got EOF")
-                })?;
-                if chr == '/' {
-                    break;
-                }
-
-                // Parse child element
-                // put the '<' back
-                self.unnext_char();
-
-                content.push(ElementContent::Element(self.parse_element().map_err(
-                    |x| {
+                
+                if chr == '$' {
+                    // Parse replacer
+                    // put '$' back
+                    self.unnext_char();
+                    
+                    content.push(ElementContent::Replacer(self.parse_replacer().map_err(|x| {
                         x.context_with_location(
                             self,
                             child_location,
-                            format!("Parsing child element of {}", html_display::DisplayIdentifier(&identifier)),
+                            format!("Parsing replacer in {}", html_display::DisplayIdentifier(&identifier)),
                         )
-                    },
-                )?));
+                    })?));
+                } else {
+                    // Lets see if its ending
+                    let (_, chr) = self.peek().ok_or_else(|| {
+                        ParseError::new(self, "Expected identifier chars or '/' got EOF")
+                    })?;
+                    if chr == '/' {
+                        break;
+                    }
+                    
+                    match chr {
+                        '/' => break,
+                        _ => {
+                            // Parse child element
+                            // put the '<' back
+                            self.unnext_char();
+
+                            content.push(ElementContent::Element(self.parse_element().map_err(
+                                |x| {
+                                    x.context_with_location(
+                                        self,
+                                        child_location,
+                                        format!("Parsing child element in {}", html_display::DisplayIdentifier(&identifier)),
+                                    )
+                                },
+                            )?));
+                        }
+                    }
+                }
             } else {
                 // Try begin new span of text, if it havent
                 if start_text.is_none() {
