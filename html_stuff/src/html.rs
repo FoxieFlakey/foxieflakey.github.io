@@ -50,7 +50,7 @@ pub struct Span<'a> {
     pub end: Location,
 
     // Original &str, not corresponding to current Span
-    source: Cow<'a, str>,
+    pub source: Cow<'a, str>,
 }
 
 #[derive(Clone)]
