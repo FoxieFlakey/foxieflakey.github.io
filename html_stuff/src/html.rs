@@ -65,6 +65,8 @@ pub enum Attribute<'a> {
         this_span: Span<'a>,
         key_span: Span<'a>,
         value_span: Span<'a>,
+        // Whether value is using "val" not 'val'
+        value_is_double_quote: bool,
         key: &'a str,
         value: &'a str,
     },
@@ -255,7 +257,8 @@ impl<'a> State<'a> {
     }
 
     // Accepts either "" or ''
-    fn parse_string(&mut self) -> Result<(Span<'a>, &'a str), ParseError<'a>> {
+    // 3rd element in tuple is true if string quoed with " else false if its quoted with '
+    fn parse_string(&mut self) -> Result<(Span<'a>, &'a str, bool), ParseError<'a>> {
         self.push_position();
         let string_type = self
             .next_char()
@@ -284,9 +287,10 @@ impl<'a> State<'a> {
                     return Ok((
                         self.pop_position(),
                         &self.source[content_start.byte_offset..pos.byte_offset],
+                        string_type == '"'
                     ));
                 } else {
-                    return Ok((self.pop_position(), ""));
+                    return Ok((self.pop_position(), "", string_type == '"'));
                 }
             }
         }
@@ -457,7 +461,7 @@ impl<'a> State<'a> {
                     self.skip_whitespace();
 
                     // Parse the value part which is a string
-                    let value = self
+                    let (value_span, value, value_is_double_quote) = self
                         .parse_string()
                         .map_err(|x| {
                             x.context(self, format!("Parsing value of '{}' attribute", key.1))
@@ -470,8 +474,9 @@ impl<'a> State<'a> {
                         this_span: self.pop_position(),
                         key_span: key.0,
                         key: key.1,
-                        value_span: value.0,
-                        value: value.1,
+                        value_span: value_span,
+                        value: value,
+                        value_is_double_quote
                     });
                 }
             }

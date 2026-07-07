@@ -7,7 +7,7 @@ use crate::{
     prefix_writer::PrefixWriter,
 };
 
-pub struct AsTree<'a>(pub Vec<html::RootElement<'a>>);
+pub struct AsTree<'a>(pub &'a Vec<html::RootElement<'a>>);
 
 const DOWN_RIGHT: char = '└';
 const DOWN_BRANCH_RIGHT: char = '├';
