@@ -2,7 +2,10 @@
 
 use std::fmt::{self, Display, Write};
 
-use crate::{html::{self, Element}, prefix_writer::PrefixWriter};
+use crate::{
+    html::{self, Element},
+    prefix_writer::PrefixWriter,
+};
 
 pub struct AsTree<'a>(pub Vec<html::RootElement<'a>>);
 
@@ -16,7 +19,7 @@ impl Display for AsTree<'_> {
         for (idx, child) in self.0.iter().enumerate() {
             let header_prefix;
             let content_prefix;
-            
+
             // Print the header, like name of element
             if idx == self.0.len() - 1 {
                 header_prefix = DOWN_RIGHT;
@@ -25,19 +28,19 @@ impl Display for AsTree<'_> {
                 header_prefix = DOWN_BRANCH_RIGHT;
                 content_prefix = STRAIGHT_DOWN;
             }
-            
+
             match child {
                 html::RootElement::Element(element) => {
                     print_element(&mut f, header_prefix, content_prefix, element)?
                 }
-                
+
                 html::RootElement::Comment(_, comment) => {
                     writeln!(f, " {header_prefix} Comment '{}'", comment)?;
                 }
             }
         }
         writeln!(f, "End of root")?;
-        
+
         Ok(())
     }
 }
@@ -48,41 +51,53 @@ fn print_element<W: Write + ?Sized>(
     f: &mut W,
     header_prefix: char,
     content_prefix: char,
-    element: &Element<'_>
+    element: &Element<'_>,
 ) -> std::fmt::Result {
     // Print the header, like name of element
-    writeln!(f, " {header_prefix} Element '{}'", DisplayIdentifier(&element.name))?;
+    writeln!(
+        f,
+        " {header_prefix} Element '{}'",
+        DisplayIdentifier(&element.name)
+    )?;
     let mut f = PrefixWriter::new(format!(" {content_prefix} "), f);
-    
+
     writeln!(f, "Attributes: (count {})", element.attributes.len())?;
     for (idx, attribute) in element.attributes.iter().enumerate() {
         let header_prefix;
-        
+
         // Print the header, like name of element
         if idx == element.attributes.len() - 1 {
             header_prefix = DOWN_RIGHT;
         } else {
             header_prefix = DOWN_BRANCH_RIGHT;
         }
-        
+
         match attribute {
             html::Attribute::Parsed { key, value, .. } => {
                 writeln!(f, " {header_prefix} '{key}'='{}'", value.escape_default())?;
             }
             html::Attribute::Replacer(replacer) => {
-                writeln!(f, " {header_prefix} Replacer: '{}'", DisplayReplacer(replacer))?;
-            },
+                writeln!(
+                    f,
+                    " {header_prefix} Replacer: '{}'",
+                    DisplayReplacer(replacer)
+                )?;
+            }
             html::Attribute::Comment(_, comment) => {
-                writeln!(f, " {header_prefix} Comment: '{}'", comment.escape_default())?;
-            },
+                writeln!(
+                    f,
+                    " {header_prefix} Comment: '{}'",
+                    comment.escape_default()
+                )?;
+            }
         }
     }
-    
+
     writeln!(f, "Content: (count {})", element.content.len())?;
     for (idx, child) in element.content.iter().enumerate() {
         let header_prefix;
         let content_prefix;
-        
+
         // Print the header, like name of element
         if idx == element.content.len() - 1 {
             header_prefix = DOWN_RIGHT;
@@ -91,23 +106,36 @@ fn print_element<W: Write + ?Sized>(
             header_prefix = DOWN_BRANCH_RIGHT;
             content_prefix = STRAIGHT_DOWN;
         }
-        
+
         match child {
             html::ElementContent::Element(element) => {
-                print_element(&mut f as &mut dyn Write, header_prefix, content_prefix, element)?;
-            },
+                print_element(
+                    &mut f as &mut dyn Write,
+                    header_prefix,
+                    content_prefix,
+                    element,
+                )?;
+            }
             html::ElementContent::Comment(_, comment) => {
-                writeln!(f, " {header_prefix} Comment: '{}'", comment.escape_default())?;
-            },
+                writeln!(
+                    f,
+                    " {header_prefix} Comment: '{}'",
+                    comment.escape_default()
+                )?;
+            }
             html::ElementContent::Text(_, text) => {
                 writeln!(f, " {header_prefix} Text: '{}'", text.escape_default())?;
-            },
+            }
             html::ElementContent::Replacer(replacer) => {
-                writeln!(f, " {header_prefix} Replacer: '{}'", DisplayReplacer(replacer))?;
+                writeln!(
+                    f,
+                    " {header_prefix} Replacer: '{}'",
+                    DisplayReplacer(replacer)
+                )?;
             }
         }
     }
-    
+
     Ok(())
 }
 
@@ -117,7 +145,7 @@ impl Display for DisplayReplacer<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self.0 {
             html::Replacer::Complex(_, x) => write!(f, "Replacer ${{{}}}", x)?,
-            html::Replacer::Simple(_, x) => write!(f, "Replacer ${}", x)?
+            html::Replacer::Simple(_, x) => write!(f, "Replacer ${}", x)?,
         }
         Ok(())
     }
@@ -131,13 +159,12 @@ impl Display for DisplayIdentifier<'_> {
             html::Identifier::Parsed(_, text) => {
                 write!(f, "{text}")?;
             }
-            
+
             html::Identifier::Replacer(replacer) => {
                 write!(f, "{}", DisplayReplacer(replacer))?;
             }
         }
-        
+
         Ok(())
     }
 }
-

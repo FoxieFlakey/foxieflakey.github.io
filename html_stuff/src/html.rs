@@ -38,7 +38,7 @@ impl From<LineColByteRange> for Location {
         Self {
             line: value.0,
             column: value.1,
-            byte_offset: value.2.start
+            byte_offset: value.2.start,
         }
     }
 }
@@ -66,16 +66,16 @@ pub enum Attribute<'a> {
         key_span: Span<'a>,
         value_span: Span<'a>,
         key: &'a str,
-        value: &'a str
+        value: &'a str,
     },
 }
 
 pub enum Replacer<'a> {
     // ${text} syntax
     Complex(Span<'a>, &'a str),
-    
+
     // $variable syntax
-    Simple(Span<'a>, &'a str)
+    Simple(Span<'a>, &'a str),
 }
 
 impl Replacer<'_> {
@@ -83,7 +83,7 @@ impl Replacer<'_> {
         match (self, other) {
             (Replacer::Complex(_, a), Replacer::Complex(_, b)) => a == b,
             (Replacer::Simple(_, a), Replacer::Simple(_, b)) => a == b,
-            _ => false
+            _ => false,
         }
     }
 }
@@ -122,7 +122,7 @@ impl<'a> Identifier<'a> {
         match (self, other) {
             (Identifier::Parsed(_, x), Identifier::Parsed(_, y)) => x == y,
             (Identifier::Replacer(x), Identifier::Replacer(y)) => x.is_same(y),
-            _ => false
+            _ => false,
         }
     }
 }
@@ -171,10 +171,7 @@ impl<'a> State<'a> {
     }
 
     fn unnext_char(&mut self, location: Location, chr: char) {
-        self.char_iter.push_back((
-            location,
-            chr
-        ));
+        self.char_iter.push_back((location, chr));
     }
 
     fn check_char(&mut self, expected: char) -> Result<(), ParseError<'a>> {
@@ -202,20 +199,29 @@ impl<'a> State<'a> {
 
     fn parse_replacer(&mut self) -> Result<Replacer<'a>, ParseError<'a>> {
         self.push_position();
-        self.check_char('$').map_err(|x| x.context(self, "Parsing replacer"))?;
-        
-        let (location, chr) = self.next_char().ok_or_else(|| ParseError::new(self, "Expected { or identifier character while parsing replacer"))?;
-        
+        self.check_char('$')
+            .map_err(|x| x.context(self, "Parsing replacer"))?;
+
+        let (location, chr) = self.next_char().ok_or_else(|| {
+            ParseError::new(
+                self,
+                "Expected { or identifier character while parsing replacer",
+            )
+        })?;
+
         if chr == '{' {
             let start = self.cur_location;
             loop {
                 let (pos, char) = self.next_char().ok_or_else(|| {
                     ParseError::new(self, "expected more character for complex replacer got EOF")
                 })?;
-                
+
                 if char == '}' {
                     // End of complex replacer, quit
-                    return Ok(Replacer::Complex(self.pop_position(), &self.source[start.byte_offset + 1..pos.byte_offset]))
+                    return Ok(Replacer::Complex(
+                        self.pop_position(),
+                        &self.source[start.byte_offset + 1..pos.byte_offset],
+                    ));
                 }
             }
         } else {
@@ -227,9 +233,17 @@ impl<'a> State<'a> {
 
     fn parse_identifier_or_replacer(&mut self) -> Result<Identifier<'a>, ParseError<'a>> {
         self.push_position();
-        let chr = self.peek().ok_or_else(|| ParseError::new(self, "Expected $ or identifier character while parsing identifier or replacer"))?.1;
+        let chr = self
+            .peek()
+            .ok_or_else(|| {
+                ParseError::new(
+                    self,
+                    "Expected $ or identifier character while parsing identifier or replacer",
+                )
+            })?
+            .1;
         self.pop_position();
-        
+
         if chr == '$' {
             // Replacer
             Ok(Identifier::Replacer(self.parse_replacer()?))
@@ -239,43 +253,56 @@ impl<'a> State<'a> {
             Ok(Identifier::Parsed(result.0, result.1))
         }
     }
-    
+
     // Accepts either "" or ''
     fn parse_string(&mut self) -> Result<(Span<'a>, &'a str), ParseError<'a>> {
         self.push_position();
-        let string_type = self.next_char().ok_or_else(|| ParseError::new(self, "expected ' or \" got EOF"))?.1;
+        let string_type = self
+            .next_char()
+            .ok_or_else(|| ParseError::new(self, "expected ' or \" got EOF"))?
+            .1;
         if string_type != '"' && string_type != '\'' {
-            return Err(ParseError::new(self, format!("expected \" or ' got {}", string_type.escape_default())));
+            return Err(ParseError::new(
+                self,
+                format!("expected \" or ' got {}", string_type.escape_default()),
+            ));
         }
-        
+
         let mut content_start = None;
         loop {
-            let (pos, char) = self.next_char().ok_or_else(|| {
-                ParseError::new(self, "expected more character got EOF")
-            })?;
-            
+            let (pos, char) = self
+                .next_char()
+                .ok_or_else(|| ParseError::new(self, "expected more character got EOF"))?;
+
             if content_start.is_none() {
                 content_start = Some(pos)
             }
-            
+
             if char == string_type {
                 // Terminate
                 if let Some(content_start) = content_start {
-                    return Ok((self.pop_position(), &self.source[content_start.byte_offset..pos.byte_offset]));
+                    return Ok((
+                        self.pop_position(),
+                        &self.source[content_start.byte_offset..pos.byte_offset],
+                    ));
                 } else {
                     return Ok((self.pop_position(), ""));
                 }
             }
         }
     }
-    
+
     // This strictly ignores whitespaces, and terminates when its not valid identifier character
     fn parse_identifier(&mut self) -> Result<(Span<'a>, &'a str), ParseError<'a>> {
         self.push_position();
         let mut start = None;
         loop {
             let (pos, char) = self.next_char().ok_or_else(|| {
-                ParseError::new_with_location(self, self.cur_location, "expected more character got EOF")
+                ParseError::new_with_location(
+                    self,
+                    self.cur_location,
+                    "expected more character got EOF",
+                )
             })?;
 
             match char {
@@ -288,9 +315,16 @@ impl<'a> State<'a> {
                 _ => {
                     self.unnext_char(pos, char);
                     if let Some(start) = start {
-                        return Ok((self.pop_position(), &self.source[start.byte_offset..pos.byte_offset]));
+                        return Ok((
+                            self.pop_position(),
+                            &self.source[start.byte_offset..pos.byte_offset],
+                        ));
                     } else {
-                        return Err(ParseError::new_with_location(self, self.cur_location, "Expected atleast one character for identifier got none"))
+                        return Err(ParseError::new_with_location(
+                            self,
+                            self.cur_location,
+                            "Expected atleast one character for identifier got none",
+                        ));
                     }
                 }
             }
@@ -303,40 +337,45 @@ impl<'a> State<'a> {
         self.check_char('!')?;
         self.check_char('-')?;
         self.check_char('-')?;
-        
+
         let mut start = None;
-        
+
         let mut history: [Option<(Location, char)>; 4] = [
             None, // At the end, must point to '>'
             None, // At the end, must point to '-'
             None, // At the end, must point to '-'
-            None  // At the end, must point to comment content or None if empty
+            None, // At the end, must point to comment content or None if empty
         ];
-        
+
         loop {
-            let (pos, char) = self.next_char().ok_or_else(|| ParseError::new(self, "expecting comment closing or any character got EOF"))?;
+            let (pos, char) = self.next_char().ok_or_else(|| {
+                ParseError::new(self, "expecting comment closing or any character got EOF")
+            })?;
             if start.is_none() {
                 start = Some(self.cur_location);
             }
-            
+
             history[3] = history[2];
             history[2] = history[1];
             history[1] = history[0];
             history[0] = Some((pos, char));
-            
+
             // Check for ending
             match (history[2], history[1], history[0]) {
                 (Some((_, '-')), Some((_, '-')), Some((_, '>'))) => {
                     // Found the ending -->
                     break;
                 }
-                _ => ()
+                _ => (),
             }
         }
-        
+
         if let Some((last_pos, _)) = history[3] {
             if let Some(start) = start {
-                Ok((self.pop_position(), &self.source[start.byte_offset..=last_pos.byte_offset]))
+                Ok((
+                    self.pop_position(),
+                    &self.source[start.byte_offset..=last_pos.byte_offset],
+                ))
             } else {
                 panic!("There last position but not start")
             }
@@ -357,86 +396,107 @@ impl<'a> State<'a> {
             .parse_identifier_or_replacer()
             .map_err(|x| x.context(self, "Reading identifier"))?;
         self.skip_whitespace();
-        
+
         let mut attributes = Vec::new();
         loop {
             self.skip_whitespace();
             let (pos, char) = self.next_char().ok_or_else(|| {
-                ParseError::new(self, "expected / or > or attributes or comment when parsing for attributes")
+                ParseError::new(
+                    self,
+                    "expected / or > or attributes or comment when parsing for attributes",
+                )
             })?;
-            
+
             if char == '/' || char == '>' {
                 self.unnext_char(pos, char);
-                break
+                break;
             }
-            
+
             match char {
                 '<' => {
                     // Has to be comment
                     self.unnext_char(pos, char);
-                    let (span, comment) = self.parse_comment()
+                    let (span, comment) = self
+                        .parse_comment()
                         .map_err(|x| x.context(self, "Parsing comment in attribute list"))?;
                     attributes.push(Attribute::Comment(span, comment));
                 }
-                
+
                 '$' => {
                     // Has to be replacer
                     self.unnext_char(pos, char);
-                    let replacer = self.parse_replacer()
+                    let replacer = self
+                        .parse_replacer()
                         .map_err(|x| x.context(self, "Parsing replacer in attribute list"))?;
                     attributes.push(Attribute::Replacer(replacer));
                 }
-                
+
                 _ => {
                     // Normal key/value attribute
-                    
+
                     // Parse the key part of attribute
                     let start_attribute = self.push_position();
                     self.unnext_char(pos, char);
-                    
-                    let key = self.parse_identifier()
+
+                    let key = self
+                        .parse_identifier()
                         .map_err(|x| x.context(self, "Parsing key of attribute"))
-                        .map_err(|x| x.context_with_location(self, start_attribute, "Parsing attributes"))?;
+                        .map_err(|x| {
+                            x.context_with_location(self, start_attribute, "Parsing attributes")
+                        })?;
                     self.skip_whitespace();
-                    
+
                     // Check for '=' sign
-                    self.check_char('=')
-                        .map_err(|x| x.context_with_location(self, start_attribute, "Parsing attributes"))?;
+                    self.check_char('=').map_err(|x| {
+                        x.context_with_location(self, start_attribute, "Parsing attributes")
+                    })?;
                     self.skip_whitespace();
-                    
+
                     // Parse the value part which is a string
-                    let value = self.parse_string()
-                        .map_err(|x| x.context(self, format!("Parsing value of '{}' attribute", key.1)))
-                        .map_err(|x| x.context_with_location(self, start_attribute, "Parsing attributes"))?;
-                    
+                    let value = self
+                        .parse_string()
+                        .map_err(|x| {
+                            x.context(self, format!("Parsing value of '{}' attribute", key.1))
+                        })
+                        .map_err(|x| {
+                            x.context_with_location(self, start_attribute, "Parsing attributes")
+                        })?;
+
                     attributes.push(Attribute::Parsed {
                         this_span: self.pop_position(),
                         key_span: key.0,
                         key: key.1,
                         value_span: value.0,
-                        value: value.1
+                        value: value.1,
                     });
                 }
             }
-            
+
             self.skip_whitespace();
         }
-        
+
         let attributes = attributes;
-        
-        if self.peek().ok_or_else(|| ParseError::new(self, "Expected /> for void tag or > for normal tag got EOF"))?.1 == '/' {
+
+        if self
+            .peek()
+            .ok_or_else(|| {
+                ParseError::new(self, "Expected /> for void tag or > for normal tag got EOF")
+            })?
+            .1
+            == '/'
+        {
             self.check_char('/')?;
             self.check_char('>')?;
-            
+
             // Void tag like <img />
             return Ok(Element {
                 attributes,
                 content: Vec::new(),
                 name: identifier,
-                this_span: self.pop_position()
-            })
+                this_span: self.pop_position(),
+            });
         }
-        
+
         self.check_char('>')?;
         ////////////////////////////////
 
@@ -448,10 +508,10 @@ impl<'a> State<'a> {
             let (pos, chr) = self
                 .next_char()
                 .ok_or_else(|| ParseError::new(self, "Expected any character or '<' got EOF"))?;
-            
+
             if chr == '<' || chr == '$' {
                 let child_location = self.cur_location;
-                
+
                 // Current text portions are ended, save it, if exists
                 if let Some(start_text) = start_text {
                     let text_str = &self.source[start_text.byte_offset..pos.byte_offset];
@@ -465,19 +525,24 @@ impl<'a> State<'a> {
                     ));
                 }
                 start_text = None;
-                
+
                 if chr == '$' {
                     // Parse replacer
                     // put '$' back
                     self.unnext_char(pos, chr);
-                    
-                    content.push(ElementContent::Replacer(self.parse_replacer().map_err(|x| {
-                        x.context_with_location(
-                            self,
-                            child_location,
-                            format!("Parsing replacer in {}", html_display::DisplayIdentifier(&identifier)),
-                        )
-                    })?));
+
+                    content.push(ElementContent::Replacer(self.parse_replacer().map_err(
+                        |x| {
+                            x.context_with_location(
+                                self,
+                                child_location,
+                                format!(
+                                    "Parsing replacer in {}",
+                                    html_display::DisplayIdentifier(&identifier)
+                                ),
+                            )
+                        },
+                    )?));
                 } else {
                     // Lets see if its ending
                     let (pos, chr) = self.peek().ok_or_else(|| {
@@ -486,17 +551,25 @@ impl<'a> State<'a> {
                     if chr == '/' {
                         break;
                     }
-                    
+
                     match chr {
                         '/' => break,
                         '!' => {
                             // Detected comment :3
                             // carefuly unnext the '<' which positioned at 'child_location'
                             self.unnext_char(child_location, '<');
-                            
-                            let (span, comment) = self.parse_comment()
-                                .map_err(|x| x.context_with_location(self, child_location, format!("Parsing comment in {}", html_display::DisplayIdentifier(&identifier))))?;
-                            
+
+                            let (span, comment) = self.parse_comment().map_err(|x| {
+                                x.context_with_location(
+                                    self,
+                                    child_location,
+                                    format!(
+                                        "Parsing comment in {}",
+                                        html_display::DisplayIdentifier(&identifier)
+                                    ),
+                                )
+                            })?;
+
                             content.push(ElementContent::Comment(span, comment));
                         }
                         _ => {
@@ -509,7 +582,10 @@ impl<'a> State<'a> {
                                     x.context_with_location(
                                         self,
                                         child_location,
-                                        format!("Parsing child element in {}", html_display::DisplayIdentifier(&identifier)),
+                                        format!(
+                                            "Parsing child element in {}",
+                                            html_display::DisplayIdentifier(&identifier)
+                                        ),
                                     )
                                 },
                             )?));
@@ -531,11 +607,12 @@ impl<'a> State<'a> {
         ////////////////////////////////
         self.check_char('/')?;
         self.skip_whitespace();
-        
-        let closing_position = self.peek()
+
+        let closing_position = self
+            .peek()
             .ok_or_else(|| ParseError::new(self, "expecting closing tag, got EOF"))
             .map(|x| x.0)?;
-        
+
         let closing = self
             .parse_identifier_or_replacer()
             .map_err(|x| x.context(self, "Reading identifier"))?;
@@ -544,7 +621,14 @@ impl<'a> State<'a> {
         ////////////////////////////////
 
         if !identifier.is_same_identifier(&closing) {
-            return Err(ParseError::new_with_location(self, closing_position, format!("Closing tag has different name than opening ('{}')!", html_display::DisplayIdentifier(&identifier))))
+            return Err(ParseError::new_with_location(
+                self,
+                closing_position,
+                format!(
+                    "Closing tag has different name than opening ('{}')!",
+                    html_display::DisplayIdentifier(&identifier)
+                ),
+            ));
         }
 
         Ok(Element {
@@ -558,7 +642,7 @@ impl<'a> State<'a> {
 
 pub enum RootElement<'a> {
     Element(Element<'a>),
-    Comment(Span<'a>, &'a str)
+    Comment(Span<'a>, &'a str),
 }
 
 pub fn parse<'a>(string: &'a str) -> Result<Vec<RootElement<'a>>, ParseError<'a>> {
@@ -573,9 +657,9 @@ pub fn parse<'a>(string: &'a str) -> Result<Vec<RootElement<'a>>, ParseError<'a>
         source: string,
         eof_met: false,
     };
-    
+
     let mut elements = Vec::new();
-    
+
     state.skip_whitespace();
     state.push_position();
     loop {
@@ -583,30 +667,38 @@ pub fn parse<'a>(string: &'a str) -> Result<Vec<RootElement<'a>>, ParseError<'a>
         if state.peek().is_none() {
             break;
         }
-        
+
         let opening_pos = state.cur_location;
-        state.check_char('<')
+        state
+            .check_char('<')
             .map_err(|x| x.context(&mut state, "Parsing child element/comment of root"))?;
-        let (second_opening_pos, second_opening_char) = state.next_char()
-            .ok_or_else(|| ParseError::new(&mut state, "Expecting '!' or any identifier for element"))?;
-        
+        let (second_opening_pos, second_opening_char) = state.next_char().ok_or_else(|| {
+            ParseError::new(&mut state, "Expecting '!' or any identifier for element")
+        })?;
+
         state.unnext_char(second_opening_pos, second_opening_char);
         state.unnext_char(opening_pos, '<');
-        
+
         match second_opening_char {
             '!' => {
-                let (span, comment) = state.parse_comment().map_err(|x| x.context(&mut state, "Parsing comment in root"))?;
+                let (span, comment) = state
+                    .parse_comment()
+                    .map_err(|x| x.context(&mut state, "Parsing comment in root"))?;
                 elements.push(RootElement::Comment(span, comment));
             }
-            
+
             // Must be normal element
-            _ => elements.push(RootElement::Element(state.parse_element().map_err(|x| x.context(&mut state, "Parsing child element of root"))?))
+            _ => {
+                elements.push(RootElement::Element(state.parse_element().map_err(
+                    |x| x.context(&mut state, "Parsing child element of root"),
+                )?))
+            }
         }
-        
+
         state.skip_whitespace();
     }
     state.pop_position();
-    
+
     Ok(elements)
 }
 
@@ -630,8 +722,12 @@ impl<'a> ParseError<'a> {
             context_chain: None,
         }
     }
-    
-    fn new_with_location<T: Into<String>>(state: &mut State<'a>, location: Location, message: T) -> Self {
+
+    fn new_with_location<T: Into<String>>(
+        state: &mut State<'a>,
+        location: Location,
+        message: T,
+    ) -> Self {
         Self {
             at: location,
             message: message.into(),
@@ -663,7 +759,8 @@ impl<'a> ParseError<'a> {
         let mut cur = &mut self;
         loop {
             if cur.context_chain.is_none() {
-                cur.context_chain = Some(Box::new(Self::new_with_location(state, location, message)));
+                cur.context_chain =
+                    Some(Box::new(Self::new_with_location(state, location, message)));
                 break;
             }
 

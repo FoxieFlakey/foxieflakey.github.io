@@ -33,8 +33,8 @@ fn main() {
     );
     match result {
         Ok(x) => {
-           println!("{}", html_display::AsTree(x));
-        },
+            println!("{}", html_display::AsTree(x));
+        }
 
         Err(e) => {
             println!("Error while parsing");
