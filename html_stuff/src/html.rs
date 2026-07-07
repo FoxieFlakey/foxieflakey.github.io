@@ -330,7 +330,7 @@ impl<'a> State<'a> {
                         _ => {
                             // Parse child element
                             // put the '<' back
-                            self.unnext_char(pos, chr);
+                            self.unnext_char(pos, '<');
 
                             content.push(ElementContent::Element(self.parse_element().map_err(
                                 |x| {
