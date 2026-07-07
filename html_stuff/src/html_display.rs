@@ -51,7 +51,7 @@ fn print_element<W: Write + ?Sized>(
         let header_prefix;
         
         // Print the header, like name of element
-        if idx == element.content.len() - 1 {
+        if idx == element.attributes.len() - 1 {
             header_prefix = DOWN_RIGHT;
         } else {
             header_prefix = DOWN_BRANCH_RIGHT;
