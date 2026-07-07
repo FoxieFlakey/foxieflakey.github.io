@@ -370,32 +370,54 @@ impl<'a> State<'a> {
                 break
             }
             
-            // Parse the key part of attribute
-            let start_attribute = self.push_position();
-            self.unnext_char(pos, char);
-            
-            let key = self.parse_identifier()
-                .map_err(|x| x.context(self, "Parsing key of attribute"))
-                .map_err(|x| x.context_with_location(self, start_attribute, "Parsing attributes"))?;
-            self.skip_whitespace();
-            
-            // Check for '=' sign
-            self.check_char('=')
-                .map_err(|x| x.context_with_location(self, start_attribute, "Parsing attributes"))?;
-            self.skip_whitespace();
-            
-            // Parse the value part which is a string
-            let value = self.parse_string()
-                .map_err(|x| x.context(self, format!("Parsing value of '{}' attribute", key.1)))
-                .map_err(|x| x.context_with_location(self, start_attribute, "Parsing attributes"))?;
-            
-            attributes.push(Attribute::Parsed {
-                this_span: self.pop_position(),
-                key_span: key.0,
-                key: key.1,
-                value_span: value.0,
-                value: value.1
-            });
+            match char {
+                '<' => {
+                    // Has to be comment
+                    self.unnext_char(pos, char);
+                    let (span, comment) = self.parse_comment()
+                        .map_err(|x| x.context(self, "Parsing comment in attribute list"))?;
+                    attributes.push(Attribute::Comment(span, comment));
+                }
+                
+                '$' => {
+                    // Has to be replacer
+                    self.unnext_char(pos, char);
+                    let replacer = self.parse_replacer()
+                        .map_err(|x| x.context(self, "Parsing replacer in attribute list"))?;
+                    attributes.push(Attribute::Replacer(replacer));
+                }
+                
+                _ => {
+                    // Normal key/value attribute
+                    
+                    // Parse the key part of attribute
+                    let start_attribute = self.push_position();
+                    self.unnext_char(pos, char);
+                    
+                    let key = self.parse_identifier()
+                        .map_err(|x| x.context(self, "Parsing key of attribute"))
+                        .map_err(|x| x.context_with_location(self, start_attribute, "Parsing attributes"))?;
+                    self.skip_whitespace();
+                    
+                    // Check for '=' sign
+                    self.check_char('=')
+                        .map_err(|x| x.context_with_location(self, start_attribute, "Parsing attributes"))?;
+                    self.skip_whitespace();
+                    
+                    // Parse the value part which is a string
+                    let value = self.parse_string()
+                        .map_err(|x| x.context(self, format!("Parsing value of '{}' attribute", key.1)))
+                        .map_err(|x| x.context_with_location(self, start_attribute, "Parsing attributes"))?;
+                    
+                    attributes.push(Attribute::Parsed {
+                        this_span: self.pop_position(),
+                        key_span: key.0,
+                        key: key.1,
+                        value_span: value.0,
+                        value: value.1
+                    });
+                }
+            }
             
             self.skip_whitespace();
         }
