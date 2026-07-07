@@ -556,8 +556,13 @@ impl<'a> State<'a> {
     }
 }
 
-pub fn parse<'a>(string: &'a str) -> Result<Element<'a>, ParseError<'a>> {
-    State {
+pub enum RootElement<'a> {
+    Element(Element<'a>),
+    Comment(Span<'a>, &'a str)
+}
+
+pub fn parse<'a>(string: &'a str) -> Result<Vec<RootElement<'a>>, ParseError<'a>> {
+    let mut state = State {
         char_iter: PushBackIterator::from(string.char_positions()),
         cur_location: Location {
             byte_offset: 0,
@@ -567,8 +572,42 @@ pub fn parse<'a>(string: &'a str) -> Result<Element<'a>, ParseError<'a>> {
         location_stack: Vec::new(),
         source: string,
         eof_met: false,
+    };
+    
+    let mut elements = Vec::new();
+    
+    state.skip_whitespace();
+    state.push_position();
+    loop {
+        // End of HTML file/input
+        if state.peek().is_none() {
+            break;
+        }
+        
+        let opening_pos = state.cur_location;
+        state.check_char('<')
+            .map_err(|x| x.context(&mut state, "Parsing child element/comment of root"))?;
+        let (second_opening_pos, second_opening_char) = state.next_char()
+            .ok_or_else(|| ParseError::new(&mut state, "Expecting '!' or any identifier for element"))?;
+        
+        state.unnext_char(second_opening_pos, second_opening_char);
+        state.unnext_char(opening_pos, '<');
+        
+        match second_opening_char {
+            '!' => {
+                let (span, comment) = state.parse_comment().map_err(|x| x.context(&mut state, "Parsing comment in root"))?;
+                elements.push(RootElement::Comment(span, comment));
+            }
+            
+            // Must be normal element
+            _ => elements.push(RootElement::Element(state.parse_element().map_err(|x| x.context(&mut state, "Parsing child element of root"))?))
+        }
+        
+        state.skip_whitespace();
     }
-    .parse_element()
+    state.pop_position();
+    
+    Ok(elements)
 }
 
 pub struct ParseError<'a> {

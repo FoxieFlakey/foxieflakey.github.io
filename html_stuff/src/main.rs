@@ -26,11 +26,14 @@ fn main() {
             <tag />
             
             <!-- img></ img   > <!-- <-->
-        </  ${abc  aa}>"#,
+        </  ${abc  aa}> <!--- --->
+        <div>
+        <div/>
+        </div>"#,
     );
     match result {
         Ok(x) => {
-           println!("{}", html_display::AsTree(vec![x]));
+           println!("{}", html_display::AsTree(x));
         },
 
         Err(e) => {

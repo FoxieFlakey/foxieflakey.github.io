@@ -4,7 +4,7 @@ use std::fmt::{self, Display, Write};
 
 use crate::{html::{self, Element}, prefix_writer::PrefixWriter};
 
-pub struct AsTree<'a>(pub Vec<html::Element<'a>>);
+pub struct AsTree<'a>(pub Vec<html::RootElement<'a>>);
 
 const DOWN_RIGHT: char = '└';
 const DOWN_BRANCH_RIGHT: char = '├';
@@ -26,7 +26,15 @@ impl Display for AsTree<'_> {
                 content_prefix = STRAIGHT_DOWN;
             }
             
-            print_element(&mut f, header_prefix, content_prefix, child)?;
+            match child {
+                html::RootElement::Element(element) => {
+                    print_element(&mut f, header_prefix, content_prefix, element)?
+                }
+                
+                html::RootElement::Comment(_, comment) => {
+                    writeln!(f, " {header_prefix} Comment '{}'", comment)?;
+                }
+            }
         }
         writeln!(f, "End of root")?;
         
