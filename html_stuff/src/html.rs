@@ -240,7 +240,7 @@ impl<'a> State<'a> {
         let mut start = None;
         loop {
             let (pos, char) = self.next_char().ok_or_else(|| {
-                ParseError::new(self, "expected more character got EOF")
+                ParseError::new_with_location(self, self.cur_location, "expected more character got EOF")
             })?;
             
             if start.is_none() {
@@ -256,7 +256,7 @@ impl<'a> State<'a> {
                     if let Some(start) = start {
                         return Ok((self.pop_position(), &self.source[start.byte_offset..pos.byte_offset]));
                     } else {
-                        return Err(ParseError::new(self, "Expected atleast one character for identifier got none"))
+                        return Err(ParseError::new_with_location(self, self.cur_location, "Expected atleast one character for identifier got none"))
                     }
                 }
             }
