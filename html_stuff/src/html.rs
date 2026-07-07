@@ -21,16 +21,26 @@
 
 use std::cmp;
 
-use char_positions::{CharPositions, CharPositionsExt, LineColByte};
+use char_positions::{CharPositions, CharPositionsExt, LineColByteRange};
 use pushback_iter::PushBackIterator;
 
 use crate::html_display;
 
 #[derive(Clone, Copy)]
 pub struct Location {
-    pub line: u32,
-    pub column: u32,
+    pub line: usize,
+    pub column: usize,
     pub byte_offset: usize,
+}
+
+impl From<LineColByteRange> for Location {
+    fn from(value: LineColByteRange) -> Self {
+        Self {
+            line: value.0,
+            column: value.1,
+            byte_offset: value.2.start
+        }
+    }
 }
 
 // NOTE: Spans are inclusive on both ends
@@ -99,7 +109,7 @@ pub struct Element<'a> {
 struct State<'a> {
     source: &'a str,
     // Iterator of chars
-    char_iter: PushBackIterator<CharPositions<'a, LineColByte>>,
+    char_iter: PushBackIterator<CharPositions<'a, Location>>,
     location_stack: Vec<Location>,
     cur_location: Location,
     cur_char: Option<char>,
@@ -117,12 +127,12 @@ impl<'a> Identifier<'a> {
 }
 
 impl<'a> State<'a> {
-    fn peek(&mut self) -> Option<(LineColByte, char)> {
+    fn peek(&mut self) -> Option<(Location, char)> {
         self.char_iter.peek().copied()
     }
 
     // This does not skip whitespace, manually skip it before
-    fn next_char(&mut self) -> Option<(LineColByte, char)> {
+    fn next_char(&mut self) -> Option<(Location, char)> {
         let Some((pos, chr)) = self.char_iter.next() else {
             if !self.eof_met {
                 self.cur_location.column += 1;
@@ -131,9 +141,7 @@ impl<'a> State<'a> {
             return None;
         };
 
-        self.cur_location.line = u32::try_from(pos.0).unwrap();
-        self.cur_location.column = u32::try_from(pos.1).unwrap();
-        self.cur_location.byte_offset = pos.2;
+        self.cur_location = pos;
         self.cur_char = Some(chr);
 
         Some((pos, chr))
@@ -165,12 +173,8 @@ impl<'a> State<'a> {
     fn unnext_char(&mut self) {
         let chr = self.cur_char.take().expect("cant unnext char (because its either first char/already unnext)");
         self.char_iter.push_back((
-            LineColByte(
-                self.cur_location.line.try_into().unwrap(),
-                self.cur_location.column.try_into().unwrap(),
-                self.cur_location.byte_offset,
-            ),
-            chr,
+            self.cur_location,
+            chr
         ));
     }
 
@@ -212,7 +216,7 @@ impl<'a> State<'a> {
                 
                 if char == '}' {
                     // End of complex replacer, quit
-                    return Ok(Replacer::Complex(self.pop_position(), &self.source[start.byte_offset + 1..pos.2]))
+                    return Ok(Replacer::Complex(self.pop_position(), &self.source[start.byte_offset + 1..pos.byte_offset]))
                 }
             }
         } else {
@@ -253,7 +257,7 @@ impl<'a> State<'a> {
                 _ => {
                     self.unnext_char();
                     if let Some(start) = start {
-                        return Ok((self.pop_position(), &self.source[start.byte_offset..pos.2]));
+                        return Ok((self.pop_position(), &self.source[start.byte_offset..pos.byte_offset]));
                     } else {
                         return Err(ParseError::new(self, "Expected atleast one character for identifier got none"))
                     }
@@ -291,7 +295,7 @@ impl<'a> State<'a> {
                 
                 // Current text portions are ended, save it, if exists
                 if let Some(start_text) = start_text {
-                    let text_str = &self.source[start_text.byte_offset..pos.2];
+                    let text_str = &self.source[start_text.byte_offset..pos.byte_offset];
                     content.push(ElementContent::Text(
                         Span {
                             start: start_text,
@@ -361,11 +365,7 @@ impl<'a> State<'a> {
         
         let closing_position = self.peek()
             .ok_or_else(|| ParseError::new(self, "expecting closing tag, got EOF"))
-            .map(|x| Location {
-                line: x.0.0 as u32,
-                column: x.0.1 as u32,
-                byte_offset: x.0.2
-            })?;
+            .map(|x| x.0)?;
         
         let closing = self
             .parse_identifier_or_replacer()
