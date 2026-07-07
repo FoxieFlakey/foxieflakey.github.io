@@ -323,6 +323,20 @@ impl<'a> State<'a> {
             .parse_identifier_or_replacer()
             .map_err(|x| x.context(self, "Reading identifier"))?;
         self.skip_whitespace();
+        
+        if self.peek().ok_or_else(|| ParseError::new(self, "Expected /> for void tag or > for normal tag got EOF"))?.1 == '/' {
+            self.check_char('/')?;
+            self.check_char('>')?;
+            
+            // Void tag like <img />
+            return Ok(Element {
+                attributes: Vec::new(),
+                content: Vec::new(),
+                name: identifier,
+                this_span: self.pop_position()
+            })
+        }
+        
         self.check_char('>')?;
         ////////////////////////////////
 
