@@ -53,11 +53,13 @@ pub struct Span<'a> {
     source: Cow<'a, str>,
 }
 
+#[derive(Clone)]
 pub enum Identifier<'a> {
     Replacer(Replacer<'a>),
     Parsed(Span<'a>, Cow<'a, str>),
 }
 
+#[derive(Clone)]
 pub enum Attribute<'a> {
     Replacer(Replacer<'a>),
     Comment(Span<'a>, Cow<'a, str>),
@@ -70,6 +72,7 @@ pub enum Attribute<'a> {
     },
 }
 
+#[derive(Clone)]
 pub enum Replacer<'a> {
     // ${text} syntax
     Complex(Span<'a>, Cow<'a, str>),
@@ -88,6 +91,7 @@ impl Replacer<'_> {
     }
 }
 
+#[derive(Clone)]
 pub enum ElementContent<'a> {
     Replacer(Replacer<'a>),
     Text(Span<'a>, Cow<'a, str>),
@@ -95,6 +99,7 @@ pub enum ElementContent<'a> {
     Element(Element<'a>),
 }
 
+#[derive(Clone)]
 pub struct Element<'a> {
     pub this_span: Span<'a>,
     pub name: Identifier<'a>,
@@ -668,6 +673,7 @@ impl<'a> State<'a> {
     }
 }
 
+#[derive(Clone)]
 pub enum RootElement<'a> {
     Element(Element<'a>),
     Comment(Span<'a>, Cow<'a, str>),
