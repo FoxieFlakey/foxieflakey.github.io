@@ -49,15 +49,22 @@ fn encode_element(buf: &mut String, element: &html::Element<'_>, config: &Encode
                 html::Attribute::Comment(_, comment) => encode_comment(buf, comment, config),
                 html::Attribute::Parsed { key, value, value_is_double_quote, .. } => {
                     buf.push_str(key);
-                    buf.push('=');
-                    if *value_is_double_quote {
-                        buf.push('"');
-                        buf.push_str(value);
-                        buf.push('"');
-                    } else {
-                        buf.push('\'');
-                        buf.push_str(value);
-                        buf.push('\'');
+                    
+                    // if value is empty string it can be just one word
+                    // see https://html.spec.whatwg.org/multipage/syntax.html
+                    // look for 'Empty attribute syntax'
+                    
+                    if *value != "" {
+                        buf.push('=');
+                        if *value_is_double_quote {
+                            buf.push('"');
+                            buf.push_str(value);
+                            buf.push('"');
+                        } else {
+                            buf.push('\'');
+                            buf.push_str(value);
+                            buf.push('\'');
+                        }
                     }
                 }
             }
