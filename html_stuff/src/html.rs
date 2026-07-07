@@ -66,7 +66,7 @@ pub enum Attribute<'a> {
         // Whether value is using "val" not 'val'
         value_is_double_quote: bool,
         key: (Span<'a>, &'a str),
-        value: (Span<'a>, &'a str),
+        value: Option<(Span<'a>, &'a str)>,
     },
 }
 
@@ -452,28 +452,40 @@ impl<'a> State<'a> {
                         })?;
                     self.skip_whitespace();
 
-                    // Check for '=' sign
-                    self.check_char('=').map_err(|x| {
-                        x.context_with_location(self, start_attribute, "Parsing attributes")
-                    })?;
-                    self.skip_whitespace();
-
-                    // Parse the value part which is a string
-                    let (value_span, value, value_is_double_quote) = self
-                        .parse_string()
-                        .map_err(|x| {
-                            x.context(self, format!("Parsing value of '{}' attribute", key.1))
-                        })
-                        .map_err(|x| {
+                    let (_, chr) = self.peek().ok_or_else(|| ParseError::new(self, "Expected value of attribute or whtiespace (empty attribute) got EOF"))?;
+                    if chr != '=' {
+                        // Its void value, continue normally as if attribute done parsed
+                        
+                        attributes.push(Attribute::Parsed {
+                            this_span: self.pop_position(),
+                            key,
+                            value: None,
+                            value_is_double_quote: false
+                        });
+                    } else {
+                        // Check for '=' sign
+                        self.check_char('=').map_err(|x| {
                             x.context_with_location(self, start_attribute, "Parsing attributes")
                         })?;
-
-                    attributes.push(Attribute::Parsed {
-                        this_span: self.pop_position(),
-                        key,
-                        value: (value_span, value),
-                        value_is_double_quote
-                    });
+                        self.skip_whitespace();
+    
+                        // Parse the value part which is a string
+                        let (value_span, value, value_is_double_quote) = self
+                            .parse_string()
+                            .map_err(|x| {
+                                x.context(self, format!("Parsing value of '{}' attribute", key.1))
+                            })
+                            .map_err(|x| {
+                                x.context_with_location(self, start_attribute, "Parsing attributes")
+                            })?;
+    
+                        attributes.push(Attribute::Parsed {
+                            this_span: self.pop_position(),
+                            key,
+                            value: Some((value_span, value)),
+                            value_is_double_quote
+                        });
+                    }
                 }
             }
 
