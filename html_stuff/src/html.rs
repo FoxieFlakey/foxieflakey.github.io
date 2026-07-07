@@ -63,12 +63,10 @@ pub enum Attribute<'a> {
     Comment(Span<'a>, &'a str),
     Parsed {
         this_span: Span<'a>,
-        key_span: Span<'a>,
-        value_span: Span<'a>,
         // Whether value is using "val" not 'val'
         value_is_double_quote: bool,
-        key: &'a str,
-        value: &'a str,
+        key: (Span<'a>, &'a str),
+        value: (Span<'a>, &'a str),
     },
 }
 
@@ -472,10 +470,8 @@ impl<'a> State<'a> {
 
                     attributes.push(Attribute::Parsed {
                         this_span: self.pop_position(),
-                        key_span: key.0,
-                        key: key.1,
-                        value_span: value_span,
-                        value: value,
+                        key,
+                        value: (value_span, value),
                         value_is_double_quote
                     });
                 }

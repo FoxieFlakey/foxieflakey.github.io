@@ -48,21 +48,21 @@ fn encode_element(buf: &mut String, element: &html::Element<'_>, config: &Encode
                 html::Attribute::Replacer(_) => return Err(ThereReplacer),
                 html::Attribute::Comment(_, comment) => encode_comment(buf, comment, config),
                 html::Attribute::Parsed { key, value, value_is_double_quote, .. } => {
-                    buf.push_str(key);
+                    buf.push_str(key.1);
                     
                     // if value is empty string it can be just one word
                     // see https://html.spec.whatwg.org/multipage/syntax.html
                     // look for 'Empty attribute syntax'
                     
-                    if *value != "" {
+                    if value.1 != "" {
                         buf.push('=');
                         if *value_is_double_quote {
                             buf.push('"');
-                            buf.push_str(value);
+                            buf.push_str(value.1);
                             buf.push('"');
                         } else {
                             buf.push('\'');
-                            buf.push_str(value);
+                            buf.push_str(value.1);
                             buf.push('\'');
                         }
                     }

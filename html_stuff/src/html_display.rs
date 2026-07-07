@@ -74,7 +74,7 @@ fn print_element<W: Write + ?Sized>(
 
         match attribute {
             html::Attribute::Parsed { key, value, .. } => {
-                writeln!(f, " {header_prefix} '{key}'='{}'", value.escape_default())?;
+                writeln!(f, " {header_prefix} '{}'='{}'", key.1, value.1.escape_default())?;
             }
             html::Attribute::Replacer(replacer) => {
                 writeln!(

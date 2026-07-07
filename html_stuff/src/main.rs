@@ -12,6 +12,7 @@ fn main() {
     <title>Test</title>
   </head>
   <body>
+    <a disabled />
     <x-button>Helo! Click me</x-button>
     <script>
       let a = abc = "<" + "/script>"
