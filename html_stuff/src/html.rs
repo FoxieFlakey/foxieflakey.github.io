@@ -241,9 +241,11 @@ impl<'a> State<'a> {
         // Parsing the openign tag
         ////////////////////////////////
         self.check_char('<')?;
+        self.skip_whitespace();
         let identifier = self
             .parse_identifier_or_replacer()
             .map_err(|x| x.context(self, "Reading identifier"))?;
+        self.skip_whitespace();
         self.check_char('>')?;
         ////////////////////////////////
 
@@ -308,10 +310,12 @@ impl<'a> State<'a> {
         // to be '/'
         ////////////////////////////////
         self.check_char('/')?;
+        self.skip_whitespace();
         let closing_position = self.cur_location;
         let closing = self
             .parse_identifier_or_replacer()
             .map_err(|x| x.context(self, "Reading identifier"))?;
+        self.skip_whitespace();
         self.check_char('>')?;
         ////////////////////////////////
 

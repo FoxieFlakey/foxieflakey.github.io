@@ -4,17 +4,17 @@ mod prefix_writer;
 
 fn main() {
     let result = html::parse(
-        r#"<div>
-            <div>
+        r#"<  div   >
+            <div >
                 Hello Foxie here
                 ${abc}
-                <div>
+                <  div>
                   Mreow
                 </div>
             </div>
             
-            <img></img>
-        </div>"#,
+            <img></ img   >
+        </  div>"#,
     );
     match result {
         Ok(x) => {
