@@ -263,6 +263,54 @@ impl<'a> State<'a> {
         }
     }
 
+    fn parse_comment(&mut self) -> Result<(Span<'a>, &'a str), ParseError<'a>> {
+        self.push_position();
+        self.check_char('<')?;
+        self.check_char('!')?;
+        self.check_char('-')?;
+        self.check_char('-')?;
+        
+        let mut start = None;
+        
+        let mut history: [Option<(Location, char)>; 4] = [
+            None, // At the end, must point to '>'
+            None, // At the end, must point to '-'
+            None, // At the end, must point to '-'
+            None  // At the end, must point to comment content or None if empty
+        ];
+        
+        loop {
+            let (pos, char) = self.next_char().ok_or_else(|| ParseError::new(self, "expecting comment closing or any character got EOF"))?;
+            if start.is_none() {
+                start = Some(self.cur_location);
+            }
+            
+            history[3] = history[2];
+            history[2] = history[1];
+            history[1] = history[0];
+            history[0] = Some((pos, char));
+            
+            // Check for ending
+            match (history[2], history[1], history[0]) {
+                (Some((_, '-')), Some((_, '-')), Some((_, '>'))) => {
+                    // Found the ending -->
+                    break;
+                }
+                _ => ()
+            }
+        }
+        
+        if let Some((last_pos, _)) = history[3] {
+            if let Some(start) = start {
+                Ok((self.pop_position(), &self.source[start.byte_offset..=last_pos.byte_offset]))
+            } else {
+                panic!("There last position but not start")
+            }
+        } else {
+            Ok((self.pop_position(), &""))
+        }
+    }
+
     fn parse_element(&mut self) -> Result<Element<'a>, ParseError<'a>> {
         self.skip_whitespace();
         self.push_position();
@@ -327,6 +375,16 @@ impl<'a> State<'a> {
                     
                     match chr {
                         '/' => break,
+                        '!' => {
+                            // Detected comment :3
+                            // carefuly unnext the '<' which positioned at 'child_location'
+                            self.unnext_char(child_location, '<');
+                            
+                            let (span, comment) = self.parse_comment()
+                                .map_err(|x| x.context_with_location(self, child_location, format!("Parsing comment in {}", html_display::DisplayIdentifier(&identifier))))?;
+                            
+                            content.push(ElementContent::Comment(span, comment));
+                        }
                         _ => {
                             // Parse child element
                             // put the '<' back

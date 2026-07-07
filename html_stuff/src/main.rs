@@ -7,13 +7,13 @@ fn main() {
         r#"<  ${abc  aa}   >
             <div >
                 Hello Foxie here
-                ${abc}
+                <!--
                 <  div>
                   Mreow
-                </div>
+                </div> -->
             </div>
             
-            <img></ img   >
+            <!-- img></ img   > <!-- <-->
         </  ${abc  aa}>"#,
     );
     match result {
