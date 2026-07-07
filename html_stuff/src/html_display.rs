@@ -70,13 +70,25 @@ fn print_element<W: Write + ?Sized>(
             html::ElementContent::Text(_, text) => {
                 writeln!(f, " {header_prefix} Text: '{}'", text.escape_default())?;
             },
-            html::ElementContent::Replacer(_, replacer) => {
-                writeln!(f, " {header_prefix} Replacer: '${{{}}}'", replacer.escape_default())?;
+            html::ElementContent::Replacer(replacer) => {
+                writeln!(f, " {header_prefix} Replacer: '{}'", DisplayReplacer(replacer))?;
             }
         }
     }
     
     Ok(())
+}
+
+struct DisplayReplacer<'a>(&'a html::Replacer<'a>);
+
+impl Display for DisplayReplacer<'_> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self.0 {
+            html::Replacer::Complex(_, x) => writeln!(f, "${{{}}}", x)?,
+            html::Replacer::Simple(_, x) => writeln!(f, "${}", x)?
+        }
+        Ok(())
+    }
 }
 
 struct DisplayIdentifier<'a>(&'a html::Identifier<'a>);
@@ -88,8 +100,8 @@ impl Display for DisplayIdentifier<'_> {
                 write!(f, "{text}")?;
             }
             
-            html::Identifier::Replacer(_, replacer) => {
-                write!(f, "${{{replacer}}}")?;
+            html::Identifier::Replacer(replacer) => {
+                write!(f, "{}", DisplayReplacer(replacer))?;
             }
         }
         

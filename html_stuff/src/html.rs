@@ -41,27 +41,48 @@ pub struct Span<'a> {
     source: &'a str,
 }
 
-pub enum ReplaceableItem<'a, T> {
-    Replacer(Span<'a>, &'a str),
-    Comment(Span<'a>, &'a str),
-    Parsed(T),
-}
-
 pub enum Identifier<'a> {
-    Replacer(Span<'a>, &'a str),
+    Replacer(Replacer<'a>),
     Parsed(Span<'a>, &'a str),
 }
 
-pub struct AttributeData<'a> {
-    pub this_span: Span<'a>,
-    pub key_span: Span<'a>,
-    pub value_span: Span<'a>,
+pub enum Attribute<'a> {
+    Replacer(Replacer<'a>),
+    Comment(Span<'a>, &'a str),
+    Parsed {
+        this_span: Span<'a>,
+        key_span: Span<'a>,
+        value_span: Span<'a>,
+    },
 }
 
-pub type Attribute<'a> = ReplaceableItem<'a, AttributeData<'a>>;
+pub enum Replacer<'a> {
+    // ${text} syntax
+    Complex(Span<'a>, &'a str),
+    
+    // $variable syntax
+    Simple(Span<'a>, &'a str)
+}
+
+impl Replacer<'_> {
+    pub fn is_same(&self, other: &Self) -> bool {
+        match (self, other) {
+            (Replacer::Complex(_, a), Replacer::Complex(_, b)) => a == b,
+            (Replacer::Simple(_, a), Replacer::Simple(_, b)) => a == b,
+            _ => false
+        }
+    }
+    
+    pub fn debug_name(&self) -> &str {
+        match self {
+            Replacer::Complex(_, a) => *a,
+            Replacer::Simple(_, a) => *a,
+        }
+    }
+}
 
 pub enum ElementContent<'a> {
-    Replacer(Span<'a>, &'a str),
+    Replacer(Replacer<'a>),
     Text(Span<'a>, &'a str),
     Comment(Span<'a>, &'a str),
     Element(Element<'a>),
@@ -94,14 +115,14 @@ impl<'a> Identifier<'a> {
     pub fn debug_name(&self) -> &str {
         match self {
             Identifier::Parsed(_, x) => x,
-            Identifier::Replacer(_, x) => x,
+            Identifier::Replacer(x) => x.debug_name(),
         }
     }
     
     pub fn is_same_identifier(&self, other: &Self) -> bool {
         match (self, other) {
             (Identifier::Parsed(_, x), Identifier::Parsed(_, y)) => x == y,
-            (Identifier::Replacer(_, x), Identifier::Replacer(_, y)) => x == y,
+            (Identifier::Replacer(x), Identifier::Replacer(y)) => x.is_same(y),
             _ => false
         }
     }
@@ -154,7 +175,7 @@ impl<'a> State<'a> {
     }
 
     fn unnext_char(&mut self) {
-        let chr = self.cur_char.expect("cant unnext first char");
+        let chr = self.cur_char.take().expect("cant unnext char (because its either first char/already unnext)");
         self.char_iter.push_back((
             LineColByte(
                 self.cur_location.line.try_into().unwrap(),
@@ -188,39 +209,26 @@ impl<'a> State<'a> {
         Ok(())
     }
 
-    // This strictly ignores whitespaces
-    fn parse_identifier(&mut self, terminator: char) -> Result<Identifier<'a>, ParseError<'a>> {
+    fn parse_identifier_or_replacer(&mut self) -> Result<Identifier<'a>, ParseError<'a>> {
+        let result = self.parse_identifier()?;
+        Ok(Identifier::Parsed(result.0, result.1))
+    }
+    
+    // This strictly ignores whitespaces, and terminates when its not valid identifier character
+    fn parse_identifier(&mut self) -> Result<(Span<'a>, &'a str), ParseError<'a>> {
         let start = self.push_position();
         loop {
             let (pos, char) = self.next_char().ok_or_else(|| {
-                ParseError::new(
-                    self,
-                    format!(
-                        "expected identifier character or {} got EOF",
-                        terminator.escape_default()
-                    ),
-                )
+                ParseError::new(self, "expected more character got EOF")
             })?;
-
-            if char == terminator {
-                return Ok(Identifier::Parsed(
-                    self.pop_position(),
-                    &self.source[start.byte_offset + 1..pos.2],
-                ));
-            }
 
             match char {
                 '0'..='9' | 'A'..='Z' | 'a'..='z' | '-' | '_' | ':' => {
                     continue;
                 }
-                x => {
-                    return Err(ParseError::new(
-                        self,
-                        format!(
-                            "Expected A-Z, a-z, -, _, :, 0-9 or '{terminator}' character got '{}'",
-                            x.escape_default()
-                        ),
-                    ));
+                _ => {
+                    self.unnext_char();
+                    return Ok((self.pop_position(), &self.source[start.byte_offset + 1..pos.2]));
                 }
             }
         }
@@ -234,9 +242,9 @@ impl<'a> State<'a> {
         ////////////////////////////////
         self.check_char('<')?;
         let identifier = self
-            .parse_identifier('>')
+            .parse_identifier_or_replacer()
             .map_err(|x| x.context(self, "Reading identifier"))?;
-        // Note: terminator is already consumed
+        self.check_char('>')?;
         ////////////////////////////////
 
         // Parsing the text content, may be nest of other elements
@@ -302,9 +310,9 @@ impl<'a> State<'a> {
         self.check_char('/')?;
         let closing_position = self.cur_location;
         let closing = self
-            .parse_identifier('>')
+            .parse_identifier_or_replacer()
             .map_err(|x| x.context(self, "Reading identifier"))?;
-        // Note: terminator is already consumed
+        self.check_char('>')?;
         ////////////////////////////////
 
         if !identifier.is_same_identifier(&closing) {
