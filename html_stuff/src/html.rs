@@ -287,6 +287,7 @@ impl<'a> State<'a> {
                     },
                 )?));
             } else {
+                // Try begin new span of text, if it havent
                 if start_text.is_none() {
                     start_text = Some(self.cur_location);
                 }
