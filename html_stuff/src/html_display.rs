@@ -79,7 +79,7 @@ fn print_element<W: Write + ?Sized>(
     Ok(())
 }
 
-struct DisplayReplacer<'a>(&'a html::Replacer<'a>);
+pub struct DisplayReplacer<'a>(pub &'a html::Replacer<'a>);
 
 impl Display for DisplayReplacer<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -91,7 +91,7 @@ impl Display for DisplayReplacer<'_> {
     }
 }
 
-struct DisplayIdentifier<'a>(&'a html::Identifier<'a>);
+pub struct DisplayIdentifier<'a>(pub &'a html::Identifier<'a>);
 
 impl Display for DisplayIdentifier<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {

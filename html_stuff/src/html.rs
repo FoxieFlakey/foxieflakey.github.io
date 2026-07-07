@@ -24,6 +24,8 @@ use std::cmp;
 use char_positions::{CharPositions, CharPositionsExt, LineColByte};
 use pushback_iter::PushBackIterator;
 
+use crate::html_display;
+
 #[derive(Clone, Copy)]
 pub struct Location {
     pub line: u32,
@@ -72,13 +74,6 @@ impl Replacer<'_> {
             _ => false
         }
     }
-    
-    pub fn debug_name(&self) -> &str {
-        match self {
-            Replacer::Complex(_, a) => *a,
-            Replacer::Simple(_, a) => *a,
-        }
-    }
 }
 
 pub enum ElementContent<'a> {
@@ -112,13 +107,6 @@ struct State<'a> {
 }
 
 impl<'a> Identifier<'a> {
-    pub fn debug_name(&self) -> &str {
-        match self {
-            Identifier::Parsed(_, x) => x,
-            Identifier::Replacer(x) => x.debug_name(),
-        }
-    }
-    
     pub fn is_same_identifier(&self, other: &Self) -> bool {
         match (self, other) {
             (Identifier::Parsed(_, x), Identifier::Parsed(_, y)) => x == y,
@@ -332,7 +320,7 @@ impl<'a> State<'a> {
                         x.context_with_location(
                             self,
                             child_location,
-                            format!("Parsing child element of {}", identifier.debug_name()),
+                            format!("Parsing child element of {}", html_display::DisplayIdentifier(&identifier)),
                         )
                     },
                 )?));
@@ -368,7 +356,7 @@ impl<'a> State<'a> {
         ////////////////////////////////
 
         if !identifier.is_same_identifier(&closing) {
-            return Err(ParseError::new_with_location(self, closing_position, format!("Closing tag has different name than opening ('{}')!", identifier.debug_name())))
+            return Err(ParseError::new_with_location(self, closing_position, format!("Closing tag has different name than opening ('{}')!", html_display::DisplayIdentifier(&identifier))))
         }
 
         Ok(Element {
