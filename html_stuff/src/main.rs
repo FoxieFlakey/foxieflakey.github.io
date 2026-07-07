@@ -4,7 +4,7 @@ mod prefix_writer;
 
 fn main() {
     let result = html::parse(
-        r#"<  div   >
+        r#"<  ${abc  aa}   >
             <div >
                 Hello Foxie here
                 ${abc}
@@ -14,7 +14,7 @@ fn main() {
             </div>
             
             <img></ img   >
-        </  div>"#,
+        </  ${abc  aa}>"#,
     );
     match result {
         Ok(x) => {

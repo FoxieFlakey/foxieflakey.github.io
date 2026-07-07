@@ -84,8 +84,8 @@ struct DisplayReplacer<'a>(&'a html::Replacer<'a>);
 impl Display for DisplayReplacer<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self.0 {
-            html::Replacer::Complex(_, x) => writeln!(f, "${{{}}}", x)?,
-            html::Replacer::Simple(_, x) => writeln!(f, "${}", x)?
+            html::Replacer::Complex(_, x) => write!(f, "Replacer ${{{}}}", x)?,
+            html::Replacer::Simple(_, x) => write!(f, "Replacer ${}", x)?
         }
         Ok(())
     }

@@ -209,18 +209,54 @@ impl<'a> State<'a> {
         Ok(())
     }
 
+    fn parse_replacer(&mut self) -> Result<Replacer<'a>, ParseError<'a>> {
+        self.push_position();
+        self.check_char('$').map_err(|x| x.context(self, "Parsing replacer"))?;
+        
+        let chr = self.next_char().ok_or_else(|| ParseError::new(self, "Expected { or identifier character while parsing replacer"))?.1;
+        
+        if chr == '{' {
+            let start = self.cur_location;
+            loop {
+                let (pos, char) = self.next_char().ok_or_else(|| {
+                    ParseError::new(self, "expected more character for complex replacer got EOF")
+                })?;
+                
+                if char == '}' {
+                    // End of complex replacer, quit
+                    return Ok(Replacer::Complex(self.pop_position(), &self.source[start.byte_offset + 1..pos.2]))
+                }
+            }
+        } else {
+            self.unnext_char();
+            let identifier = self.parse_identifier()?;
+            Ok(Replacer::Simple(self.pop_position(), identifier.1))
+        }
+    }
+
     fn parse_identifier_or_replacer(&mut self) -> Result<Identifier<'a>, ParseError<'a>> {
-        let result = self.parse_identifier()?;
-        Ok(Identifier::Parsed(result.0, result.1))
+        let chr = self.peek().ok_or_else(|| ParseError::new(self, "Expected $ or identifier character while parsing identifier or replacer"))?.1;
+        if chr == '$' {
+            // Replacer
+            Ok(Identifier::Replacer(self.parse_replacer()?))
+        } else {
+            // Plain identifier
+            let result = self.parse_identifier()?;
+            Ok(Identifier::Parsed(result.0, result.1))
+        }
     }
     
     // This strictly ignores whitespaces, and terminates when its not valid identifier character
     fn parse_identifier(&mut self) -> Result<(Span<'a>, &'a str), ParseError<'a>> {
-        let start = self.push_position();
+        let mut start = None;
         loop {
             let (pos, char) = self.next_char().ok_or_else(|| {
                 ParseError::new(self, "expected more character got EOF")
             })?;
+            
+            if start.is_none() {
+                start = Some(self.push_position());
+            }
 
             match char {
                 '0'..='9' | 'A'..='Z' | 'a'..='z' | '-' | '_' | ':' => {
@@ -228,7 +264,11 @@ impl<'a> State<'a> {
                 }
                 _ => {
                     self.unnext_char();
-                    return Ok((self.pop_position(), &self.source[start.byte_offset + 1..pos.2]));
+                    if let Some(start) = start {
+                        return Ok((self.pop_position(), &self.source[start.byte_offset..pos.2]));
+                    } else {
+                        return Err(ParseError::new(self, "Expected atleast one character for identifier got none"))
+                    }
                 }
             }
         }
@@ -311,7 +351,15 @@ impl<'a> State<'a> {
         ////////////////////////////////
         self.check_char('/')?;
         self.skip_whitespace();
-        let closing_position = self.cur_location;
+        
+        let closing_position = self.peek()
+            .ok_or_else(|| ParseError::new(self, "expecting closing tag, got EOF"))
+            .map(|x| Location {
+                line: x.0.0 as u32,
+                column: x.0.1 as u32,
+                byte_offset: x.0.2
+            })?;
+        
         let closing = self
             .parse_identifier_or_replacer()
             .map_err(|x| x.context(self, "Reading identifier"))?;
