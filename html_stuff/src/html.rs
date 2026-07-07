@@ -19,7 +19,7 @@
 // 7. Closing tag must have exact same byte to byte value as
 //    the opening after trimming whitespaces
 
-use std::cmp;
+use std::{cmp, borrow::Cow};
 
 use char_positions::{CharPositions, CharPositionsExt, LineColByteRange};
 use pushback_iter::PushBackIterator;
@@ -44,38 +44,38 @@ impl From<LineColByteRange> for Location {
 }
 
 // NOTE: Spans are inclusive on both ends
-#[derive(Clone, Copy)]
+#[derive(Clone)]
 pub struct Span<'a> {
     pub start: Location,
     pub end: Location,
 
     // Original &str, not corresponding to current Span
-    source: &'a str,
+    source: Cow<'a, str>,
 }
 
 pub enum Identifier<'a> {
     Replacer(Replacer<'a>),
-    Parsed(Span<'a>, &'a str),
+    Parsed(Span<'a>, Cow<'a, str>),
 }
 
 pub enum Attribute<'a> {
     Replacer(Replacer<'a>),
-    Comment(Span<'a>, &'a str),
+    Comment(Span<'a>, Cow<'a, str>),
     Parsed {
         this_span: Span<'a>,
         // Whether value is using "val" not 'val'
         value_is_double_quote: bool,
-        key: (Span<'a>, &'a str),
-        value: Option<(Span<'a>, &'a str)>,
+        key: (Span<'a>, Cow<'a, str>),
+        value: Option<(Span<'a>, Cow<'a, str>)>,
     },
 }
 
 pub enum Replacer<'a> {
     // ${text} syntax
-    Complex(Span<'a>, &'a str),
+    Complex(Span<'a>, Cow<'a, str>),
 
     // $variable syntax
-    Simple(Span<'a>, &'a str),
+    Simple(Span<'a>, Cow<'a, str>),
 }
 
 impl Replacer<'_> {
@@ -90,8 +90,8 @@ impl Replacer<'_> {
 
 pub enum ElementContent<'a> {
     Replacer(Replacer<'a>),
-    Text(Span<'a>, &'a str),
-    Comment(Span<'a>, &'a str),
+    Text(Span<'a>, Cow<'a, str>),
+    Comment(Span<'a>, Cow<'a, str>),
     Element(Element<'a>),
 }
 
@@ -156,7 +156,7 @@ impl<'a> State<'a> {
         Span {
             start: self.location_stack.pop().unwrap(),
             end: self.cur_location,
-            source: self.source,
+            source: Cow::Borrowed(self.source),
         }
     }
 
@@ -220,7 +220,7 @@ impl<'a> State<'a> {
                     // End of complex replacer, quit
                     return Ok(Replacer::Complex(
                         self.pop_position(),
-                        &self.source[start.byte_offset + 1..pos.byte_offset],
+                        Cow::Borrowed(&self.source[start.byte_offset + 1..pos.byte_offset]),
                     ));
                 }
             }
@@ -256,7 +256,7 @@ impl<'a> State<'a> {
 
     // Accepts either "" or ''
     // 3rd element in tuple is true if string quoed with " else false if its quoted with '
-    fn parse_string(&mut self) -> Result<(Span<'a>, &'a str, bool), ParseError<'a>> {
+    fn parse_string(&mut self) -> Result<(Span<'a>, Cow<'a, str>, bool), ParseError<'a>> {
         self.push_position();
         let string_type = self
             .next_char()
@@ -284,11 +284,11 @@ impl<'a> State<'a> {
                 if let Some(content_start) = content_start {
                     return Ok((
                         self.pop_position(),
-                        &self.source[content_start.byte_offset..pos.byte_offset],
+                        Cow::Borrowed(&self.source[content_start.byte_offset..pos.byte_offset]),
                         string_type == '"'
                     ));
                 } else {
-                    return Ok((self.pop_position(), "", string_type == '"'));
+                    return Ok((self.pop_position(), Cow::Borrowed(""), string_type == '"'));
                 }
             }
         }
@@ -302,7 +302,7 @@ impl<'a> State<'a> {
     }
 
     // This strictly ignores whitespaces, and terminates when its not valid identifier character
-    fn parse_identifier(&mut self) -> Result<(Span<'a>, &'a str), ParseError<'a>> {
+    fn parse_identifier(&mut self) -> Result<(Span<'a>, Cow<'a, str>), ParseError<'a>> {
         self.push_position();
         let mut start = None;
         loop {
@@ -324,7 +324,7 @@ impl<'a> State<'a> {
                 if let Some(start) = start {
                     return Ok((
                         self.pop_position(),
-                        &self.source[start.byte_offset..pos.byte_offset],
+                        Cow::Borrowed(&self.source[start.byte_offset..pos.byte_offset]),
                     ));
                 } else {
                     return Err(ParseError::new_with_location(
@@ -337,7 +337,7 @@ impl<'a> State<'a> {
         }
     }
 
-    fn parse_comment(&mut self) -> Result<(Span<'a>, &'a str), ParseError<'a>> {
+    fn parse_comment(&mut self) -> Result<(Span<'a>, Cow<'a, str>), ParseError<'a>> {
         self.push_position();
         self.check_char('<')?;
         self.check_char('!')?;
@@ -380,13 +380,13 @@ impl<'a> State<'a> {
             if let Some(start) = start {
                 Ok((
                     self.pop_position(),
-                    &self.source[start.byte_offset..=last_pos.byte_offset],
+                    Cow::Borrowed(&self.source[start.byte_offset..=last_pos.byte_offset]),
                 ))
             } else {
                 panic!("There last position but not start")
             }
         } else {
-            Ok((self.pop_position(), &""))
+            Ok((self.pop_position(), Cow::Borrowed(&"")))
         }
     }
 
@@ -533,23 +533,23 @@ impl<'a> State<'a> {
                 })?;
 
                 // Current text portions are ended, save it, if exists
-                let mut save_text = || {
+                let mut save_text = |this: &Self| {
                     if let Some(start_text) = start_text {
-                        let text_str = &self.source[start_text.byte_offset..pos.byte_offset];
+                        let text_str = &this.source[start_text.byte_offset..pos.byte_offset];
                         content.push(ElementContent::Text(
                             Span {
                                 start: start_text,
-                                end: self.cur_location,
-                                source: text_str,
+                                end: this.cur_location,
+                                source: Cow::Borrowed(text_str),
                             },
-                            text_str,
+                            Cow::Borrowed(text_str),
                         ));
                     }
                     start_text = None;
                 };
 
                 if chr == '$' {
-                    save_text();
+                    save_text(self);
                     
                     // Parse replacer
                     // put '$' back
@@ -570,11 +570,11 @@ impl<'a> State<'a> {
                 } else {
                     match peek_chr {
                         '/' => {
-                            save_text();
+                            save_text(self);
                             break;
                         },
                         '!' => {
-                            save_text();
+                            save_text(self);
                             // Detected comment :3
                             // carefuly unnext the '<' which positioned at 'child_location'
                             self.unnext_char(peek_pos, '<');
@@ -599,7 +599,7 @@ impl<'a> State<'a> {
                                 // the identifier character, there cannot
                                 // be whitespace
                                 
-                                save_text();
+                                save_text(self);
                                 // Parse child element
                                 // put the '<' back
                                 self.unnext_char(peek_pos, '<');
@@ -670,7 +670,7 @@ impl<'a> State<'a> {
 
 pub enum RootElement<'a> {
     Element(Element<'a>),
-    Comment(Span<'a>, &'a str),
+    Comment(Span<'a>, Cow<'a, str>),
 }
 
 pub fn parse<'a>(string: &'a str) -> Result<Vec<RootElement<'a>>, ParseError<'a>> {
