@@ -4,32 +4,21 @@ mod prefix_writer;
 
 fn main() {
     let result = html::parse(
-        r#"<  ${abc  aa}   >
-            <div style="
-            div {
-                kgdb
-            }
-            " a="2" onclick="hewwwo! <html> </html>" >
-                Hello Foxie here
-                <!--
-                <  div>
-                  Mreow
-                </div> -->
-            </div>
-            
-            <special_void ${abc} $a id="meow" stretchccc   = "
-            
-            
-            "   /> 
-            
-            <void />
-            <tag />
-            
-            <!-- img></ img   > <!-- <-->
-        </  ${abc  aa}> <!--- --->
-        <div>
-        <div/>
-        </div>"#,
+        r#"<import src="components/button.html"></import>
+
+<html lang="en">
+  <head>
+    <title>Test</title>
+  </head>
+  <body>
+    <x-button>Helo! Click me</x-button>
+    <script>
+      let a = abc = "<" + "/script>"
+    </script>
+  </body>
+</html>
+
+"#,
     );
     match result {
         Ok(x) => {

@@ -292,6 +292,13 @@ impl<'a> State<'a> {
         }
     }
 
+    fn is_identifier_char(char: char) -> bool {
+        match char {
+            '0'..='9' | 'A'..='Z' | 'a'..='z' | '-' | '_' | ':' => true,
+            _ => false
+        }
+    }
+
     // This strictly ignores whitespaces, and terminates when its not valid identifier character
     fn parse_identifier(&mut self) -> Result<(Span<'a>, &'a str), ParseError<'a>> {
         self.push_position();
@@ -305,27 +312,24 @@ impl<'a> State<'a> {
                 )
             })?;
 
-            match char {
-                '0'..='9' | 'A'..='Z' | 'a'..='z' | '-' | '_' | ':' => {
-                    if start.is_none() {
-                        start = Some(self.push_position());
-                    }
-                    continue;
+            if Self::is_identifier_char(char) {
+                if start.is_none() {
+                    start = Some(self.push_position());
                 }
-                _ => {
-                    self.unnext_char(pos, char);
-                    if let Some(start) = start {
-                        return Ok((
-                            self.pop_position(),
-                            &self.source[start.byte_offset..pos.byte_offset],
-                        ));
-                    } else {
-                        return Err(ParseError::new_with_location(
-                            self,
-                            self.cur_location,
-                            "Expected atleast one character for identifier got none",
-                        ));
-                    }
+                continue;
+            } else {
+                self.unnext_char(pos, char);
+                if let Some(start) = start {
+                    return Ok((
+                        self.pop_position(),
+                        &self.source[start.byte_offset..pos.byte_offset],
+                    ));
+                } else {
+                    return Err(ParseError::new_with_location(
+                        self,
+                        self.cur_location,
+                        "Expected atleast one character for identifier got none",
+                    ));
                 }
             }
         }
@@ -511,22 +515,29 @@ impl<'a> State<'a> {
 
             if chr == '<' || chr == '$' {
                 let child_location = self.cur_location;
+                let (peek_pos, peek_chr) = self.peek().ok_or_else(|| {
+                    ParseError::new(self, "Expected identifier chars or '/' got EOF")
+                })?;
 
                 // Current text portions are ended, save it, if exists
-                if let Some(start_text) = start_text {
-                    let text_str = &self.source[start_text.byte_offset..pos.byte_offset];
-                    content.push(ElementContent::Text(
-                        Span {
-                            start: start_text,
-                            end: self.cur_location,
-                            source: text_str,
-                        },
-                        text_str,
-                    ));
-                }
-                start_text = None;
+                let mut save_text = || {
+                    if let Some(start_text) = start_text {
+                        let text_str = &self.source[start_text.byte_offset..pos.byte_offset];
+                        content.push(ElementContent::Text(
+                            Span {
+                                start: start_text,
+                                end: self.cur_location,
+                                source: text_str,
+                            },
+                            text_str,
+                        ));
+                    }
+                    start_text = None;
+                };
 
                 if chr == '$' {
+                    save_text();
+                    
                     // Parse replacer
                     // put '$' back
                     self.unnext_char(pos, chr);
@@ -544,20 +555,16 @@ impl<'a> State<'a> {
                         },
                     )?));
                 } else {
-                    // Lets see if its ending
-                    let (pos, chr) = self.peek().ok_or_else(|| {
-                        ParseError::new(self, "Expected identifier chars or '/' got EOF")
-                    })?;
-                    if chr == '/' {
-                        break;
-                    }
-
-                    match chr {
-                        '/' => break,
+                    match peek_chr {
+                        '/' => {
+                            save_text();
+                            break;
+                        },
                         '!' => {
+                            save_text();
                             // Detected comment :3
                             // carefuly unnext the '<' which positioned at 'child_location'
-                            self.unnext_char(child_location, '<');
+                            self.unnext_char(peek_pos, '<');
 
                             let (span, comment) = self.parse_comment().map_err(|x| {
                                 x.context_with_location(
@@ -572,23 +579,31 @@ impl<'a> State<'a> {
 
                             content.push(ElementContent::Comment(span, comment));
                         }
-                        _ => {
-                            // Parse child element
-                            // put the '<' back
-                            self.unnext_char(pos, '<');
-
-                            content.push(ElementContent::Element(self.parse_element().map_err(
-                                |x| {
-                                    x.context_with_location(
-                                        self,
-                                        child_location,
-                                        format!(
-                                            "Parsing child element in {}",
-                                            html_display::DisplayIdentifier(&identifier)
-                                        ),
-                                    )
-                                },
-                            )?));
+                        char => {
+                            if Self::is_identifier_char(char) {
+                                // Indeed child element, opening tag
+                                // has to start with '<' and immediately
+                                // the identifier character, there cannot
+                                // be whitespace
+                                
+                                save_text();
+                                // Parse child element
+                                // put the '<' back
+                                self.unnext_char(peek_pos, '<');
+    
+                                content.push(ElementContent::Element(self.parse_element().map_err(
+                                    |x| {
+                                        x.context_with_location(
+                                            self,
+                                            child_location,
+                                            format!(
+                                                "Parsing child element in {}",
+                                                html_display::DisplayIdentifier(&identifier)
+                                            ),
+                                        )
+                                    },
+                                )?));
+                            }
                         }
                     }
                 }
