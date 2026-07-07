@@ -112,7 +112,6 @@ struct State<'a> {
     char_iter: PushBackIterator<CharPositions<'a, Location>>,
     location_stack: Vec<Location>,
     cur_location: Location,
-    cur_char: Option<char>,
     eof_met: bool,
 }
 
@@ -142,7 +141,6 @@ impl<'a> State<'a> {
         };
 
         self.cur_location = pos;
-        self.cur_char = Some(chr);
 
         Some((pos, chr))
     }
@@ -170,10 +168,9 @@ impl<'a> State<'a> {
         }
     }
 
-    fn unnext_char(&mut self) {
-        let chr = self.cur_char.take().expect("cant unnext char (because its either first char/already unnext)");
+    fn unnext_char(&mut self, location: Location, chr: char) {
         self.char_iter.push_back((
-            self.cur_location,
+            location,
             chr
         ));
     }
@@ -205,7 +202,7 @@ impl<'a> State<'a> {
         self.push_position();
         self.check_char('$').map_err(|x| x.context(self, "Parsing replacer"))?;
         
-        let chr = self.next_char().ok_or_else(|| ParseError::new(self, "Expected { or identifier character while parsing replacer"))?.1;
+        let (location, chr) = self.next_char().ok_or_else(|| ParseError::new(self, "Expected { or identifier character while parsing replacer"))?;
         
         if chr == '{' {
             let start = self.cur_location;
@@ -220,7 +217,7 @@ impl<'a> State<'a> {
                 }
             }
         } else {
-            self.unnext_char();
+            self.unnext_char(location, chr);
             let identifier = self.parse_identifier()?;
             Ok(Replacer::Simple(self.pop_position(), identifier.1))
         }
@@ -255,7 +252,7 @@ impl<'a> State<'a> {
                     continue;
                 }
                 _ => {
-                    self.unnext_char();
+                    self.unnext_char(pos, char);
                     if let Some(start) = start {
                         return Ok((self.pop_position(), &self.source[start.byte_offset..pos.byte_offset]));
                     } else {
@@ -310,7 +307,7 @@ impl<'a> State<'a> {
                 if chr == '$' {
                     // Parse replacer
                     // put '$' back
-                    self.unnext_char();
+                    self.unnext_char(pos, chr);
                     
                     content.push(ElementContent::Replacer(self.parse_replacer().map_err(|x| {
                         x.context_with_location(
@@ -321,7 +318,7 @@ impl<'a> State<'a> {
                     })?));
                 } else {
                     // Lets see if its ending
-                    let (_, chr) = self.peek().ok_or_else(|| {
+                    let (pos, chr) = self.peek().ok_or_else(|| {
                         ParseError::new(self, "Expected identifier chars or '/' got EOF")
                     })?;
                     if chr == '/' {
@@ -333,7 +330,7 @@ impl<'a> State<'a> {
                         _ => {
                             // Parse child element
                             // put the '<' back
-                            self.unnext_char();
+                            self.unnext_char(pos, chr);
 
                             content.push(ElementContent::Element(self.parse_element().map_err(
                                 |x| {
@@ -397,7 +394,6 @@ pub fn parse<'a>(string: &'a str) -> Result<Element<'a>, ParseError<'a>> {
         },
         location_stack: Vec::new(),
         source: string,
-        cur_char: None,
         eof_met: false,
     }
     .parse_element()
