@@ -226,7 +226,10 @@ impl<'a> State<'a> {
     }
 
     fn parse_identifier_or_replacer(&mut self) -> Result<Identifier<'a>, ParseError<'a>> {
+        self.push_position();
         let chr = self.peek().ok_or_else(|| ParseError::new(self, "Expected $ or identifier character while parsing identifier or replacer"))?.1;
+        self.pop_position();
+        
         if chr == '$' {
             // Replacer
             Ok(Identifier::Replacer(self.parse_replacer()?))
@@ -268,18 +271,18 @@ impl<'a> State<'a> {
     
     // This strictly ignores whitespaces, and terminates when its not valid identifier character
     fn parse_identifier(&mut self) -> Result<(Span<'a>, &'a str), ParseError<'a>> {
+        self.push_position();
         let mut start = None;
         loop {
             let (pos, char) = self.next_char().ok_or_else(|| {
                 ParseError::new_with_location(self, self.cur_location, "expected more character got EOF")
             })?;
-            
-            if start.is_none() {
-                start = Some(self.push_position());
-            }
 
             match char {
                 '0'..='9' | 'A'..='Z' | 'a'..='z' | '-' | '_' | ':' => {
+                    if start.is_none() {
+                        start = Some(self.push_position());
+                    }
                     continue;
                 }
                 _ => {
@@ -357,32 +360,37 @@ impl<'a> State<'a> {
         
         let mut attributes = Vec::new();
         loop {
-            let (_, char) = self.peek().ok_or_else(|| {
+            self.skip_whitespace();
+            let (pos, char) = self.next_char().ok_or_else(|| {
                 ParseError::new(self, "expected / or > or attributes or comment when parsing for attributes")
             })?;
             
             if char == '/' || char == '>' {
+                self.unnext_char(pos, char);
                 break
             }
             
             // Parse the key part of attribute
-            self.skip_whitespace();
-            let start = self.cur_location;
-            let key = self.parse_identifier().map_err(|x| x.context(self, "Parsing key of attribute"))?;
+            let start_attribute = self.push_position();
+            self.unnext_char(pos, char);
+            
+            let key = self.parse_identifier()
+                .map_err(|x| x.context(self, "Parsing key of attribute"))
+                .map_err(|x| x.context_with_location(self, start_attribute, "Parsing attributes"))?;
             self.skip_whitespace();
             
             // Check for '=' sign
-            self.check_char('=')?;
+            self.check_char('=')
+                .map_err(|x| x.context_with_location(self, start_attribute, "Parsing attributes"))?;
             self.skip_whitespace();
             
             // Parse the value part which is a string
-            let value = self.parse_string().map_err(|x| x.context(self, format!("Parsing value of '{}' attribute", key.1)))?;
+            let value = self.parse_string()
+                .map_err(|x| x.context(self, format!("Parsing value of '{}' attribute", key.1)))
+                .map_err(|x| x.context_with_location(self, start_attribute, "Parsing attributes"))?;
+            
             attributes.push(Attribute::Parsed {
-                this_span: Span {
-                    start,
-                    end: value.0.end,
-                    source: self.source
-                },
+                this_span: self.pop_position(),
                 key_span: key.0,
                 key: key.1,
                 value_span: value.0,

@@ -9,7 +9,7 @@ fn main() {
             div {
                 kgdb
             }
-            " >
+            " a="2" onclick="hewwwo! <html> </html>" >
                 Hello Foxie here
                 <!--
                 <  div>
