@@ -13,9 +13,15 @@ fn main() {
   <head>
     <title>Test</title>
   </head>
+  <x-template name="x-button">
+    <button>
+        $children
+    </button>
+  </x-template>
+  
   <body>
     <a disabled />
-    <x-button>Helo! Click me</x-button>
+    <x-button>Helo! Click me, this is template</x-button>
     <div id="test replace 1">
         $host_test
     </div>
