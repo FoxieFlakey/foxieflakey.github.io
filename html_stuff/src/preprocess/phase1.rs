@@ -70,7 +70,6 @@ fn process_element<'tree: 'template_borrow, 'template_borrow>(element: &mut Elem
                         
                         for child in template_content {
                             match child {
-                                ElementContent::Comment(_, _) => (),
                                 ElementContent::Element(elem) => {
                                     let mut cloned = elem.clone();
                                     process_concreted_template(&mut cloned, &child_element)?;
@@ -99,9 +98,7 @@ fn process_element<'tree: 'template_borrow, 'template_borrow>(element: &mut Elem
                                         }
                                     }
                                 }
-                                ElementContent::Text(span, text) => {
-                                    element.content.push(ElementContent::Text(span.clone(), text.clone()));
-                                }
+                                x => element.content.push(x.clone())
                             }
                         }
                         
@@ -174,7 +171,6 @@ fn process_concreted_template<'tree>(
     let new_content = Vec::with_capacity(element.content.len());
     for content in mem::replace(&mut element.content, new_content) {
         match content {
-            ElementContent::Comment(_, _) => (),
             ElementContent::Element(mut elem) => {
                 process_concreted_template(&mut elem, template_instance_site)?;
                 element.content.push(ElementContent::Element(elem));
@@ -195,9 +191,7 @@ fn process_concreted_template<'tree>(
                     }
                 }
             }
-            ElementContent::Text(span, text) => {
-                element.content.push(ElementContent::Text(span.clone(), text.clone()));
-            }
+            x => element.content.push(x.clone())
         }
     }
     Ok(())

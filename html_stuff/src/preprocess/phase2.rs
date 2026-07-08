@@ -29,7 +29,6 @@ where
     // Normalize the attributes
     for attribute in &element.attributes {
         match attribute {
-            html::Attribute::Comment(_, _) => (),
             html::Attribute::Replacer(replacer) => {
                 match process_replacer(replacer, &mut env_fetcher)? {
                     EnvValue::Elements(_) => {
@@ -64,6 +63,7 @@ where
                     normalized_attributes.push(attribute.clone());
                 }
             }
+            x => normalized_attributes.push(x.clone()),
         }
     }
 
@@ -76,8 +76,6 @@ where
 
     for child in old_content {
         match child {
-            html::ElementContent::Comment(_, _) => (),
-            html::ElementContent::Text(_, _) => element.content.push(child.clone()),
             html::ElementContent::Element(mut child) => {
                 // Here, the env fetcher is different so can inherit
                 // turned it to dynamic dispatch because else rust going
@@ -122,6 +120,7 @@ where
                     }
                 }
             }
+            x => element.content.push(x)
         }
     }
 

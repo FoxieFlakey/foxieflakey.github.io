@@ -24,6 +24,9 @@ fn main() {
         <div $props></div>
         $children
     </button>
+    <!--
+    Comment preserved
+    -->
   </x-template>
   
   <body>
