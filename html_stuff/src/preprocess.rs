@@ -6,7 +6,8 @@ use crate::html::{self, Element, Replacer, RootElement};
 
 pub enum EnvValue<'a> {
     String(Cow<'a, str>),
-    ReplacementElement(html::Element<'a>)
+    Elements(Vec<html::Element<'a>>),
+    Attributes(Vec<html::Attribute<'a>>)
 }
 
 pub fn process<'a>(
@@ -30,7 +31,24 @@ fn process_element<'a>(element: &mut Element<'a>, env: &HashMap<String, EnvValue
         match attribute {
             html::Attribute::Comment(_, _) => (),
             html::Attribute::Replacer(replacer) => {
-                // TODO: Handle replacer here
+                match process_replacer(replacer, env)? {
+                    EnvValue::Elements(_) => return Err("Cannot place Elements in attributes list".to_string()),
+                    EnvValue::String(_) => return Err("Cannot place String in attributes list".to_string()),
+                    EnvValue::Attributes(attrs) => {
+                        for attribute in attrs {
+                            match attribute {
+                                html::Attribute::Comment(_, _) => (),
+                                html::Attribute::Replacer(_) => return Err("Cannot have replacer replacing replacer".to_string()),
+                                html::Attribute::Parsed { key, .. } => {
+                                    if attributes_present.insert(&key.1) {
+                                        // First pair
+                                        normalized_attributes.push(attribute.clone());
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             },
             html::Attribute::Parsed { key, .. } => {
                 if attributes_present.insert(&key.1) {
@@ -57,8 +75,14 @@ fn process_element<'a>(element: &mut Element<'a>, env: &HashMap<String, EnvValue
             },
             html::ElementContent::Replacer(replacer) => {
                 match process_replacer(&replacer, env)? {
-                    EnvValue::ReplacementElement(replaced) => {
-                        element.content.push(html::ElementContent::Element(replaced.clone()));
+                    EnvValue::Elements(elements) => {
+                        for replaced in elements {
+                            element.content.push(html::ElementContent::Element(replaced.clone()));
+                        }
+                    }
+                    
+                    EnvValue::Attributes(_) => {
+                        return Err("Attributes replacer cannot be inserted to text portion of element".to_string());
                     }
                     
                     EnvValue::String(replaced) => {
@@ -79,7 +103,7 @@ fn process_element<'a>(element: &mut Element<'a>, env: &HashMap<String, EnvValue
 fn process_replacer<'a, 'b>(replacer: &Replacer<'_>, env: &'b HashMap<String, EnvValue<'a>>) -> Result<&'b EnvValue<'a>, String> {
     match replacer {
         html::Replacer::Complex(_, _) => {
-            todo!("Handle complex");
+            return Err("Complex syntax like ${...} is reserved for something, do not use".to_string());
         }
         
         html::Replacer::Simple(_, var_name) => {
