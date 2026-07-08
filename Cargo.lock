@@ -18,6 +18,10 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "21eb25e26d7f0447e5334df6cd8800bb1b97512dc0b7af6867123ffe76cfebe6"
 
 [[package]]
+name = "html_preprocess"
+version = "0.1.0"
+
+[[package]]
 name = "html_stuff"
 version = "0.1.0"
 dependencies = [

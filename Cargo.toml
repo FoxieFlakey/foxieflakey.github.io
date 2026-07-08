@@ -1,5 +1,6 @@
 [workspace]
 resolver = "2"
 members = [
-  "html_stuff"
+  "html_stuff",
+  "html_preprocess"
 ]
