@@ -85,7 +85,14 @@ fn process_element<'tree: 'template_borrow, 'template_borrow>(element: &mut Elem
                                             if name == "children" {
                                                 // Paste children
                                                 for child in &child_element.content {
-                                                    element.content.push(child.clone());
+                                                    let mut cloned = child.clone();
+                                                    match &mut cloned {
+                                                        ElementContent::Element(element) => {
+                                                            process_concreted_template_attributes(element, &child_element)?;
+                                                        }
+                                                        _ => ()
+                                                    }
+                                                    element.content.push(cloned);
                                                 }
                                             } else {
                                                 // Passthru the replacer for next stage
@@ -123,10 +130,49 @@ fn process_element<'tree: 'template_borrow, 'template_borrow>(element: &mut Elem
     Ok(())
 }
 
+// This one like process_concreted_template_attributes_base but it goes nest deep
+fn process_concreted_template_attributes<'tree>(
+    element: &mut Element<'tree>,
+    template_instance_site: &Element<'tree>
+) -> Result<(), String> {
+    process_concreted_template_attributes_base(element, template_instance_site)?;
+    
+    for child in &mut element.content {
+        match child {
+            ElementContent::Element(elem) => {
+                process_concreted_template_attributes(elem, template_instance_site)?;
+            }
+            _ => ()
+        }
+    }
+    
+    Ok(())
+}
+
+fn process_concreted_template_attributes_base<'tree>(
+    element: &mut Element<'tree>,
+    template_instance_site: &Element<'tree>
+) -> Result<(), String> {
+    let new_attributes = Vec::with_capacity(element.attributes.len());
+    for attribute in mem::replace(&mut element.attributes, new_attributes) {
+        match attribute {
+            html::Attribute::Replacer(html::Replacer::Simple(_, name)) => {
+                if name == "props" {
+                    element.attributes.extend_from_slice(&template_instance_site.attributes);
+                }
+            }
+            x => element.attributes.push(x),
+        }
+    }
+    
+    Ok(())
+}
+
 fn process_concreted_template<'tree>(
     element: &mut Element<'tree>,
     template_instance_site: &Element<'tree>
 ) -> Result<(), String> {
+    process_concreted_template_attributes_base(element, template_instance_site)?;
     let new_content = Vec::with_capacity(element.content.len());
     for content in mem::replace(&mut element.content, new_content) {
         match content {

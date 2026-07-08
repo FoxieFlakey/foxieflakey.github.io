@@ -14,14 +14,22 @@ fn main() {
     <title>Test</title>
   </head>
   <x-template name="x-button">
-    <button>
+    <button $props>
+        $children
+    </button>
+  </x-template>
+  
+  <x-template name="x-button2">
+    <button onclick $props>
+        <div $props></div>
         $children
     </button>
   </x-template>
   
   <body>
     <a disabled />
-    <x-button>Helo! Click me, this is template</x-button>
+    <x-button onclick="alert('hi!')">Helo! Click me, this is template</x-button>
+    <x-button2 onclick="alert('hi!')">Helo! Click me, this is template</x-button2>
     <div id="test replace 1">
         $host_test
     </div>
