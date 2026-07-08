@@ -10,6 +10,7 @@ mod phase1;
 #[derive(Clone)]
 pub enum EnvValue<'a> {
     String(Cow<'a, str>),
+    #[expect(unused)]
     Elements(Vec<html::Element<'a>>),
     Attributes(Vec<html::Attribute<'a>>),
 }

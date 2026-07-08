@@ -3,9 +3,8 @@ use std::{collections::HashMap, mem};
 use crate::{html::{self, Element, ElementContent, Identifier, RootElement}, preprocess::EnvValue};
 
 enum FetchResult<'a, 'b> {
-    Env(EnvValue<'a>),
-    Template(&'b Vec<ElementContent<'a>>),
-    ChildrenPaste(&'b Vec<ElementContent<'a>>)
+    Env(#[expect(unused)] EnvValue<'a>),
+    Template(&'b Vec<ElementContent<'a>>)
 }
 
 pub fn run<'a, F>(tree: &mut Vec<RootElement<'a>>, mut env_fetcher: F) -> Result<(), String>
@@ -64,7 +63,6 @@ fn process_element<'tree: 'template_borrow, 'template_borrow>(element: &mut Elem
                                 // Try delegate to upper level
                                 match env_fetcher(name)? {
                                     FetchResult::Env(_) => None,
-                                    FetchResult::ChildrenPaste(_) => None,
                                     FetchResult::Template(elem) => Some(elem)
                                 }
                             })
