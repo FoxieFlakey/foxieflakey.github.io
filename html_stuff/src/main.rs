@@ -3,8 +3,8 @@ use std::{borrow::Cow, hash_map};
 
 mod html;
 mod html_display;
-mod prefix_writer;
 mod html_encoder;
+mod prefix_writer;
 mod preprocess;
 
 fn main() {
@@ -38,16 +38,16 @@ fn main() {
                 start: html::Location {
                     line: 0,
                     column: 0,
-                    byte_offset: 0
+                    byte_offset: 0,
                 },
                 end: html::Location {
                     line: 0,
                     column: 0,
-                    byte_offset: 0
+                    byte_offset: 0,
                 },
-                source: Cow::Borrowed("")
+                source: Cow::Borrowed(""),
             };
-            
+
             let env = hash_map! {
                 "host_test".to_string() => preprocess::EnvValue::String("?this is replaced?".into()),
                 "var_a".to_string() => preprocess::EnvValue::String("?this is replaced v2?".into()),
@@ -58,7 +58,7 @@ fn main() {
                         key: (empty_span.clone(), Cow::Borrowed("special")),
                         value: Some((empty_span.clone(), Cow::Borrowed("value")))
                     },
-                    
+
                     html::Attribute::Parsed {
                         this_span: empty_span.clone(),
                         value_is_double_quote: true,
@@ -67,17 +67,24 @@ fn main() {
                     }
                 ])
             };
-            
+
             preprocess::process(&mut x, &env).unwrap();
-            
+
             println!("{}", html_display::AsTree(&x));
             println!();
             println!();
-            println!("Encoded {}", html_encoder::encode(&x, &html_encoder::EncodeConfig {
-                preserve_comment: true,
-                strip_whitespace: false,
-                ..Default::default()
-            }).expect("There replacer"));
+            println!(
+                "Encoded {}",
+                html_encoder::encode(
+                    &x,
+                    &html_encoder::EncodeConfig {
+                        preserve_comment: true,
+                        strip_whitespace: false,
+                        ..Default::default()
+                    }
+                )
+                .expect("There replacer")
+            );
         }
 
         Err(e) => {

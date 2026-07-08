@@ -19,7 +19,7 @@
 // 7. Closing tag must have exact same byte to byte value as
 //    the opening after trimming whitespaces
 
-use std::{cmp, borrow::Cow};
+use std::{borrow::Cow, cmp};
 
 use char_positions::{CharPositions, CharPositionsExt, LineColByteRange};
 use pushback_iter::PushBackIterator;
@@ -290,7 +290,7 @@ impl<'a> State<'a> {
                     return Ok((
                         self.pop_position(),
                         Cow::Borrowed(&self.source[content_start.byte_offset..pos.byte_offset]),
-                        string_type == '"'
+                        string_type == '"',
                     ));
                 } else {
                     return Ok((self.pop_position(), Cow::Borrowed(""), string_type == '"'));
@@ -302,7 +302,7 @@ impl<'a> State<'a> {
     fn is_identifier_char(char: char) -> bool {
         match char {
             '0'..='9' | 'A'..='Z' | 'a'..='z' | '-' | '_' | ':' => true,
-            _ => false
+            _ => false,
         }
     }
 
@@ -457,15 +457,20 @@ impl<'a> State<'a> {
                         })?;
                     self.skip_whitespace();
 
-                    let (_, chr) = self.peek().ok_or_else(|| ParseError::new(self, "Expected value of attribute or whtiespace (empty attribute) got EOF"))?;
+                    let (_, chr) = self.peek().ok_or_else(|| {
+                        ParseError::new(
+                            self,
+                            "Expected value of attribute or whtiespace (empty attribute) got EOF",
+                        )
+                    })?;
                     if chr != '=' {
                         // Its void value, continue normally as if attribute done parsed
-                        
+
                         attributes.push(Attribute::Parsed {
                             this_span: self.pop_position(),
                             key,
                             value: None,
-                            value_is_double_quote: false
+                            value_is_double_quote: false,
                         });
                     } else {
                         // Check for '=' sign
@@ -473,7 +478,7 @@ impl<'a> State<'a> {
                             x.context_with_location(self, start_attribute, "Parsing attributes")
                         })?;
                         self.skip_whitespace();
-    
+
                         // Parse the value part which is a string
                         let (value_span, value, value_is_double_quote) = self
                             .parse_string()
@@ -483,12 +488,12 @@ impl<'a> State<'a> {
                             .map_err(|x| {
                                 x.context_with_location(self, start_attribute, "Parsing attributes")
                             })?;
-    
+
                         attributes.push(Attribute::Parsed {
                             this_span: self.pop_position(),
                             key,
                             value: Some((value_span, value)),
-                            value_is_double_quote
+                            value_is_double_quote,
                         });
                     }
                 }
@@ -555,7 +560,7 @@ impl<'a> State<'a> {
 
                 if chr == '$' {
                     save_text(self);
-                    
+
                     // Parse replacer
                     // put '$' back
                     self.unnext_char(pos, chr);
@@ -577,7 +582,7 @@ impl<'a> State<'a> {
                         '/' => {
                             save_text(self);
                             break;
-                        },
+                        }
                         '!' => {
                             save_text(self);
                             // Detected comment :3
@@ -603,14 +608,14 @@ impl<'a> State<'a> {
                                 // has to start with '<' and immediately
                                 // the identifier character, there cannot
                                 // be whitespace
-                                
+
                                 save_text(self);
                                 // Parse child element
                                 // put the '<' back
                                 self.unnext_char(peek_pos, '<');
-    
-                                content.push(ElementContent::Element(self.parse_element().map_err(
-                                    |x| {
+
+                                content.push(ElementContent::Element(
+                                    self.parse_element().map_err(|x| {
                                         x.context_with_location(
                                             self,
                                             child_location,
@@ -619,8 +624,8 @@ impl<'a> State<'a> {
                                                 html_display::DisplayIdentifier(&identifier)
                                             ),
                                         )
-                                    },
-                                )?));
+                                    })?,
+                                ));
                             }
                         }
                     }
@@ -715,18 +720,22 @@ pub fn parse<'a>(string: &'a str) -> Result<Vec<RootElement<'a>>, ParseError<'a>
 
         match second_opening_char {
             '!' => {
-                let (span, comment) = state
-                    .parse_comment()
-                    .map_err(|x| x.context_with_location(&mut state, opening_pos, "Parsing comment in root"))?;
+                let (span, comment) = state.parse_comment().map_err(|x| {
+                    x.context_with_location(&mut state, opening_pos, "Parsing comment in root")
+                })?;
                 elements.push(RootElement::Comment(span, comment));
             }
 
             // Must be normal element
-            _ => {
-                elements.push(RootElement::Element(state.parse_element().map_err(
-                    |x| x.context_with_location(&mut state, opening_pos, "Parsing child element of root"),
-                )?))
-            }
+            _ => elements.push(RootElement::Element(state.parse_element().map_err(
+                |x| {
+                    x.context_with_location(
+                        &mut state,
+                        opening_pos,
+                        "Parsing child element of root",
+                    )
+                },
+            )?)),
         }
 
         state.skip_whitespace();
@@ -813,7 +822,9 @@ impl<'a> ParseError<'a> {
             .unwrap()
             .saturating_sub(context_length + 2);
         let last_line_to_print = cmp::min(
-            usize::try_from(cmp::max(self.span.end.line, self.at.line)).unwrap() + context_length + 1,
+            usize::try_from(cmp::max(self.span.end.line, self.at.line)).unwrap()
+                + context_length
+                + 1,
             all_lines.len(),
         );
 

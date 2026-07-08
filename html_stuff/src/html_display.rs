@@ -73,12 +73,15 @@ fn print_element<W: Write + ?Sized>(
         }
 
         match attribute {
-            html::Attribute::Parsed { key, value, .. } => {
-                match value {
-                    Some(value) => writeln!(f, " {header_prefix} '{}'='{}'", key.1, value.1.escape_default())?,
-                    None => writeln!(f, " {header_prefix} '{}' is empty string", key.1)?
-                }
-            }
+            html::Attribute::Parsed { key, value, .. } => match value {
+                Some(value) => writeln!(
+                    f,
+                    " {header_prefix} '{}'='{}'",
+                    key.1,
+                    value.1.escape_default()
+                )?,
+                None => writeln!(f, " {header_prefix} '{}' is empty string", key.1)?,
+            },
             html::Attribute::Replacer(replacer) => {
                 writeln!(
                     f,
