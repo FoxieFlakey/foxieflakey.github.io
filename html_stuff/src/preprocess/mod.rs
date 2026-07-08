@@ -6,6 +6,7 @@ use crate::html::{self, RootElement};
 
 mod phase3;
 mod phase2;
+mod phase1;
 
 #[derive(Clone)]
 pub enum EnvValue<'a> {
@@ -19,6 +20,9 @@ pub fn process<'a>(
     tree: &mut Vec<RootElement<'a>>,
     environment: &'a HashMap<String, EnvValue<'a>>,
 ) -> Result<(), String> {
+    // Phase 1: resolve imports
+    phase1::run(tree, |key| environment.get(key).cloned())?;
+    
     // Phase 2: resolve templates
     phase2::run(tree, |key| environment.get(key).cloned())?;
     
