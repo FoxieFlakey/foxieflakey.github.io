@@ -1,8 +1,0 @@
-[package]
-name = "html_stuff"
-version = "0.1.0"
-edition = "2024"
-
-[dependencies]
-char-positions = "0.1.0"
-pushback-iter = "0.2.0"
