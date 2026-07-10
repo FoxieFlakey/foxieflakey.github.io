@@ -457,7 +457,7 @@ pub fn run(file: &File) -> Result<Vec<(Span, Token)>, Vec<Diagnostic>> {
         let token;
 
         if c.is_whitespace() {
-            if text_start.is_none() {
+            if text_start.is_none() && tag_started_since.is_none() {
                 text_start = Some(offset);
             }
             continue;
