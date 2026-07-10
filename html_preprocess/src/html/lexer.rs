@@ -457,6 +457,9 @@ pub fn run(file: &File) -> Result<Vec<(Span, Token)>, Vec<Diagnostic>> {
         let token;
 
         if c.is_whitespace() {
+            if text_start.is_none() {
+                text_start = Some(offset);
+            }
             continue;
         }
 
@@ -579,9 +582,17 @@ pub fn run(file: &File) -> Result<Vec<(Span, Token)>, Vec<Diagnostic>> {
                             ));
                         } else {
                             token = WhatToDoWithText::DoNothing;
+                            // False start, start saving text instead
+                            if text_start.is_none() {
+                                text_start = Some(offset);
+                            }
                         }
                     } else {
                         token = WhatToDoWithText::DoNothing;
+                        // False start, start saving text instead
+                        if text_start.is_none() {
+                            text_start = Some(offset);
+                        }
                     }
                 }
             }
