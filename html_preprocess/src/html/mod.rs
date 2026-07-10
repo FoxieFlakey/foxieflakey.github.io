@@ -27,14 +27,64 @@
 //    only needs &quot; (for " inside "...") &apos; (for ' inside '...')
 //    and &amp; (for typing & literally to not get confused)
 
-use codemap::CodeMap;
+use codemap::{CodeMap, File, Span};
+use codemap_diagnostic::Diagnostic;
 
-pub mod util;
-pub mod lexer;
+use crate::html::lexer::Token;
 
-struct State {
-    pub code_map: CodeMap
+mod lexer;
+mod util;
+
+pub struct Preprocessor {
+    code_map: CodeMap,
 }
 
+impl Preprocessor {
+    pub fn new() -> Self {
+        Self {
+            code_map: CodeMap::new(),
+        }
+    }
 
+    fn perform_lex(&self, file: &File) -> Result<Vec<(Span, Token)>, Vec<Diagnostic>> {
+        lexer::run(file)
+    }
 
+    pub fn get_codemap(&self) -> &CodeMap {
+        &self.code_map
+    }
+
+    pub fn parse_file(&mut self, name: &str, source: String) -> Result<(), Vec<Diagnostic>> {
+        let file = self.code_map.add_file(name.to_string(), source);
+        let tokens = self.perform_lex(&file)?;
+
+        for (idx, token) in tokens.iter().enumerate() {
+            let token_slice = file.source_slice(token.0);
+            print!("Token[{idx}] (raw: '{}') = ", token_slice.escape_default());
+
+            match &token.1 {
+                Token::Equal => println!("Equal"),
+                Token::LessThan => println!("LessThan"),
+                Token::GreaterThan => println!("GreaterThan"),
+                Token::Identifier => println!("Identifer('{}')", token_slice.escape_default()),
+                Token::Slash => println!("Slash"),
+                Token::Text => println!("Text('{}')", token_slice.escape_default()),
+                Token::Comment(comment) => {
+                    println!("Comment('{}')", file.source_slice(comment.content).escape_default())
+                }
+                Token::QuotedString(quoted_string) => println!(
+                    "QuotedString('{}', is_double_quote = {})",
+                    file.source_slice(quoted_string.content).escape_default(),
+                    quoted_string.is_double_quote
+                ),
+                Token::Replacer(replacer) => println!(
+                    "Replacer('{}', isSimple = {})",
+                    file.source_slice(replacer.content).escape_default(),
+                    replacer.is_simple
+                ),
+            }
+        }
+
+        Ok(())
+    }
+}

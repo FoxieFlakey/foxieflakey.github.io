@@ -1,27 +1,33 @@
-use codemap::CodeMap;
+use codemap_diagnostic::{ColorConfig, Emitter};
 
-use crate::html::util::{MietteFile, into_miette_span};
+use crate::html::Preprocessor;
 
 mod html;
 
 fn main() {
-    let mut map = CodeMap::new();
-    let file = map.add_file("Hello.html".into(), "fn main() {
-    let \"a\" = 23;
-}".into());
-    
-    let error = html::lexer::LexerError::ExpectingClosingCommentGotEof {
-        location: into_miette_span(&file, &file.span.subspan(
-            20,
-            23
-        )),
-        src: MietteFile(file),
-    };
-    
-    let mut output = &mut String::new();
-    miette::GraphicalReportHandler::new()
-        .render_report(&mut output, &error)
-        .unwrap();
-    println!("Result:");
-    println!("{output}");
+    let mut preprocessor = Preprocessor::new();
+    let source = r#"<import src="components/button.html"></import>
+
+<html lang="en">
+  <head>
+    <title>Test</title>
+  </head>
+  <body>
+    <x-button>Helo! Click me </x-button>
+    <!-- comment <a> -->
+    <script ${props>
+      let a = abc = "<" + "/script>"
+      $a
+    </script>
+  </body>
+</html>"#
+        .to_string();
+
+    match preprocessor.parse_file("index.html", source) {
+        Ok(_) => println!("File parsed succesfully"),
+        Err(e) => {
+            println!("Failed parsing file");
+            Emitter::stderr(ColorConfig::Auto, Some(preprocessor.get_codemap())).emit(&e);
+        }
+    }
 }
