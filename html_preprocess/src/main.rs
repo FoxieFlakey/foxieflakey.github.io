@@ -40,7 +40,7 @@ fn main() {
             .ok_or_else(|| format!("Cannot find '{path}'"))
     });
     
-    let source = r#"<import src="components/button.html"></import>
+    let source = r#"<import src="components/button.html" />
 
 <html lang="en">
   <head>
@@ -49,7 +49,8 @@ fn main() {
   <body>
     <x-button>Helo! Click me </x-button>
     <!-- comment <a> -->
-    <script ${props>
+    <script>
+    <script ${props}>
       let a = abc = "<" + "/script>"
       $a
     </script>
