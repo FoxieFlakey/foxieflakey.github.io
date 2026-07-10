@@ -35,14 +35,19 @@ use crate::html::lexer::Token;
 mod lexer;
 mod util;
 
-pub struct Preprocessor {
+pub struct Preprocessor<'a> {
     code_map: CodeMap,
+    #[expect(unused)]
+    fetcher: Box<dyn FnMut(&str) -> Result<String, String> + 'a>
 }
 
-impl Preprocessor {
-    pub fn new() -> Self {
+impl<'a> Preprocessor<'a> {
+    pub fn new<F>(file_fetcher: F) -> Self
+        where F: FnMut(&str) -> Result<String, String> + 'a
+    {
         Self {
             code_map: CodeMap::new(),
+            fetcher: Box::new(file_fetcher)
         }
     }
 
