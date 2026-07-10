@@ -396,7 +396,7 @@ where
             })?;
 
             if !is_identifier(c) {
-                end = util::inc_char_offset(offset, file.source());
+                end = offset;
                 content_end = end;
                 break;
             }
