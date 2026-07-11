@@ -524,7 +524,7 @@ pub fn run(file: &File) -> Result<Vec<(Span, Token)>, Vec<Diagnostic>> {
                             })?;
 
                             let content_start =
-                                util::inc_char_offset(exclamation_start, file.source());
+                                util::inc_char_offset(exclamation_start + 2, file.source());
 
                             let end;
 
