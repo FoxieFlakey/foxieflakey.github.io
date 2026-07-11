@@ -52,6 +52,7 @@ pub struct Preprocessor<'a> {
     cached_files: HashMap<String, Arc<(Arc<File>, Vec<(Span, ElementContent)>)>>,
     code_map: CodeMap,
     fetcher: Box<dyn FnMut(&str) -> Result<String, String> + 'a>,
+    environment: HashMap<String, String>
 }
 
 struct FileContext<'a, 'env> {
@@ -108,7 +109,18 @@ impl<'a> Preprocessor<'a> {
             code_map: CodeMap::new(),
             cached_files: HashMap::new(),
             fetcher: Box::new(file_fetcher),
+            environment: HashMap::new()
         }
+    }
+
+    // Same return value as HashMap::get
+    pub fn get_env<K: AsRef<str> + ?Sized>(&self, key: &K) -> Option<&String> {
+        self.environment.get(key.as_ref())
+    }
+
+    // Same return value as HashMap::insert
+    pub fn set_env<S1: Into<String>, S2: Into<String>>(&mut self, key: S1, value: S2) -> Option<String> {
+        self.environment.insert(key.into(), value.into())
     }
 
     pub fn get_codemap(&self) -> &CodeMap {
@@ -223,6 +235,10 @@ impl<'a> Preprocessor<'a> {
 
                 parser::ElementContent::Text => {
                     println!("Text('{}')", element_slice.escape_default())
+                }
+
+                parser::ElementContent::TextReplaced(x) => {
+                    println!("TextReplaced('{x}', from = '{}')", element_slice.escape_default())
                 }
             }
         }

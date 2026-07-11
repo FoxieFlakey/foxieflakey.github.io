@@ -37,6 +37,7 @@ pub enum ElementContent {
     Replacer(lexer::Replacer),
     Element(Element),
     Text,
+    TextReplaced(String)
 }
 
 struct ParseState {

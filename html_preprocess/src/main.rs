@@ -20,6 +20,7 @@ fn main() {
     <x-button>Helo! Click me</x-button>
     <script>
       let a = abc = "<" + "/script>"
+      $hewlo
     </script>
   </body>
 </html>
@@ -61,6 +62,7 @@ fn main() {
             .map(|x| x.to_string())
             .ok_or_else(|| format!("Cannot find '{path}'"))
     });
+    preprocessor.set_env("hi", "meow!");
 
     match preprocessor.process_file("index.html") {
         Ok(_) => println!("File parsed succesfully"),
