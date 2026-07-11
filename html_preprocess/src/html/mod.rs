@@ -158,18 +158,18 @@ impl<'a> Preprocessor<'a> {
     fn dump_element(&mut self, file: &File, depth: usize, elements: &[(Span, ElementContent)]) {
         let indent = "  ".repeat(depth);
         for (idx, element) in elements.iter().enumerate() {
-            let element_slice = file.source_slice(element.0);
+            let element_slice = util::resolve_span_to_string(&self.code_map, element.0);
             print!("{indent}[{idx:#3}] = ");
 
             match &element.1 {
                 parser::ElementContent::Comment(comment) => println!(
                     "Comment('{}')",
-                    file.source_slice(comment.content).escape_default()
+                    util::resolve_span_to_string(&self.code_map, comment.content).escape_default()
                 ),
 
                 parser::ElementContent::Replacer(replacer) => println!(
                     "Replacer('{}', isSimple = {})",
-                    file.source_slice(replacer.content).escape_default(),
+                    util::resolve_span_to_string(&self.code_map, replacer.content).escape_default(),
                     replacer.is_simple
                 ),
 
@@ -182,7 +182,7 @@ impl<'a> Preprocessor<'a> {
                         Either::Right(replacer) => {
                             println!(
                                 "Element tag name: Replacer('{}', is_simple = {})",
-                                file.source_slice(replacer.content).escape_default(),
+                                util::resolve_span_to_string(&self.code_map, replacer.content).escape_default(),
                                 replacer.is_simple
                             );
                         }
@@ -195,21 +195,21 @@ impl<'a> Preprocessor<'a> {
                             parser::Attribute::EmptyAttribute(span) => {
                                 println!(
                                     "EmptyAttribute('{}')",
-                                    file.source_slice(*span).escape_default()
+                                    util::resolve_span_to_string(&self.code_map, *span).escape_default()
                                 );
                             }
                             parser::Attribute::Attribute(_, data) => {
                                 println!(
                                     "Attribute(key = '{}', value = QuotedString('{}', is_double_quote = {}))",
-                                    file.source_slice(data.key_span).escape_default(),
-                                    file.source_slice(data.value.content).escape_default(),
+                                    util::resolve_span_to_string(&self.code_map, data.key_span).escape_default(),
+                                    util::resolve_span_to_string(&self.code_map, data.value.content).escape_default(),
                                     data.value.is_double_quote
                                 );
                             }
                             parser::Attribute::Replacer(_, replacer) => {
                                 println!(
                                     "Replacer('{}', is_simple = {})",
-                                    file.source_slice(replacer.content),
+                                    util::resolve_span_to_string(&self.code_map, replacer.content),
                                     replacer.is_simple
                                 );
                             }

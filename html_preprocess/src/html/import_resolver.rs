@@ -68,7 +68,15 @@ fn run_impl(
     tree: Vec<(Span, parser::ElementContent)>,
 ) -> Result<Vec<(Span, parser::ElementContent)>, Vec<Diagnostic>> {
     let mut new_tree = Vec::with_capacity(tree.len());
-    'outer_loop: for (element_span, element) in tree {
+    let mut iteration_stack = vec![tree.into_iter()];
+
+    'outer_loop: while iteration_stack.len() > 0 {
+        let Some((element_span, element)) = iteration_stack.last_mut().unwrap().next() else {
+            // The top iterator already exhausted
+            iteration_stack.pop();
+            continue;
+        };
+
         if let parser::ElementContent::Element(parser::Element {
             name: Either::Left(name),
             attributes,
@@ -165,6 +173,7 @@ fn run_impl(
                                 }
                             })?;
 
+                        iteration_stack.push(imported.1.clone().into_iter());
                     break;
                 }
                 continue;
