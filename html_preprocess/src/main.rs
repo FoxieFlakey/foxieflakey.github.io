@@ -49,11 +49,14 @@ fn main() {
   <body>
     <x-button>Helo! Click me </x-button>
     <!-- comment <a> -->
-    <script>
     <script ${props}>
       let a = abc = "<" + "/script>"
       $a
     </script>
+    <${replacer fox uwu}>
+        <div>
+        </div>
+    </${replacer fox uwu}>
   </body>
 </html>"#
         .to_string();

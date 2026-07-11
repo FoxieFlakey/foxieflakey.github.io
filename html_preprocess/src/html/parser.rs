@@ -58,6 +58,7 @@ pub enum ParseCodes {
     MismatchedNameBetweenOpeningAndClosingWithReplacer = 0011,
     ExpectingGreaterThanForClosing = 0012,
     ExpectingChildOrClosingTag = 0013,
+    ExpectingIdentiferForAttributeName = 0014,
 }
 
 impl ParseCodes {
@@ -76,7 +77,8 @@ impl ParseCodes {
             ParseCodes::MismatchedNameBetweenOpeningAndClosing => "Opening and closing has mismatched tag name",
             ParseCodes::MismatchedNameBetweenOpeningAndClosingWithReplacer => "Opening with replacer will never match with closing (closing has to be </>)",
             ParseCodes::ExpectingGreaterThanForClosing => "Expecting '>' after content of closing tag",
-            ParseCodes::ExpectingChildOrClosingTag => "Expecting child element, closing tag or text"
+            ParseCodes::ExpectingChildOrClosingTag => "Expecting child element, closing tag or text",
+            ParseCodes::ExpectingIdentiferForAttributeName => "Expecting identifier for attribute name",
         }
     }
 
@@ -95,6 +97,7 @@ impl ParseCodes {
             ParseCodes::MismatchedNameBetweenOpeningAndClosingWithReplacer |
             ParseCodes::ExpectingGreaterThanForClosing |
             ParseCodes::ExpectingChildOrClosingTag |
+            ParseCodes::ExpectingIdentiferForAttributeName |
             ParseCodes::ExpectingElementNameOrReplacerName => Level::Error,
         }
     }
@@ -277,70 +280,8 @@ impl ParseState {
                 
                 // Key/value attribute pair
                 lexer::Token::Identifier => {
-                    let key_span = span;
-                    let attribute;
-                    
-                    // Check if there '=', i.e. non empty attribute
-                    match self.token_iterator.peek() {
-                        Some((_, lexer::Token::Equal)) => {
-                            self.token_iterator.next().unwrap();
-                            
-                            // Key value attribute
-                            match self.token_iterator.next() {
-                                Some((span, lexer::Token::QuotedString(x))) => {
-                                    let full_span = self.file.span.subspan(
-                                        key_span.low() - self.file.span.low(),
-                                        span.low() - self.file.span.low()
-                                    );
-                                    
-                                    attribute = Attribute::Attribute(full_span, AttributeData {
-                                        key_span,
-                                        value_span: span,
-                                        value: x
-                                    });
-                                },
-                                Some((span, _)) => {
-                                    return Err(vec![
-                                        ParseCodes::ExpectingAttributeValue.to_diagnostic(&[
-                                            SpanLabel {
-                                                label: None,
-                                                span: util::one_char_span(&self.file, span.low() - self.file.span.low()),
-                                                style: SpanStyle::Primary
-                                            }
-                                        ])
-                                    ]);
-                                },
-                                None => {
-                                    return Err(vec![
-                                        ParseCodes::ExpectingAttributeValue.to_diagnostic(&[
-                                            SpanLabel {
-                                                label: None,
-                                                span: self.eof_span.clone(),
-                                                style: SpanStyle::Primary
-                                            }
-                                        ])
-                                    ]);
-                                }
-                            }
-                        },
-                        Some(_) => {
-                            // Empty attribute
-                            attribute = Attribute::EmptyAttribute(key_span);
-                        },
-                        None => {
-                            return Err(vec![
-                                ParseCodes::ExpectingEqualOrNextAttribute.to_diagnostic(&[
-                                    SpanLabel {
-                                        label: None,
-                                        span: self.eof_span.clone(),
-                                        style: SpanStyle::Primary
-                                    }
-                                ])
-                            ]);
-                        }
-                    }
-                    
-                    this.attributes.push(attribute);
+                    self.token_iterator.push_back((span.clone(), lexer::Token::Identifier));
+                    this.attributes.push(self.parse_attribute()?);
                 }
                 
                 _ => {
@@ -428,7 +369,110 @@ impl ParseState {
         }
         
         // part 4: parse the closing </> or </name>
-        let end;
+        let end = self.parse_closing_tag(&this)?;
+        
+        Ok((
+            self.file.span.subspan(start, end),
+            ElementContent::Element(this)
+        ))
+    }
+    
+    fn parse_attribute(&mut self) -> Result<Attribute, Vec<Diagnostic>> {
+        let key_span;
+        // Check identifier for the key portion
+        match self.token_iterator.next() {
+            Some((span, lexer::Token::Identifier)) => {
+                key_span = span;
+            }
+            
+            Some((span, _)) => {
+                return Err(vec![
+                    ParseCodes::ExpectingIdentiferForAttributeName.to_diagnostic(&[
+                        SpanLabel {
+                            label: None,
+                            span,
+                            style: SpanStyle::Primary
+                        }
+                    ])
+                ]);
+            }
+            
+            None => {
+                return Err(vec![
+                    ParseCodes::ExpectingIdentiferForAttributeName.to_diagnostic(&[
+                        SpanLabel {
+                            label: None,
+                            span: self.eof_span.clone(),
+                            style: SpanStyle::Primary
+                        }
+                    ])
+                ]);
+            }
+        }
+        
+        // Check if there '=', i.e. non empty attribute
+        match self.token_iterator.peek() {
+            Some((_, lexer::Token::Equal)) => {
+                self.token_iterator.next().unwrap();
+                
+                // Key value attribute
+                match self.token_iterator.next() {
+                    Some((span, lexer::Token::QuotedString(x))) => {
+                        let full_span = self.file.span.subspan(
+                            key_span.low() - self.file.span.low(),
+                            span.low() - self.file.span.low()
+                        );
+                        
+                        return Ok(Attribute::Attribute(full_span, AttributeData {
+                            key_span,
+                            value_span: span,
+                            value: x
+                        }));
+                    },
+                    Some((span, _)) => {
+                        return Err(vec![
+                            ParseCodes::ExpectingAttributeValue.to_diagnostic(&[
+                                SpanLabel {
+                                    label: None,
+                                    span: util::one_char_span(&self.file, span.low() - self.file.span.low()),
+                                    style: SpanStyle::Primary
+                                }
+                            ])
+                        ]);
+                    },
+                    None => {
+                        return Err(vec![
+                            ParseCodes::ExpectingAttributeValue.to_diagnostic(&[
+                                SpanLabel {
+                                    label: None,
+                                    span: self.eof_span.clone(),
+                                    style: SpanStyle::Primary
+                                }
+                            ])
+                        ]);
+                    }
+                }
+            },
+            Some(_) => {
+                // Empty attribute
+                return Ok(Attribute::EmptyAttribute(key_span));
+            },
+            None => {
+                return Err(vec![
+                    ParseCodes::ExpectingEqualOrNextAttribute.to_diagnostic(&[
+                        SpanLabel {
+                            label: None,
+                            span: self.eof_span.clone(),
+                            style: SpanStyle::Primary
+                        }
+                    ])
+                ]);
+            }
+        }
+    }
+    
+    // return the last offset, after the closing
+    fn parse_closing_tag(&mut self, this: &Element) -> Result<u64, Vec<Diagnostic>> {
         match self.token_iterator.next() {
             Some((_, lexer::Token::LessThan)) => {
                 match self.token_iterator.next() {
@@ -436,7 +480,7 @@ impl ParseState {
                         // Optionally a name or immediately '>'
                         match self.token_iterator.next() {
                             Some((span, lexer::Token::GreaterThan)) => {
-                                end = span.high() - self.file.span.low();
+                                return Ok(span.high() - self.file.span.low());
                             }
                             Some((span, lexer::Token::Identifier)) => {
                                 match &this.name {
@@ -479,7 +523,7 @@ impl ParseState {
                                 // And finally final '>'
                                 match self.token_iterator.next() {
                                     Some((span, lexer::Token::GreaterThan)) => {
-                                        end = span.high() - self.file.span.low();
+                                        return Ok(span.high() - self.file.span.low());
                                     }
                                     Some((span, _)) => {
                                         return Err(vec![
@@ -589,11 +633,6 @@ impl ParseState {
                 ]);
             }
         }
-        
-        Ok((
-            self.file.span.subspan(start, end),
-            ElementContent::Element(this)
-        ))
     }
 }
 
