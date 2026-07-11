@@ -161,12 +161,14 @@ impl<'a> Preprocessor<'a> {
             match &element.1 {
                 parser::ElementContent::Comment(comment) => println!(
                     "Comment('{}')",
-                    self.resolve_span_to_string(comment.content).escape_default()
+                    self.resolve_span_to_string(comment.content)
+                        .escape_default()
                 ),
 
                 parser::ElementContent::Replacer(replacer) => println!(
                     "Replacer('{}', isSimple = {})",
-                    self.resolve_span_to_string(replacer.content).escape_default(),
+                    self.resolve_span_to_string(replacer.content)
+                        .escape_default(),
                     replacer.is_simple
                 ),
 
@@ -179,7 +181,8 @@ impl<'a> Preprocessor<'a> {
                         Either::Right(replacer) => {
                             println!(
                                 "Element tag name: Replacer('{}', is_simple = {})",
-                                self.resolve_span_to_string(replacer.content).escape_default(),
+                                self.resolve_span_to_string(replacer.content)
+                                    .escape_default(),
                                 replacer.is_simple
                             );
                         }
@@ -199,7 +202,8 @@ impl<'a> Preprocessor<'a> {
                                 println!(
                                     "Attribute(key = '{}', value = QuotedString('{}', is_double_quote = {}))",
                                     self.resolve_span_to_string(data.key_span).escape_default(),
-                                    self.resolve_span_to_string(data.value.content).escape_default(),
+                                    self.resolve_span_to_string(data.value.content)
+                                        .escape_default(),
                                     data.value.is_double_quote
                                 );
                             }
@@ -260,9 +264,7 @@ impl<'a> Preprocessor<'a> {
         let file = &loaded.0;
         let mut tree = loaded.1.clone();
 
-        let mut ctx = FileContext {
-            preprocessor: self,
-        };
+        let mut ctx = FileContext { preprocessor: self };
 
         let max_iter = 512;
         let mut current_iter = 0;
@@ -282,7 +284,7 @@ impl<'a> Preprocessor<'a> {
 
             // Resolve replacers
             tree = replacer_resolver::run(&mut ctx, tree)?;
-            
+
             // Check if next iteration is not needed
             current_iter += 1;
             for (_, element) in &tree {
@@ -295,7 +297,7 @@ impl<'a> Preprocessor<'a> {
                     }) => {
                         continue 'resolver;
                     }
-                    
+
                     parser::ElementContent::Element(parser::Element {
                         name: Either::Left(name),
                         ..
@@ -305,10 +307,10 @@ impl<'a> Preprocessor<'a> {
                             continue 'resolver;
                         }
                     }
-                    _ => ()
+                    _ => (),
                 }
             }
-            
+
             // Nothing needed to be replaced/imported
             break;
         }

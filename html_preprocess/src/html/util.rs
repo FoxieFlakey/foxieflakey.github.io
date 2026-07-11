@@ -18,6 +18,5 @@ pub fn one_char_span(file: &File, offset: u64) -> Span {
 }
 
 pub fn resolve_span_to_string(codemap: &CodeMap, span: Span) -> &str {
-    codemap.find_file(span.low())
-        .source_slice(span)
+    codemap.find_file(span.low()).source_slice(span)
 }

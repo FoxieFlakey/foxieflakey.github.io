@@ -31,7 +31,9 @@ impl ImportResolverCodes {
                 "Attempting to use empty attribute like <import src /> it does not make sense. Give a path"
             }
             ImportResolverCodes::CannotImport => "Cannot import file",
-            ImportResolverCodes::ImportNestTooDeep => "The preprocess unable to handle import that is too deeply nested"
+            ImportResolverCodes::ImportNestTooDeep => {
+                "The preprocess unable to handle import that is too deeply nested"
+            }
         }
     }
 
@@ -98,7 +100,11 @@ fn run_impl(
 
                     parser::Attribute::Attribute(span, data) => (
                         span.clone(),
-                        Some(context.preprocessor.resolve_span_to_string(data.key_span.clone())),
+                        Some(
+                            context
+                                .preprocessor
+                                .resolve_span_to_string(data.key_span.clone()),
+                        ),
                         Some(data),
                     ),
 
@@ -137,25 +143,28 @@ fn run_impl(
                     };
 
                     if iteration_stack.len() > MAX_IMPORT_DEPTH {
-                        return Err(vec![
-                            Diagnostic {
-                                code: Some(ImportResolverCodes::ImportNestTooDeep.to_code()),
-                                level: Level::Error,
-                                message: format!(
-                                    "{} (nested {MAX_IMPORT_DEPTH} times)",
-                                    ImportResolverCodes::ImportNestTooDeep.description(),
-                                ),
-                                spans: vec![SpanLabel {
-                                    label: None,
-                                    span: element_span,
-                                    style: SpanStyle::Primary,
-                                }],
-                            }
-                        ])
+                        return Err(vec![Diagnostic {
+                            code: Some(ImportResolverCodes::ImportNestTooDeep.to_code()),
+                            level: Level::Error,
+                            message: format!(
+                                "{} (nested {MAX_IMPORT_DEPTH} times)",
+                                ImportResolverCodes::ImportNestTooDeep.description(),
+                            ),
+                            spans: vec![SpanLabel {
+                                label: None,
+                                span: element_span,
+                                style: SpanStyle::Primary,
+                            }],
+                        }]);
                     }
 
                     // Got the path
-                    let import_path = html_escape::decode_html_entities(context.preprocessor.resolve_span_to_string(data.value.content)).to_string();
+                    let import_path = html_escape::decode_html_entities(
+                        context
+                            .preprocessor
+                            .resolve_span_to_string(data.value.content),
+                    )
+                    .to_string();
                     let context_diag = Diagnostic {
                         code: None,
                         level: Level::Note,
@@ -194,7 +203,7 @@ fn run_impl(
                                 }
                             })?;
 
-                        iteration_stack.push(imported.1.clone().into_iter());
+                    iteration_stack.push(imported.1.clone().into_iter());
                     break;
                 }
                 continue;
