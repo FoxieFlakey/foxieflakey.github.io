@@ -56,12 +56,6 @@ pub struct Preprocessor<'a> {
 
 struct FileContext<'a, 'env> {
     preprocessor: &'a mut Preprocessor<'env>,
-
-    // Tell is preprocess need to repeat
-    // 1. Replace
-    // 2. Handle imports
-    // again
-    reiterate: bool,
 }
 
 #[repr(u16)]
@@ -267,13 +261,12 @@ impl<'a> Preprocessor<'a> {
         let mut tree = loaded.1.clone();
 
         let mut ctx = FileContext {
-            reiterate: true,
             preprocessor: self,
         };
 
         let max_iter = 512;
         let mut current_iter = 0;
-        while ctx.reiterate {
+        'resolver: loop {
             if current_iter >= max_iter {
                 return Err(vec![
                     PreprocessorCodes::IterationExceededLimit.to_diagnostic(&[SpanLabel {
@@ -284,15 +277,40 @@ impl<'a> Preprocessor<'a> {
                 ]);
             }
 
-            ctx.reiterate = false;
-
             // Resolve imports
             tree = import_resolver::run(&mut ctx, tree)?;
 
             // Resolve replacers
             tree = replacer_resolver::run(&mut ctx, tree)?;
-
+            
+            // Check if next iteration is not needed
             current_iter += 1;
+            for (_, element) in &tree {
+                match element {
+                    // There still replacers
+                    parser::ElementContent::Replacer(_) => continue 'resolver,
+                    parser::ElementContent::Element(parser::Element {
+                        name: Either::Right(_),
+                        ..
+                    }) => {
+                        continue 'resolver;
+                    }
+                    
+                    parser::ElementContent::Element(parser::Element {
+                        name: Either::Left(name),
+                        ..
+                    }) => {
+                        // There still import needed
+                        if name == "import" {
+                            continue 'resolver;
+                        }
+                    }
+                    _ => ()
+                }
+            }
+            
+            // Nothing needed to be replaced/imported
+            break;
         }
 
         self.dump_element(&file, 0, &tree);
