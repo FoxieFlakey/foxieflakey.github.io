@@ -31,8 +31,10 @@
 //    will be useful when using replacers for tag names but <>
 //    cannot be used to open a tag
 
+use std::sync::Arc;
+
 use codemap::{CodeMap, File, Span};
-use codemap_diagnostic::Diagnostic;
+use codemap_diagnostic::{Diagnostic, Level};
 use either::Either;
 
 use crate::html::{lexer::Token, parser::ElementContent};
@@ -167,8 +169,22 @@ impl<'a> Preprocessor<'a> {
         }
     }
 
-    pub fn parse_file(&mut self, name: &str, source: String) -> Result<(), Vec<Diagnostic>> {
-        let file = self.code_map.add_file(name.to_string(), source);
+    fn load_file(&mut self, path: &str) -> Result<Arc<File>, String> {
+        let source = (self.fetcher)(path)?;
+        Ok(self.code_map.add_file(path.to_string(), source))
+    }
+    
+    pub fn parse_file(&mut self, path: &str) -> Result<(), Vec<Diagnostic>> {
+        let file = self.load_file(path)
+            .map_err(|err| vec![
+                Diagnostic {
+                    code: None,
+                    level: Level::Error,
+                    message: err,
+                    spans: Vec::new()
+                }
+            ])?;
+        
         let tokens = lexer::run(&file)?;
         let elements = parser::run(file.clone(), tokens)?;
 

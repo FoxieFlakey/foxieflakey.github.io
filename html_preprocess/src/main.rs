@@ -9,7 +9,25 @@ mod html;
 fn main() {
     let mut sources = HashMap::new();
     sources.insert(
-        "",
+        "index.html",
+        r#"<import src="components/button.html"></import>
+
+<html lang="en">
+  <head>
+    <title>Test</title>
+  </head>
+  <body>
+    <x-button>Helo! Click me</x-button>
+    <script>
+      let a = abc = "<" + "/script>"
+    </script>
+  </body>
+</html>
+
+"#
+    );
+    sources.insert(
+        "components/button.html",
         r#"<!--
   A template for Button
   Properties given to the instance can be accessed with
@@ -44,28 +62,7 @@ fn main() {
             .ok_or_else(|| format!("Cannot find '{path}'"))
     });
 
-    let source = r#"<import src="components/button.html" />
-
-<html lang="en">
-  <head>
-    <title>Test</title>
-  </head>
-  <body>
-    <x-button>Helo! Click me </x-button>
-    <!-- comment <a> -->
-    <script ${props}>
-      let a = abc = "<" + "/script>"
-      $a
-    </script>
-    <${replacer fox uwu}>
-        <div>
-        </div>
-    </>
-  </body>
-</html>"#
-        .to_string();
-
-    match preprocessor.parse_file("index.html", source) {
+    match preprocessor.parse_file("index.html") {
         Ok(_) => println!("File parsed succesfully"),
         Err(e) => {
             println!("Failed parsing file");
