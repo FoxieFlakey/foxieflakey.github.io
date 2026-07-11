@@ -103,23 +103,7 @@ impl ParseCodes {
     }
 
     pub fn level(&self) -> Level {
-        match self {
-            ParseCodes::ExpectingElementOrTextOrcomment
-            | ParseCodes::ExpectingAttributeOrReplacer
-            | ParseCodes::ExpectingGreaterThanAfterSlash
-            | ParseCodes::ExpectingEqualOrNextAttribute
-            | ParseCodes::ExpectingAttributeValue
-            | ParseCodes::ExpectingClosingTag
-            | ParseCodes::ExpectingSlashForClosingTag
-            | ParseCodes::ExpectingOptionalNameOrGreaterThan
-            | ParseCodes::ReplacerUnsupportedInClosingTag
-            | ParseCodes::MismatchedNameBetweenOpeningAndClosing
-            | ParseCodes::MismatchedNameBetweenOpeningAndClosingWithReplacer
-            | ParseCodes::ExpectingGreaterThanForClosing
-            | ParseCodes::ExpectingChildOrClosingTag
-            | ParseCodes::ExpectingIdentiferForAttributeName
-            | ParseCodes::ExpectingElementNameOrReplacerName => Level::Error,
-        }
+        Level::Error
     }
 
     pub fn to_code(&self) -> String {

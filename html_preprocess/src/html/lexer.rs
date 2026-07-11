@@ -120,21 +120,7 @@ impl LexerCodes {
     }
 
     pub fn level(&self) -> Level {
-        match self {
-            LexerCodes::ExpectingHTMLEntityName
-            | LexerCodes::UnknownEntityName
-            | LexerCodes::UnexpectedTagStartInsideTag
-            | LexerCodes::UnterminatedString
-            | LexerCodes::ExpectingMoreIdentifierOrNotCharacter
-            | LexerCodes::ExpectingContentOfTagOrClosing
-            | LexerCodes::UnterminatedComment
-            | LexerCodes::MalformedCommentStart
-            | LexerCodes::ExpectedCommentStartGotEOF
-            | LexerCodes::ExpectingReplacer
-            | LexerCodes::UnterminatedReplacer
-            | LexerCodes::ExpectingIdentifierCharacterOrBraceForReplacer
-            | LexerCodes::ExpectingAmpersand => Level::Error,
-        }
+        Level::Error
     }
 
     pub fn to_code(&self) -> String {
