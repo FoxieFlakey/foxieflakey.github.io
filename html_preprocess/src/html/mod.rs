@@ -31,7 +31,10 @@
 //    will be useful when using replacers for tag names but <>
 //    cannot be used to open a tag
 
-use std::sync::Arc;
+use std::{
+    collections::{HashMap, hash_map::Entry},
+    sync::Arc,
+};
 
 use codemap::{CodeMap, File, Span};
 use codemap_diagnostic::{Diagnostic, Level, SpanLabel, SpanStyle};
@@ -46,6 +49,7 @@ mod replacer_resolver;
 mod util;
 
 pub struct Preprocessor<'a> {
+    cached_files: HashMap<String, Arc<(Arc<File>, Vec<(Span, ElementContent)>)>>,
     code_map: CodeMap,
     fetcher: Box<dyn FnMut(&str) -> Result<String, String> + 'a>,
 }
@@ -109,6 +113,7 @@ impl<'a> Preprocessor<'a> {
     {
         Self {
             code_map: CodeMap::new(),
+            cached_files: HashMap::new(),
             fetcher: Box::new(file_fetcher),
         }
     }
@@ -222,26 +227,41 @@ impl<'a> Preprocessor<'a> {
         }
     }
 
-    fn load_file(&mut self, path: &str) -> Result<Arc<File>, String> {
-        let source = (self.fetcher)(path)?;
-        Ok(self.code_map.add_file(path.to_string(), source))
+    // Merely only loads file, parses it and caches it.
+    fn load_file(
+        &mut self,
+        path: &str,
+    ) -> Result<Arc<(Arc<File>, Vec<(Span, ElementContent)>)>, Either<Vec<Diagnostic>, String>>
+    {
+        match self.cached_files.entry(path.to_string()) {
+            Entry::Occupied(cached) => return Ok(cached.get().clone()),
+
+            Entry::Vacant(vacant) => {
+                // Slow path load the file and parse
+                let source = (self.fetcher)(path).map_err(Either::Right)?;
+                let file = self.code_map.add_file(path.to_string(), source.to_string());
+                let parsed = parser::run(file.clone(), lexer::run(&file).map_err(Either::Left)?)
+                    .map_err(Either::Left)?;
+
+                Ok(vacant.insert(Arc::new((file, parsed))).clone())
+            }
+        }
     }
 
-    fn parse_file_raw(&mut self, file: &Arc<File>) -> Result<Vec<(Span, ElementContent)>, Vec<Diagnostic>> {
-        let tokens = lexer::run(&file)?;
-        parser::run(file.clone(), tokens)
-    }
-
-    pub fn parse_file(&mut self, path: &str) -> Result<(), Vec<Diagnostic>> {
-        let file = self.load_file(path).map_err(|err| {
-            vec![Diagnostic {
-                code: None,
-                level: Level::Error,
-                message: err,
-                spans: Vec::new(),
-            }]
+    pub fn process_file(&mut self, path: &str) -> Result<(), Vec<Diagnostic>> {
+        let loaded = self.load_file(path).map_err(|x| match x {
+            Either::Left(diag) => diag,
+            Either::Right(err) => {
+                vec![Diagnostic {
+                    code: None,
+                    level: Level::Error,
+                    message: err,
+                    spans: Vec::new(),
+                }]
+            }
         })?;
-        let mut tree = self.parse_file_raw(&file)?;
+        let file = &loaded.0;
+        let mut tree = loaded.1.clone();
 
         let mut ctx = FileContext {
             file: &file,

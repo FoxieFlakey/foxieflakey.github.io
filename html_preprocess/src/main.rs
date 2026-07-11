@@ -62,7 +62,7 @@ fn main() {
             .ok_or_else(|| format!("Cannot find '{path}'"))
     });
 
-    match preprocessor.parse_file("index.html") {
+    match preprocessor.process_file("index.html") {
         Ok(_) => println!("File parsed succesfully"),
         Err(e) => {
             println!("Failed parsing file");

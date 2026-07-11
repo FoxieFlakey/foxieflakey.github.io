@@ -9,18 +9,21 @@ use pushback_iter::PushBackIterator;
 
 use crate::html::{lexer, util};
 
+#[derive(Clone)]
 pub struct AttributeData {
     pub value_span: Span,
     pub value: lexer::QuotedString,
     pub key_span: Span,
 }
 
+#[derive(Clone)]
 pub enum Attribute {
     Attribute(Span, AttributeData),
     EmptyAttribute(Span),
     Replacer(Span, lexer::Replacer),
 }
 
+#[derive(Clone)]
 pub struct Element {
     pub name_span: Span,
     pub name: Either<String, lexer::Replacer>,
@@ -28,6 +31,7 @@ pub struct Element {
     pub childs: Vec<(Span, ElementContent)>,
 }
 
+#[derive(Clone)]
 pub enum ElementContent {
     Comment(lexer::Comment),
     Replacer(lexer::Replacer),

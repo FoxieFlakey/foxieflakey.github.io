@@ -17,7 +17,7 @@ use crate::html::{FileContext, parser};
 #[derive(Clone, Copy)]
 pub enum ImportResolverCodes {
     EmptySrcAttribute = 0000,
-    CannotImport = 0001
+    CannotImport = 0001,
 }
 
 impl ImportResolverCodes {
@@ -25,10 +25,8 @@ impl ImportResolverCodes {
         match self {
             ImportResolverCodes::EmptySrcAttribute => {
                 "Attempting to use empty attribute like <import src /> it does not make sense. Give a path"
-            },
-            ImportResolverCodes::CannotImport => {
-                "Cannot import file"
             }
+            ImportResolverCodes::CannotImport => "Cannot import file",
         }
     }
 
@@ -58,11 +56,17 @@ impl ImportResolverCodes {
     }
 }
 
-pub fn run(context: &mut FileContext, tree: Vec<(Span, parser::ElementContent)>) -> Result<Vec<(Span, parser::ElementContent)>, Vec<Diagnostic>> {
+pub fn run(
+    context: &mut FileContext,
+    tree: Vec<(Span, parser::ElementContent)>,
+) -> Result<Vec<(Span, parser::ElementContent)>, Vec<Diagnostic>> {
     run_impl(context, tree)
 }
 
-fn run_impl(context: &mut FileContext, tree: Vec<(Span, parser::ElementContent)>) -> Result<Vec<(Span, parser::ElementContent)>, Vec<Diagnostic>> {
+fn run_impl(
+    context: &mut FileContext,
+    tree: Vec<(Span, parser::ElementContent)>,
+) -> Result<Vec<(Span, parser::ElementContent)>, Vec<Diagnostic>> {
     let mut new_tree = Vec::with_capacity(tree.len());
     'outer_loop: for (element_span, element) in tree {
         if let parser::ElementContent::Element(parser::Element {
@@ -72,94 +76,95 @@ fn run_impl(context: &mut FileContext, tree: Vec<(Span, parser::ElementContent)>
         }) = &element
         {
             if name == &"import" {
-                let attributes = attributes.iter()
-                    .map(|x| {
-                        match x {
-                            parser::Attribute::EmptyAttribute(span) => {
-                                (span.clone(), Some(context.file.source_slice(span.clone())), None)
-                            }
-                            
-                            parser::Attribute::Attribute(span, data) => {
-                                (span.clone(), Some(context.file.source_slice(data.key_span.clone())), Some(data))
-                            }
-                            
-                            parser::Attribute::Replacer(span, _) => {
-                                (span.clone(), None, None)
-                            }
-                        }
-                    });
-                
+                let attributes = attributes.iter().map(|x| match x {
+                    parser::Attribute::EmptyAttribute(span) => (
+                        span.clone(),
+                        Some(context.file.source_slice(span.clone())),
+                        None,
+                    ),
+
+                    parser::Attribute::Attribute(span, data) => (
+                        span.clone(),
+                        Some(context.file.source_slice(data.key_span.clone())),
+                        Some(data),
+                    ),
+
+                    parser::Attribute::Replacer(span, _) => (span.clone(), None, None),
+                });
+
                 for (attribute_span, key, data) in attributes {
                     let Some(key) = key else {
                         // <import> element is not ready yet
                         // it still has unresolved stuffs
                         continue 'outer_loop;
                     };
-                    
+
                     if key != "src" {
                         // We're not interested in uninteresting attribute
                         // todo: put warning diagnostics here
                         continue;
                     }
-                    
+
                     let Some(data) = data else {
                         // Empty attribute, it always make no sense
-                        return Err(vec![
-                            ImportResolverCodes::EmptySrcAttribute.to_diagnostic(&[
+                        return Err(vec![ImportResolverCodes::EmptySrcAttribute.to_diagnostic(
+                            &[
                                 SpanLabel {
                                     label: None,
                                     span: attribute_span,
-                                    style: SpanStyle::Primary
+                                    style: SpanStyle::Primary,
                                 },
-                                
                                 SpanLabel {
                                     label: Some("Parsing this import".to_string()),
                                     span: element_span,
-                                    style: SpanStyle::Secondary
-                                }
-                            ])
-                        ]);
+                                    style: SpanStyle::Secondary,
+                                },
+                            ],
+                        )]);
                     };
-                    
+
                     // Got the path
-                    let import_path = html_escape::decode_html_entities(context.file.source_slice(data.value.content));
-                    let imported = context.preprocessor.load_file(&import_path)
-                        .map_err(|err| {
-                            vec![
-                                Diagnostic {
-                                    code: Some(ImportResolverCodes::CannotImport.to_code()),
-                                    level: Level::Error,
-                                    message: format!("{} because {}", ImportResolverCodes::CannotImport.description(), err),
-                                    spans: vec![
-                                        SpanLabel {
-                                            label: None,
-                                            span: element_span,
-                                            style: SpanStyle::Primary
-                                        }
-                                    ]
-                                }
-                            ]
-                        })?;
+                    let import_path = html_escape::decode_html_entities(
+                        context.file.source_slice(data.value.content),
+                    );
                     let context_diag = Diagnostic {
                         code: None,
                         level: Level::Note,
                         message: "Imported from ".to_string(),
-                        spans: vec![
-                            SpanLabel {
-                                label: None,
-                                span: element_span,
-                                style: SpanStyle::Primary
-                            }
-                        ]
+                        spans: vec![SpanLabel {
+                            label: None,
+                            span: element_span,
+                            style: SpanStyle::Primary,
+                        }],
                     };
-                    
-                    let imported_tree = context.preprocessor.parse_file_raw(&imported)
-                        .map_err(|mut x| {
-                            x.push(context_diag);
-                            x
-                        })?;
-                    
-                    
+                    let imported =
+                        context
+                            .preprocessor
+                            .load_file(&import_path)
+                            .map_err(|x| match x {
+                                Either::Left(mut diag) => {
+                                    diag.push(context_diag);
+                                    diag
+                                }
+
+                                Either::Right(err) => {
+                                    vec![Diagnostic {
+                                        code: Some(ImportResolverCodes::CannotImport.to_code()),
+                                        level: Level::Error,
+                                        message: format!(
+                                            "{} because {}",
+                                            ImportResolverCodes::CannotImport.description(),
+                                            err
+                                        ),
+                                        spans: vec![SpanLabel {
+                                            label: None,
+                                            span: element_span,
+                                            style: SpanStyle::Primary,
+                                        }],
+                                    }]
+                                }
+                            })?;
+
                     break;
                 }
                 continue;
