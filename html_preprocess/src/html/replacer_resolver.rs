@@ -1,7 +1,8 @@
 use codemap::Span;
 use codemap_diagnostic::{Diagnostic, Level, SpanLabel, SpanStyle};
+use either::Either;
 
-use crate::html::{FileContext, parser, util};
+use crate::html::{FileContext, lexer, parser, util};
 
 // Resolves replacer first, excluding one that starts with props and children
 // (those two are special for template resolver to handle)
@@ -54,24 +55,51 @@ pub fn run(
     let mut diags = Vec::new();
     
     util::iter_tree_mut(&mut tree, |(span, element)| {
+        fn try_resolve_replacer(context: &mut FileContext, span: Span, replacer: &lexer::Replacer) -> Result<Option<String>, Diagnostic> {
+            let content = context.preprocessor.resolve_span_to_string(replacer.content);
+            if content.starts_with("props") || content.starts_with("children") {
+                return Ok(None);
+            }
+            
+            if let Some(val) = context.preprocessor.get_env(content) {
+                return Ok(Some(val.clone()));
+            } else {
+                return Err(ReplacerResolver::UnknownReplacer.to_diagnostic(&[
+                    SpanLabel {
+                        label: None,
+                        span,
+                        style: SpanStyle::Primary
+                    }
+                ]));
+            }
+        }
+        
         match element {
-            parser::ElementContent::Replacer(replacer) => {
-                let content = context.preprocessor.resolve_span_to_string(replacer.content);
-                if content.starts_with("props") || content.starts_with("children") {
-                    return true;
-                }
-                
-                if let Some(val) = context.preprocessor.get_env(content) {
-                    *element = parser::ElementContent::TextReplaced(val.clone());
-                } else {
-                    diags.push(ReplacerResolver::UnknownReplacer.to_diagnostic(&[
-                        SpanLabel {
-                            label: None,
-                            span: span.clone(),
-                            style: SpanStyle::Primary
+            parser::ElementContent::Element(element) => {
+                if let Either::Right(replacer) = &element.name {
+                    match try_resolve_replacer(context, element.name_span, replacer) {
+                        Ok(Some(val)) => {
+                            element.name = Either::Left(val);
                         }
-                    ]));
-                    return false;
+                        Ok(None) => (),
+                        Err(diag) => {
+                            diags.push(diag);
+                            return false;
+                        }
+                    }
+                }
+            }
+            
+            parser::ElementContent::Replacer(replacer) => {
+                match try_resolve_replacer(context, span.clone(), replacer) {
+                    Ok(Some(val)) => {
+                        *element = parser::ElementContent::TextReplaced(val);
+                    }
+                    Ok(None) => (),
+                    Err(diag) => {
+                        diags.push(diag);
+                        return false;
+                    }
                 }
             },
             _ => ()

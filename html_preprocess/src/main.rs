@@ -66,7 +66,7 @@ fn main() {
             .ok_or_else(|| format!("Cannot find '{path}'"))
     });
     preprocessor.set_env("hi", "meow!");
-    preprocessor.set_env("special", "div");
+    preprocessor.set_env("special", "div_special");
 
     match preprocessor.process_file("index.html") {
         Ok(_) => println!("File parsed succesfully"),
