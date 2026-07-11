@@ -60,7 +60,7 @@ fn main() {
     <${replacer fox uwu}>
         <div>
         </div>
-    </${replacer fox uwu}>
+    </>
   </body>
 </html>"#
         .to_string();
