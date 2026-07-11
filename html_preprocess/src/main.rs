@@ -8,7 +8,9 @@ mod html;
 
 fn main() {
     let mut sources = HashMap::new();
-    sources.insert("", r#"<!--
+    sources.insert(
+        "",
+        r#"<!--
   A template for Button
   Properties given to the instance can be accessed with
   ${props["name"]} and ${children} for the childrens pasted
@@ -30,16 +32,18 @@ fn main() {
     ${children}
   </button>
 </x-template>
-"#);
+"#,
+    );
 
     let sources = sources;
-    
+
     let mut preprocessor = Preprocessor::new(|path| {
-        sources.get(path)
+        sources
+            .get(path)
             .map(|x| x.to_string())
             .ok_or_else(|| format!("Cannot find '{path}'"))
     });
-    
+
     let source = r#"<import src="components/button.html" />
 
 <html lang="en">

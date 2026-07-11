@@ -37,23 +37,24 @@ use either::Either;
 
 use crate::html::{lexer::Token, parser::ElementContent};
 
-mod parser;
 mod lexer;
+mod parser;
 mod util;
 
 pub struct Preprocessor<'a> {
     code_map: CodeMap,
     #[expect(unused)]
-    fetcher: Box<dyn FnMut(&str) -> Result<String, String> + 'a>
+    fetcher: Box<dyn FnMut(&str) -> Result<String, String> + 'a>,
 }
 
 impl<'a> Preprocessor<'a> {
     pub fn new<F>(file_fetcher: F) -> Self
-        where F: FnMut(&str) -> Result<String, String> + 'a
+    where
+        F: FnMut(&str) -> Result<String, String> + 'a,
     {
         Self {
             code_map: CodeMap::new(),
-            fetcher: Box::new(file_fetcher)
+            fetcher: Box::new(file_fetcher),
         }
     }
 
@@ -75,7 +76,10 @@ impl<'a> Preprocessor<'a> {
                 Token::Slash => println!("Slash"),
                 Token::Text => println!("Text('{}')", token_slice.escape_default()),
                 Token::Comment(comment) => {
-                    println!("Comment('{}')", file.source_slice(comment.content).escape_default())
+                    println!(
+                        "Comment('{}')",
+                        file.source_slice(comment.content).escape_default()
+                    )
                 }
                 Token::QuotedString(quoted_string) => println!(
                     "QuotedString('{}', is_double_quote = {})",
@@ -90,61 +94,79 @@ impl<'a> Preprocessor<'a> {
             }
         }
     }
-    
+
     fn dump_element(&mut self, file: &File, depth: usize, elements: &[(Span, ElementContent)]) {
         let indent = "  ".repeat(depth);
         for (idx, element) in elements.iter().enumerate() {
             let element_slice = file.source_slice(element.0);
             print!("{indent}[{idx:#3}] = ");
-            
+
             match &element.1 {
                 parser::ElementContent::Comment(comment) => println!(
                     "Comment('{}')",
                     file.source_slice(comment.content).escape_default()
                 ),
-                
+
                 parser::ElementContent::Replacer(replacer) => println!(
                     "Replacer('{}', isSimple = {})",
                     file.source_slice(replacer.content).escape_default(),
                     replacer.is_simple
                 ),
-                
+
                 parser::ElementContent::Element(element) => {
                     match &element.name {
                         Either::Left(name) => {
                             println!("Element tag name: '{}'", name.escape_default());
                         }
-                        
+
                         Either::Right(replacer) => {
-                            println!("Element tag name: Replacer('{}', is_simple = {})", file.source_slice(replacer.content).escape_default(), replacer.is_simple);
+                            println!(
+                                "Element tag name: Replacer('{}', is_simple = {})",
+                                file.source_slice(replacer.content).escape_default(),
+                                replacer.is_simple
+                            );
                         }
                     }
-                    
+
                     println!("{indent}  Attribute (count {}):", element.attributes.len());
                     for (idx, attribute) in element.attributes.iter().enumerate() {
                         print!("{indent}    [{idx:#3}] = ");
                         match attribute {
                             parser::Attribute::EmptyAttribute(span) => {
-                                println!("EmptyAttribute('{}')", file.source_slice(*span).escape_default());
+                                println!(
+                                    "EmptyAttribute('{}')",
+                                    file.source_slice(*span).escape_default()
+                                );
                             }
                             parser::Attribute::Attribute(_, data) => {
-                                println!("Attribute(key = '{}', value = QuotedString('{}', is_double_quote = {}))", file.source_slice(data.key_span).escape_default(), file.source_slice(data.value.content).escape_default(), data.value.is_double_quote);
+                                println!(
+                                    "Attribute(key = '{}', value = QuotedString('{}', is_double_quote = {}))",
+                                    file.source_slice(data.key_span).escape_default(),
+                                    file.source_slice(data.value.content).escape_default(),
+                                    data.value.is_double_quote
+                                );
                             }
                             parser::Attribute::Replacer(_, replacer) => {
-                                println!("Replacer('{}', is_simple = {})", file.source_slice(replacer.content), replacer.is_simple);
+                                println!(
+                                    "Replacer('{}', is_simple = {})",
+                                    file.source_slice(replacer.content),
+                                    replacer.is_simple
+                                );
                             }
                         }
                     }
-                    
+
                     println!("{indent}  Child (count {}):", element.childs.len());
                     self.dump_element(file, depth + 2, &element.childs);
-                },
-                
-                parser::ElementContent::Text => println!("Text('{}')", element_slice.escape_default())
+                }
+
+                parser::ElementContent::Text => {
+                    println!("Text('{}')", element_slice.escape_default())
+                }
             }
         }
     }
-    
+
     pub fn parse_file(&mut self, name: &str, source: String) -> Result<(), Vec<Diagnostic>> {
         let file = self.code_map.add_file(name.to_string(), source);
         let tokens = lexer::run(&file)?;

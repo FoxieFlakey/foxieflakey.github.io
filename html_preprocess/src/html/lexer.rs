@@ -346,7 +346,7 @@ where
     let context_span = SpanLabel {
         label: Some("Replacer started here".to_string()),
         span: util::one_char_span(file, start),
-        style: SpanStyle::Secondary
+        style: SpanStyle::Secondary,
     };
 
     if first_char == '{' {
@@ -354,19 +354,17 @@ where
         content_start = util::inc_char_offset(offset, file.source());
         loop {
             let (offset, c) = iterator.next().ok_or_else(|| {
-                vec![
-                    LexerCodes::UnterminatedReplacer.to_diagnostic(&[
-                        SpanLabel {
-                            label: Some("Here!".to_string()),
-                            span: file.span.subspan(
-                                file.span.high() - file.span.low(),
-                                file.span.high() - file.span.low(),
-                            ),
-                            style: SpanStyle::Primary,
-                        },
-                        context_span.clone()
-                    ])
-                ]
+                vec![LexerCodes::UnterminatedReplacer.to_diagnostic(&[
+                    SpanLabel {
+                        label: Some("Here!".to_string()),
+                        span: file.span.subspan(
+                            file.span.high() - file.span.low(),
+                            file.span.high() - file.span.low(),
+                        ),
+                        style: SpanStyle::Primary,
+                    },
+                    context_span.clone(),
+                ])]
             })?;
 
             if c == '}' {
@@ -380,19 +378,17 @@ where
         content_start = offset;
         loop {
             let (offset, c) = iterator.next().ok_or_else(|| {
-                vec![
-                    LexerCodes::UnterminatedReplacer.to_diagnostic(&[
-                        SpanLabel {
-                            label: Some("Here!".to_string()),
-                            span: file.span.subspan(
-                                file.span.high() - file.span.low(),
-                                file.span.high() - file.span.low(),
-                            ),
-                            style: SpanStyle::Primary,
-                        },
-                        context_span.clone()
-                    ])
-                ]
+                vec![LexerCodes::UnterminatedReplacer.to_diagnostic(&[
+                    SpanLabel {
+                        label: Some("Here!".to_string()),
+                        span: file.span.subspan(
+                            file.span.high() - file.span.low(),
+                            file.span.high() - file.span.low(),
+                        ),
+                        style: SpanStyle::Primary,
+                    },
+                    context_span.clone(),
+                ])]
             })?;
 
             if !is_identifier(c) {
