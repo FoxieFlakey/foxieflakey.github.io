@@ -20,8 +20,11 @@ fn main() {
     <x-button>Helo! Click me</x-button>
     <script>
       let a = abc = "<" + "/script>"
-      $hewlo
+      $hi
     </script>
+    
+    <$special>
+    </>
   </body>
 </html>
 
@@ -63,6 +66,7 @@ fn main() {
             .ok_or_else(|| format!("Cannot find '{path}'"))
     });
     preprocessor.set_env("hi", "meow!");
+    preprocessor.set_env("special", "div");
 
     match preprocessor.process_file("index.html") {
         Ok(_) => println!("File parsed succesfully"),
