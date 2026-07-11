@@ -56,7 +56,6 @@ pub struct Preprocessor<'a> {
 
 struct FileContext<'a, 'env> {
     preprocessor: &'a mut Preprocessor<'env>,
-    file: &'a Arc<File>,
 
     // Tell is preprocess need to repeat
     // 1. Replace
@@ -155,21 +154,25 @@ impl<'a> Preprocessor<'a> {
         }
     }
 
+    fn resolve_span_to_string(&self, span: Span) -> &str {
+        util::resolve_span_to_string(&self.code_map, span)
+    }
+
     fn dump_element(&mut self, file: &File, depth: usize, elements: &[(Span, ElementContent)]) {
         let indent = "  ".repeat(depth);
         for (idx, element) in elements.iter().enumerate() {
-            let element_slice = util::resolve_span_to_string(&self.code_map, element.0);
+            let element_slice = self.resolve_span_to_string(element.0);
             print!("{indent}[{idx:#3}] = ");
 
             match &element.1 {
                 parser::ElementContent::Comment(comment) => println!(
                     "Comment('{}')",
-                    util::resolve_span_to_string(&self.code_map, comment.content).escape_default()
+                    self.resolve_span_to_string(comment.content).escape_default()
                 ),
 
                 parser::ElementContent::Replacer(replacer) => println!(
                     "Replacer('{}', isSimple = {})",
-                    util::resolve_span_to_string(&self.code_map, replacer.content).escape_default(),
+                    self.resolve_span_to_string(replacer.content).escape_default(),
                     replacer.is_simple
                 ),
 
@@ -182,7 +185,7 @@ impl<'a> Preprocessor<'a> {
                         Either::Right(replacer) => {
                             println!(
                                 "Element tag name: Replacer('{}', is_simple = {})",
-                                util::resolve_span_to_string(&self.code_map, replacer.content).escape_default(),
+                                self.resolve_span_to_string(replacer.content).escape_default(),
                                 replacer.is_simple
                             );
                         }
@@ -195,21 +198,21 @@ impl<'a> Preprocessor<'a> {
                             parser::Attribute::EmptyAttribute(span) => {
                                 println!(
                                     "EmptyAttribute('{}')",
-                                    util::resolve_span_to_string(&self.code_map, *span).escape_default()
+                                    self.resolve_span_to_string(*span).escape_default()
                                 );
                             }
                             parser::Attribute::Attribute(_, data) => {
                                 println!(
                                     "Attribute(key = '{}', value = QuotedString('{}', is_double_quote = {}))",
-                                    util::resolve_span_to_string(&self.code_map, data.key_span).escape_default(),
-                                    util::resolve_span_to_string(&self.code_map, data.value.content).escape_default(),
+                                    self.resolve_span_to_string(data.key_span).escape_default(),
+                                    self.resolve_span_to_string(data.value.content).escape_default(),
                                     data.value.is_double_quote
                                 );
                             }
                             parser::Attribute::Replacer(_, replacer) => {
                                 println!(
                                     "Replacer('{}', is_simple = {})",
-                                    util::resolve_span_to_string(&self.code_map, replacer.content),
+                                    self.resolve_span_to_string(replacer.content),
                                     replacer.is_simple
                                 );
                             }
@@ -264,7 +267,6 @@ impl<'a> Preprocessor<'a> {
         let mut tree = loaded.1.clone();
 
         let mut ctx = FileContext {
-            file: &file,
             reiterate: true,
             preprocessor: self,
         };

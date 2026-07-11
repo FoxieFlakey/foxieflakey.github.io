@@ -13,11 +13,15 @@ use crate::html::{FileContext, parser};
 //
 // <import src="..." />
 
+// Maximum nesting imports before errors
+const MAX_IMPORT_DEPTH: usize = 64;
+
 #[repr(u16)]
 #[derive(Clone, Copy)]
 pub enum ImportResolverCodes {
     EmptySrcAttribute = 0000,
     CannotImport = 0001,
+    ImportNestTooDeep = 0002,
 }
 
 impl ImportResolverCodes {
@@ -27,6 +31,7 @@ impl ImportResolverCodes {
                 "Attempting to use empty attribute like <import src /> it does not make sense. Give a path"
             }
             ImportResolverCodes::CannotImport => "Cannot import file",
+            ImportResolverCodes::ImportNestTooDeep => "The preprocess unable to handle import that is too deeply nested"
         }
     }
 
@@ -87,13 +92,13 @@ fn run_impl(
                 let attributes = attributes.iter().map(|x| match x {
                     parser::Attribute::EmptyAttribute(span) => (
                         span.clone(),
-                        Some(context.file.source_slice(span.clone())),
+                        Some(context.preprocessor.resolve_span_to_string(span.clone())),
                         None,
                     ),
 
                     parser::Attribute::Attribute(span, data) => (
                         span.clone(),
-                        Some(context.file.source_slice(data.key_span.clone())),
+                        Some(context.preprocessor.resolve_span_to_string(data.key_span.clone())),
                         Some(data),
                     ),
 
@@ -131,10 +136,26 @@ fn run_impl(
                         )]);
                     };
 
+                    if iteration_stack.len() > MAX_IMPORT_DEPTH {
+                        return Err(vec![
+                            Diagnostic {
+                                code: Some(ImportResolverCodes::ImportNestTooDeep.to_code()),
+                                level: Level::Error,
+                                message: format!(
+                                    "{} (nested {MAX_IMPORT_DEPTH} times)",
+                                    ImportResolverCodes::ImportNestTooDeep.description(),
+                                ),
+                                spans: vec![SpanLabel {
+                                    label: None,
+                                    span: element_span,
+                                    style: SpanStyle::Primary,
+                                }],
+                            }
+                        ])
+                    }
+
                     // Got the path
-                    let import_path = html_escape::decode_html_entities(
-                        context.file.source_slice(data.value.content),
-                    );
+                    let import_path = html_escape::decode_html_entities(context.preprocessor.resolve_span_to_string(data.value.content)).to_string();
                     let context_diag = Diagnostic {
                         code: None,
                         level: Level::Note,
