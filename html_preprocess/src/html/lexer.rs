@@ -481,9 +481,9 @@ pub fn run(file: &File) -> Result<Vec<(Span, Token)>, Vec<Diagnostic>> {
                         ],
                     )]);
                 } else {
-                    // Look ahead if its identifier characters or '/', then its definite open else not :3
+                    // Look ahead if its identifier characters or '/' or '$', then its definite open else not :3
                     if let Some((_, c)) = iterator.peek() {
-                        if is_identifier(*c) || *c == '/' {
+                        if is_identifier(*c) || *c == '/' || *c == '$' {
                             token = WhatToDoWithText::SaveThenPushTokenIgnoreCurrent((
                                 current_char_span,
                                 Token::LessThan,
