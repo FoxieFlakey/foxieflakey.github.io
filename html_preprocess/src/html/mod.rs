@@ -34,19 +34,73 @@
 use std::sync::Arc;
 
 use codemap::{CodeMap, File, Span};
-use codemap_diagnostic::{Diagnostic, Level};
+use codemap_diagnostic::{Diagnostic, Level, SpanLabel, SpanStyle};
 use either::Either;
 
 use crate::html::{lexer::Token, parser::ElementContent};
 
+mod import_resolver;
 mod lexer;
 mod parser;
+mod replacer_resolver;
 mod util;
 
 pub struct Preprocessor<'a> {
     code_map: CodeMap,
-    #[expect(unused)]
     fetcher: Box<dyn FnMut(&str) -> Result<String, String> + 'a>,
+}
+
+struct FileContext<'a, 'env> {
+    preprocessor: &'a mut Preprocessor<'env>,
+    file: &'a Arc<File>,
+    tree: Vec<(Span, parser::ElementContent)>,
+
+    // Tell is preprocess need to repeat
+    // 1. Replace
+    // 2. Handle imports
+    // again
+    reiterate: bool,
+}
+
+#[repr(u16)]
+#[derive(Clone, Copy)]
+pub enum PreprocessorCodes {
+    IterationExceededLimit = 0000,
+}
+
+impl PreprocessorCodes {
+    pub fn description(&self) -> &'static str {
+        match self {
+            PreprocessorCodes::IterationExceededLimit => {
+                "Limit reached when processing file (too deep of import or runaway replacer + import loop). Preprocessor can't find stable state"
+            }
+        }
+    }
+
+    pub fn level(&self) -> Level {
+        Level::Error
+    }
+
+    pub fn to_code(&self) -> String {
+        let letter = match self.level() {
+            Level::Note => "I",
+            Level::Help => "H",
+            Level::Warning => "W",
+            Level::Bug => "B",
+            Level::Error => "E",
+        };
+
+        format!("Preprocessor:{letter}{:04}", *self as u16)
+    }
+
+    pub fn to_diagnostic(&self, span_labels: &[SpanLabel]) -> Diagnostic {
+        Diagnostic {
+            code: Some(self.to_code()),
+            level: self.level(),
+            message: self.description().into(),
+            spans: span_labels.into(),
+        }
+    }
 }
 
 impl<'a> Preprocessor<'a> {
@@ -173,22 +227,54 @@ impl<'a> Preprocessor<'a> {
         let source = (self.fetcher)(path)?;
         Ok(self.code_map.add_file(path.to_string(), source))
     }
-    
+
     pub fn parse_file(&mut self, path: &str) -> Result<(), Vec<Diagnostic>> {
-        let file = self.load_file(path)
-            .map_err(|err| vec![
-                Diagnostic {
-                    code: None,
-                    level: Level::Error,
-                    message: err,
-                    spans: Vec::new()
-                }
-            ])?;
-        
+        let file = self.load_file(path).map_err(|err| {
+            vec![Diagnostic {
+                code: None,
+                level: Level::Error,
+                message: err,
+                spans: Vec::new(),
+            }]
+        })?;
+
         let tokens = lexer::run(&file)?;
         let elements = parser::run(file.clone(), tokens)?;
 
-        self.dump_element(&file, 0, &elements);
+        let mut ctx = FileContext {
+            file: &file,
+            reiterate: true,
+            preprocessor: self,
+            tree: elements,
+        };
+
+        let max_iter = 512;
+        let mut current_iter = 0;
+        while ctx.reiterate {
+            if current_iter >= max_iter {
+                return Err(vec![
+                    PreprocessorCodes::IterationExceededLimit.to_diagnostic(&[SpanLabel {
+                        label: None,
+                        span: util::one_char_span(&file, 0),
+                        style: SpanStyle::Primary,
+                    }]),
+                ]);
+            }
+
+            ctx.reiterate = false;
+
+            // Resolve imports
+            import_resolver::run(&mut ctx)?;
+
+            // Resolve replacers
+            replacer_resolver::run(&mut ctx)?;
+
+            current_iter += 1;
+        }
+
+        // Have to move out first
+        let tree = ctx.tree;
+        self.dump_element(&file, 0, &tree);
         Ok(())
     }
 }

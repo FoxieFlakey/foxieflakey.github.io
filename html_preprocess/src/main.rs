@@ -24,7 +24,7 @@ fn main() {
   </body>
 </html>
 
-"#
+"#,
     );
     sources.insert(
         "components/button.html",
