@@ -380,6 +380,7 @@ where
             if !is_identifier(c) {
                 end = offset;
                 content_end = end;
+                iterator.push_back((offset, c));
                 break;
             }
         }
