@@ -140,6 +140,26 @@ fn run_impl(context: &mut FileContext, tree: Vec<(Span, parser::ElementContent)>
                                 }
                             ]
                         })?;
+                    let context_diag = Diagnostic {
+                        code: None,
+                        level: Level::Note,
+                        message: "Imported from ".to_string(),
+                        spans: vec![
+                            SpanLabel {
+                                label: None,
+                                span: element_span,
+                                style: SpanStyle::Primary
+                            }
+                        ]
+                    };
+                    
+                    let imported_tree = context.preprocessor.parse_file_raw(&imported)
+                        .map_err(|mut x| {
+                            x.push(context_diag);
+                            x
+                        })?;
+                    
+                    
                     break;
                 }
                 continue;

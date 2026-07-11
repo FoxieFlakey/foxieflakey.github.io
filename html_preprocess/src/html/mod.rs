@@ -227,6 +227,11 @@ impl<'a> Preprocessor<'a> {
         Ok(self.code_map.add_file(path.to_string(), source))
     }
 
+    fn parse_file_raw(&mut self, file: &Arc<File>) -> Result<Vec<(Span, ElementContent)>, Vec<Diagnostic>> {
+        let tokens = lexer::run(&file)?;
+        parser::run(file.clone(), tokens)
+    }
+
     pub fn parse_file(&mut self, path: &str) -> Result<(), Vec<Diagnostic>> {
         let file = self.load_file(path).map_err(|err| {
             vec![Diagnostic {
@@ -236,9 +241,7 @@ impl<'a> Preprocessor<'a> {
                 spans: Vec::new(),
             }]
         })?;
-
-        let tokens = lexer::run(&file)?;
-        let mut tree = parser::run(file.clone(), tokens)?;
+        let mut tree = self.parse_file_raw(&file)?;
 
         let mut ctx = FileContext {
             file: &file,
