@@ -1,5 +1,4 @@
-use std::mem;
-
+use codemap::Span;
 use codemap_diagnostic::{Diagnostic, Level, SpanLabel, SpanStyle};
 use either::Either;
 
@@ -59,10 +58,12 @@ impl ImportResolverCodes {
     }
 }
 
-pub fn run(context: &mut FileContext) -> Result<(), Vec<Diagnostic>> {
-    let new_tree = Vec::with_capacity(context.tree.len());
-    let tree = mem::replace(&mut context.tree, new_tree);
+pub fn run(context: &mut FileContext, tree: Vec<(Span, parser::ElementContent)>) -> Result<Vec<(Span, parser::ElementContent)>, Vec<Diagnostic>> {
+    run_impl(context, tree)
+}
 
+fn run_impl(context: &mut FileContext, tree: Vec<(Span, parser::ElementContent)>) -> Result<Vec<(Span, parser::ElementContent)>, Vec<Diagnostic>> {
+    let mut new_tree = Vec::with_capacity(tree.len());
     'outer_loop: for (element_span, element) in tree {
         if let parser::ElementContent::Element(parser::Element {
             name: Either::Left(name),
@@ -145,8 +146,8 @@ pub fn run(context: &mut FileContext) -> Result<(), Vec<Diagnostic>> {
             }
         }
 
-        context.tree.push((element_span, element));
+        new_tree.push((element_span, element));
     }
 
-    Ok(())
+    Ok(new_tree)
 }

@@ -53,7 +53,6 @@ pub struct Preprocessor<'a> {
 struct FileContext<'a, 'env> {
     preprocessor: &'a mut Preprocessor<'env>,
     file: &'a Arc<File>,
-    tree: Vec<(Span, parser::ElementContent)>,
 
     // Tell is preprocess need to repeat
     // 1. Replace
@@ -239,13 +238,12 @@ impl<'a> Preprocessor<'a> {
         })?;
 
         let tokens = lexer::run(&file)?;
-        let elements = parser::run(file.clone(), tokens)?;
+        let mut tree = parser::run(file.clone(), tokens)?;
 
         let mut ctx = FileContext {
             file: &file,
             reiterate: true,
             preprocessor: self,
-            tree: elements,
         };
 
         let max_iter = 512;
@@ -264,16 +262,14 @@ impl<'a> Preprocessor<'a> {
             ctx.reiterate = false;
 
             // Resolve imports
-            import_resolver::run(&mut ctx)?;
+            tree = import_resolver::run(&mut ctx, tree)?;
 
             // Resolve replacers
-            replacer_resolver::run(&mut ctx)?;
+            tree = replacer_resolver::run(&mut ctx, tree)?;
 
             current_iter += 1;
         }
 
-        // Have to move out first
-        let tree = ctx.tree;
         self.dump_element(&file, 0, &tree);
         Ok(())
     }
