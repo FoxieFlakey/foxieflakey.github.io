@@ -284,7 +284,7 @@ impl<'a> Preprocessor<'a> {
 
         let max_iter = 512;
         let mut current_iter = 0;
-        'resolver: loop {
+        loop {
             if current_iter >= max_iter {
                 return Err(vec![
                     PreprocessorCodes::IterationExceededLimit.to_diagnostic(&[SpanLabel {
@@ -303,32 +303,33 @@ impl<'a> Preprocessor<'a> {
 
             // Check if next iteration is not needed
             current_iter += 1;
-            for (_, element) in &tree {
-                match element {
-                    // There still replacers
-                    parser::ElementContent::Replacer(_) => continue 'resolver,
-                    parser::ElementContent::Element(parser::Element {
-                        name: Either::Right(_),
-                        ..
-                    }) => {
-                        continue 'resolver;
+            
+            let mut need_reiter = false;
+            util::iter_tree_mut(&mut tree, |element| {
+                match &element.1 {
+                    ElementContent::Replacer(_) => {
+                        need_reiter = true;
+                        false
                     }
-
-                    parser::ElementContent::Element(parser::Element {
-                        name: Either::Left(name),
-                        ..
-                    }) => {
-                        // There still import needed
-                        if name == "import" {
-                            continue 'resolver;
+                    
+                    ElementContent::Element(elem) => {
+                        if let Either::Right(a) = &elem.name {
+                            let _: &lexer::Replacer = a;
+                            need_reiter = true;
+                            false
+                        } else {
+                            true
                         }
                     }
-                    _ => (),
+                    
+                    _ => true
                 }
+            });
+            
+            if !need_reiter {
+                // Nothing changes, quit iterating
+                break;
             }
-
-            // Nothing needed to be replaced/imported
-            break;
         }
 
         self.dump_element(&file, 0, &tree);
