@@ -290,6 +290,7 @@ impl<'a> Preprocessor<'a> {
 
         if self.minify {
             let cfg = simple_minify_html::Cfg {
+                keep_html_and_head_opening_tags: true,
                 ..Default::default()
             };
 
