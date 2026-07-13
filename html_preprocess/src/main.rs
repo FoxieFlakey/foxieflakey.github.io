@@ -97,20 +97,6 @@ fn main() -> ExitCode {
         .map(|x| Path::new(&x).to_path_buf())
         .unwrap_or(cwd);
 
-    let output_file;
-    if args.output != "-" {
-        match File::create(Path::new(&args.output)) {
-            Ok(x) => output_file = Some(x),
-            Err(e) => {
-                eprintln!("Cannot open output: {e}");
-                return ExitCode::FAILURE;
-            }
-        }
-    } else {
-        // Writes to stdout
-        output_file = None;
-    }
-
     let mut preprocessor = Preprocessor::new(
         |path| {
             let path = Path::new(path);
@@ -202,6 +188,20 @@ fn main() -> ExitCode {
 
     match preprocessor.process_file(&args.input) {
         Ok(x) => {
+            let output_file;
+            if args.output != "-" {
+                match File::create(Path::new(&args.output)) {
+                    Ok(x) => output_file = Some(x),
+                    Err(e) => {
+                        eprintln!("Cannot open output: {e}");
+                        return ExitCode::FAILURE;
+                    }
+                }
+            } else {
+                // Writes to stdout
+                output_file = None;
+            }
+            
             if let Some(mut file) = output_file {
                 if let Err(e) = file.write_all(&x.as_bytes()) {
                     eprintln!("Error writing to output file: {e}");
