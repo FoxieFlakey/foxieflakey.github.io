@@ -289,14 +289,14 @@ impl<'a> Preprocessor<'a> {
         })?;
 
         if self.minify {
-            let cfg = minify_html::Cfg {
+            let cfg = simple_minify_html::Cfg {
                 ..Default::default()
             };
 
             let input = &buf;
             str::from_utf8(input).expect("HTML encoder written non valid UTF-8 bytes!");
 
-            let output = minify_html::minify(&input, &cfg);
+            let output = simple_minify_html::minify(&input, Some(cfg));
             return Ok(
                 String::from_utf8(output).expect("HTML minifier written non valid UTF-8 bytes!")
             );
