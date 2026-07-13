@@ -32,8 +32,7 @@
 //    cannot be used to open a tag
 
 use std::{
-    collections::{HashMap, hash_map::Entry},
-    sync::Arc,
+    collections::{HashMap, hash_map::Entry}, path::Path, sync::Arc
 };
 
 use codemap::{CodeMap, File, Span};
@@ -67,12 +66,25 @@ impl<'env> FileContext<'_, 'env> {
         self.preprocessor.get_env(key)
     }
     
+    pub fn find_src_file(&self, span: Span) -> &Arc<File> {
+        self.preprocessor.code_map.find_file(span.low())
+    }
+    
     pub fn import_file(
         &mut self,
+        importer: &File,
         path: &str,
     ) -> Result<Arc<(Arc<File>, Vec<(Span, ElementContent)>)>, Either<Vec<Diagnostic>, String>>
     {
-        self.preprocessor.load_file(path)
+        if path.starts_with('/') {
+            self.preprocessor.load_file(path)
+        } else {
+            let importer_dir = Path::new(importer.name()).parent()
+                .unwrap()
+                .to_str()
+                .unwrap();
+            self.preprocessor.load_file(&format!("{importer_dir}/{path}"))
+        }
     }
     
     pub fn resolve_span_to_string(&self, span: Span) -> &str {
