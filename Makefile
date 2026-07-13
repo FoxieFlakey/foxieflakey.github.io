@@ -29,7 +29,8 @@ $(web_dir)/%.html: $(input_dir)/%.html $(current_dir)/target/release/html_prepro
 
 # The HTML preprocesser i made
 $(current_dir)/target/release/html_preprocess:
-	cargo build --release
+	@echo "[ CARGO ] Building preprocessor"
+	@cargo build --release
 
 .PHONY: create_dirs
 create_dirs:
@@ -50,4 +51,7 @@ host: all
 # See https://stackoverflow.com/questions/2483182/recursive-wildcards-in-gnu-make
 rwildcard=$(foreach d,$(wildcard $(1:=/*)),$(call rwildcard,$d,$2) $(filter $(subst *,%,$2),$d))
 include $(call rwildcard,$(deps_dir),*.d)
+
+# Also include Rust's makefile deps
+-include $(current_dir)/target/release/html_preprocess.d
 
