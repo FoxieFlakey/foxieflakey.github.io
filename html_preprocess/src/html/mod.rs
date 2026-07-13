@@ -47,6 +47,7 @@ mod lexer;
 mod parser;
 mod replacer_resolver;
 mod util;
+mod template_resolver;
 
 pub struct Preprocessor<'a> {
     cached_files: HashMap<String, Arc<(Arc<File>, Vec<(Span, ElementContent)>)>>,
@@ -300,6 +301,9 @@ impl<'a> Preprocessor<'a> {
 
             // Resolve replacers
             tree = replacer_resolver::run(&mut ctx, tree)?;
+
+            // Resolve templates
+            tree = template_resolver::run(&mut ctx, tree)?;
 
             // Check if next iteration is not needed
             current_iter += 1;

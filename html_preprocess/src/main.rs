@@ -1,3 +1,5 @@
+#![feature(map_try_insert)]
+
 use std::collections::HashMap;
 
 use codemap_diagnostic::{ColorConfig, Emitter};
@@ -17,7 +19,10 @@ fn main() {
     <title>Test</title>
   </head>
   <body>
-    <x-button>Helo! Click me</x-button>
+    <x-button onclick="yay!">Helo! Click me</x-button>
+    <x-button onclick="yay!">Helo! Click me</x-button>
+    <x-button onclick="yay!">Helo! Click me</x-button>
+    <x-button onclick="yay!">Helo! Click me</x-button>
     <script>
       let a = abc = "<" + "/script>"
       $hi
