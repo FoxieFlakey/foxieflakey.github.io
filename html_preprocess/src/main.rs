@@ -72,7 +72,7 @@ fn main() {
     });
 
     match preprocessor.process_file("index.html") {
-        Ok(_) => println!("File parsed succesfully"),
+        Ok(x) => println!("File parsed succesfully. Result:\n{x}"),
         Err(e) => {
             println!("Failed parsing file");
             Emitter::stderr(ColorConfig::Auto, Some(preprocessor.get_codemap())).emit(&e);

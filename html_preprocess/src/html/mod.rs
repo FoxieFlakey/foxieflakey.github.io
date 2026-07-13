@@ -48,6 +48,7 @@ mod parser;
 mod replacer_resolver;
 mod util;
 mod template_resolver;
+mod encoder;
 
 pub struct Preprocessor<'a> {
     cached_files: HashMap<String, Arc<(Arc<File>, Vec<(Span, ElementContent)>)>>,
@@ -266,7 +267,7 @@ impl<'a> Preprocessor<'a> {
         }
     }
 
-    pub fn process_file(&mut self, path: &str) -> Result<(), Vec<Diagnostic>> {
+    pub fn process_file(&mut self, path: &str) -> Result<String, Vec<Diagnostic>> {
         let loaded = self.load_file(path).map_err(|x| match x {
             Either::Left(diag) => diag,
             Either::Right(err) => {
@@ -336,7 +337,35 @@ impl<'a> Preprocessor<'a> {
             }
         }
 
-        self.dump_element(&file, 0, &tree);
-        Ok(())
+        let mut buf = Vec::new();
+        encoder::encode(&mut ctx, &mut buf, &tree)
+            .map_err(|e| {
+                let error_span = file.span.subspan(0, util::inc_char_offset(0, file.source()));
+                let msg = match e {
+                    encoder::EncodeError::IO(e) => {
+                        format!("Cannot write to output: {e}")
+                    }
+                    
+                    encoder::EncodeError::Message(e) => {
+                        format!("Encoder met an error: {e}")
+                    }
+                };
+                
+                return vec![
+                    Diagnostic {
+                        code: None,
+                        level: Level::Error,
+                        message: msg,
+                        spans: vec![
+                            SpanLabel {
+                                label: None,
+                                span: error_span,
+                                style: SpanStyle::Primary
+                            }
+                        ]
+                    }
+                ]
+            })?;
+        Ok(String::from_utf8(buf).expect("HTML encoder written non valid UTF-8 bytes!"))
     }
 }
