@@ -1,11 +1,6 @@
 use clap::Parser;
 use std::{
-    env,
-    fs::File,
-    io::{Read, Write},
-    path::Path,
-    process::ExitCode,
-    str::FromStr,
+    collections::HashSet, env, fs::File, io::{self, Read, Write}, path::{Path, PathBuf}, process::ExitCode, str::FromStr
 };
 
 use codemap_diagnostic::{ColorConfig, Emitter};
@@ -40,6 +35,11 @@ struct Args {
     /// Whether to minify the output HTML or not
     #[arg(short, long)]
     minify: bool,
+    
+    /// Dependency file, whether to generate makefile depedency or not
+    /// On stdout, this no-op
+    #[arg(long)]
+    makefile_depedency: Option<PathBuf>
 }
 
 #[derive(Clone)]
@@ -81,14 +81,14 @@ impl FromStr for EnvValue {
     }
 }
 
-fn main() -> ExitCode {
+fn main() -> Result<ExitCode, ExitCode> {
     let args = Args::parse();
     let cwd;
     match env::current_dir() {
         Ok(x) => cwd = x,
         Err(e) => {
             eprintln!("Cannot find current directory: {e}");
-            return ExitCode::FAILURE;
+            return Err(ExitCode::FAILURE);
         }
     };
 
@@ -96,6 +96,8 @@ fn main() -> ExitCode {
         .source_dir
         .map(|x| Path::new(&x).to_path_buf())
         .unwrap_or(cwd);
+
+    let mut dependencies = HashSet::new();
 
     let mut preprocessor = Preprocessor::new(
         |path| {
@@ -168,6 +170,7 @@ fn main() -> ExitCode {
                 )
             })?;
 
+            dependencies.insert(path);
             Ok(source_code.to_string())
         },
         args.minify,
@@ -188,13 +191,13 @@ fn main() -> ExitCode {
 
     match preprocessor.process_file(&args.input) {
         Ok(x) => {
-            let output_file;
+            let mut output_file;
             if args.output != "-" {
                 match File::create(Path::new(&args.output)) {
                     Ok(x) => output_file = Some(x),
                     Err(e) => {
                         eprintln!("Cannot open output: {e}");
-                        return ExitCode::FAILURE;
+                        return Err(ExitCode::FAILURE);
                     }
                 }
             } else {
@@ -202,20 +205,56 @@ fn main() -> ExitCode {
                 output_file = None;
             }
             
-            if let Some(mut file) = output_file {
+            if let Some(file) = &mut output_file {
                 if let Err(e) = file.write_all(&x.as_bytes()) {
                     eprintln!("Error writing to output file: {e}");
-                    return ExitCode::FAILURE;
+                    return Err(ExitCode::FAILURE);
                 }
             } else {
                 println!("{}", x);
             }
-            ExitCode::SUCCESS
+            
+            if output_file.is_some() {
+                if let Some(path) = args.makefile_depedency {
+                    let mut dep_file;
+                    match File::create(&path) {
+                        Ok(x) => dep_file = x,
+                        Err(e) => {
+                            eprintln!("warning: Cannot open dependency file: {e}");
+                            return Err(ExitCode::FAILURE);
+                        }
+                    }
+                    
+                    fn handle_err(err: io::Error) -> ExitCode {
+                        eprintln!("Cannot write to makefile dependency file: {err}");
+                        ExitCode::FAILURE
+                    }
+                    
+                    writeln!(dep_file, "{}: \\", Path::new(&args.output).display()).map_err(handle_err)?;
+                    
+                    drop(preprocessor);
+                    for (idx, dep) in dependencies.iter().enumerate() {
+                        write!(dep_file, "\t{} ", dep.display()).map_err(handle_err)?;
+                        
+                        // All except last entry needs \
+                        if idx < dependencies.len() - 1 {
+                            writeln!(dep_file, "\\").map_err(handle_err)?;
+                        } else {
+                            writeln!(dep_file).map_err(handle_err)?;
+                        }
+                    }
+                    
+                    for dep in dependencies {
+                        writeln!(dep_file, "{}:", dep.display()).map_err(handle_err)?;
+                    }
+                }
+            }
+            Ok(ExitCode::SUCCESS)
         }
         Err(e) => {
             eprintln!("Failed preprocessing file");
             Emitter::stderr(ColorConfig::Auto, Some(preprocessor.get_codemap())).emit(&e);
-            ExitCode::FAILURE
+            Err(ExitCode::FAILURE)
         }
     }
 }
