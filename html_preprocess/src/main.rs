@@ -1,77 +1,75 @@
 #![feature(map_try_insert)]
 
-use std::collections::HashMap;
+use std::{fs::File, io::Read, path::Path};
 
 use codemap_diagnostic::{ColorConfig, Emitter};
+use path_jail::JailError;
 
 use crate::html::Preprocessor;
 
 mod html;
 
 fn main() {
-    let mut sources = HashMap::new();
-    sources.insert(
-        "index.html",
-        r#"<import src="components/button.html"></import>
-
-<html lang="en">
-  <head>
-    <title>Test</title>
-  </head>
-  <body>
-    <x-button onclick="yay!">Helo! Click me</x-button>
-    <x-button onclick="yay!">Helo! Click me</x-button>
-    <x-button onclick="yay!">Helo! Click me</x-button>
-    <x-button onclick="yay!">Helo! Click me</x-button>
-    <script>
-      let a = abc = "<" + "/script>"
-      $hi
-    </script>
-    
-    <$special>
-    </>
-  </body>
-</html>
-
-"#,
-    );
-    sources.insert(
-        "components/button.html",
-        r#"<!--
-  A template for Button
-  Properties given to the instance can be accessed with
-  ${props["name"]} and ${children} for the childrens pasted
-  into the position.
-  
-  To pass thru props use ${props} it would expand to all
-  set properties so
-  
-  <x-button onclick="abc" />
-  
-  expands to
-  
-  <button onclick="abc"></button>
-  
-  If there duplicate, the later items
--->
-<x-template name="x-button">
-  <button ${props} >
-    ${children}
-  </button>
-</x-template>
-"#,
-    );
-
-    let sources = sources;
-
+    let src_dir = "./web/";
     let mut preprocessor = Preprocessor::new(|path| {
-        sources
-            .get(path)
-            .map(|x| x.to_string())
-            .ok_or_else(|| format!("Cannot find '{path}'"))
+        let path = Path::new(path);
+        let path = path_jail::join(src_dir, path)
+            .map_err(|e| {
+                match e {
+                    JailError::BrokenSymlink(location) => {
+                        format!("Broken symlink at '{}' when accessing '{}'", location.display(), path.display())
+                    }
+                    
+                    JailError::EscapedRoot { attempted, root } => {
+                        format!("File path at '{}' (attempting '{}') escapes '{}'", path.display(), attempted.display(), root.display())
+                    }
+                    
+                    JailError::Io(e) => {
+                        format!("Error reading file: {e}")
+                    }
+                    
+                    JailError::InvalidPath(path) => {
+                        format!("Invalid path to read: \"{}\"", path.escape_default())
+                    }
+                    
+                    JailError::InvalidRoot { path, source: Some(source) } => {
+                        format!("Cannot access source directory '{}': {source}", path.display())
+                    }
+                    
+                    JailError::InvalidRoot { path, source: None } => {
+                        if path.parent().is_none() {
+                            format!("Cannot use filesystem root '{}' for source dir", path.display())
+                        } else if !path.is_dir() {
+                            format!("Cannot use non directory '{}' source dir", path.display())
+                        } else {
+                            format!("Invalid source dir '{}'", path.display())
+                        }
+                    }
+                    
+                    e => {
+                        format!("Unknown JailError: {e}")
+                    }
+                }
+            })?;
+        
+        let mut file = File::open(&path)
+            .map_err(|e| {
+                format!("Error opening '{}': {e}", path.display())
+            })?;
+        
+        let mut buf = Vec::new();
+        file.read_to_end(&mut buf)
+            .map_err(|e| {
+                format!("Error reading '{}': {e}", path.display())
+            })?;
+        
+        let source_code = str::from_utf8(&buf)
+            .map_err(|e| {
+                format!("Error reading '{}' due its invalid UTF-8: {e}", path.display())
+            })?;
+        
+        Ok(source_code.to_string())
     });
-    preprocessor.set_env("hi", "meow!");
-    preprocessor.set_env("special", "div_special");
 
     match preprocessor.process_file("index.html") {
         Ok(_) => println!("File parsed succesfully"),

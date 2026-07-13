@@ -38,8 +38,15 @@ dependencies = [
  "codemap-diagnostic",
  "either",
  "html-escape",
+ "path_jail",
  "pushback-iter",
 ]
+
+[[package]]
+name = "path_jail"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bfe21bf78eee1bef6eaf9e4e423cacf5c55ada71016ac652c84737a86dc38eea"
 
 [[package]]
 name = "pushback-iter"
