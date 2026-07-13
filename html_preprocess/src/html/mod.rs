@@ -32,9 +32,7 @@
 //    cannot be used to open a tag
 
 use std::{
-    collections::{HashMap, hash_map::Entry},
-    path::Path,
-    sync::Arc,
+    collections::{HashMap, hash_map::Entry}, path::Path, sync::Arc
 };
 
 use codemap::{CodeMap, File, Span};
@@ -56,6 +54,7 @@ pub struct Preprocessor<'a> {
     code_map: CodeMap,
     fetcher: Box<dyn FnMut(&str) -> Result<String, String> + 'a>,
     environment: HashMap<String, String>,
+    minify: bool
 }
 
 struct FileContext<'a, 'env> {
@@ -138,7 +137,7 @@ impl PreprocessorCodes {
 }
 
 impl<'a> Preprocessor<'a> {
-    pub fn new<F>(file_fetcher: F) -> Self
+    pub fn new<F>(file_fetcher: F, can_minify: bool) -> Self
     where
         F: FnMut(&str) -> Result<String, String> + 'a,
     {
@@ -147,6 +146,7 @@ impl<'a> Preprocessor<'a> {
             cached_files: HashMap::new(),
             fetcher: Box::new(file_fetcher),
             environment: HashMap::new(),
+            minify: can_minify
         }
     }
 
@@ -301,9 +301,6 @@ impl<'a> Preprocessor<'a> {
 
         let mut buf = Vec::new();
         encoder::encode(&mut ctx, &mut buf, &tree).map_err(|e| {
-            let error_span = file
-                .span
-                .subspan(0, util::inc_char_offset(0, file.source()));
             let msg = match e {
                 encoder::EncodeError::IO(e) => {
                     format!("Cannot write to output: {e}")
@@ -318,13 +315,23 @@ impl<'a> Preprocessor<'a> {
                 code: None,
                 level: Level::Error,
                 message: msg,
-                spans: vec![SpanLabel {
-                    label: None,
-                    span: error_span,
-                    style: SpanStyle::Primary,
-                }],
+                spans: vec![],
             }];
         })?;
+        
+        
+        if self.minify {
+            let cfg = minify_html::Cfg {
+                ..Default::default()
+            };
+            
+            let input = &buf;
+            str::from_utf8(input).expect("HTML encoder written non valid UTF-8 bytes!");
+            
+            let output = minify_html::minify(&input, &cfg);
+            return Ok(String::from_utf8(output).expect("HTML minifier written non valid UTF-8 bytes!"));
+        }
+        
         Ok(String::from_utf8(buf).expect("HTML encoder written non valid UTF-8 bytes!"))
     }
 }

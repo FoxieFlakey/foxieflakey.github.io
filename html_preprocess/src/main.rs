@@ -38,6 +38,10 @@ struct Args {
     /// The output where preprocessed HTML be outputted
     /// or stdout if '-' given
     output: String,
+    
+    /// Whether to minify the output HTML or not
+    #[arg(short, long)]
+    minify: bool
 }
 
 #[derive(Clone)]
@@ -180,7 +184,7 @@ fn main() -> ExitCode {
         })?;
 
         Ok(source_code.to_string())
-    });
+    }, args.minify);
 
     // Process environments
     for env_val in &args.env_values {
