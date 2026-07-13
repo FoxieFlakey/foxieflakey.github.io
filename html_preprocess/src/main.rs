@@ -28,8 +28,8 @@ fn main() {
                         format!("Error reading file: {e}")
                     }
                     
-                    JailError::InvalidPath(path) => {
-                        format!("Invalid path to read: \"{}\"", path.escape_default())
+                    JailError::InvalidPath(err) => {
+                        format!("Invalid path to open for '{}': {err}", path.display())
                     }
                     
                     JailError::InvalidRoot { path, source: Some(source) } => {
