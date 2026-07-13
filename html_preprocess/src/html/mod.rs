@@ -88,7 +88,7 @@ impl<'env> FileContext<'_, 'env> {
                 .to_str()
                 .unwrap();
             self.preprocessor
-                .load_file(&format!("{importer_dir}/{path}"))
+                .load_file(&format!("./{importer_dir}/{path}"))
         }
     }
 
