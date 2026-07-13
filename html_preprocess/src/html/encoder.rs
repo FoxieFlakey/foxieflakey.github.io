@@ -58,13 +58,13 @@ pub fn encode<W>(
                 for attribute in &element.attributes {
                     match attribute {
                         parser::Attribute::EmptyAttribute(span) => {
-                            let key = file_context.preprocessor.resolve_span_to_string(*span);
+                            let key = file_context.resolve_span_to_string(*span);
                             write!(writer, " {key}")?;
                         }
                         
                         parser::Attribute::Attribute(_, data) => {
-                            let key = file_context.preprocessor.resolve_span_to_string(data.key_span);
-                            let value = file_context.preprocessor.resolve_span_to_string(data.value.content);
+                            let key = file_context.resolve_span_to_string(data.key_span);
+                            let value = file_context.resolve_span_to_string(data.value.content);
                             write!(writer, " {key}=")?;
                             
                             if data.value.is_double_quote {
@@ -86,12 +86,12 @@ pub fn encode<W>(
             }
             
             parser::ElementContent::Comment(comment) => {
-                let content = file_context.preprocessor.resolve_span_to_string(comment.content);
+                let content = file_context.resolve_span_to_string(comment.content);
                 write!(writer, "<!--{content}--->")?;
             }
             
             parser::ElementContent::Text => {
-                let content = file_context.preprocessor.resolve_span_to_string(*current_span);
+                let content = file_context.resolve_span_to_string(*current_span);
                 write!(writer, "{content}")?;
             }
             

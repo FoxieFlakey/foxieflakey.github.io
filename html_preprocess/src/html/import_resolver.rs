@@ -94,16 +94,14 @@ fn run_impl(
                 let attributes = attributes.iter().map(|x| match x {
                     parser::Attribute::EmptyAttribute(span) => (
                         span.clone(),
-                        Some(context.preprocessor.resolve_span_to_string(span.clone())),
+                        Some(context.resolve_span_to_string(span.clone())),
                         None,
                     ),
 
                     parser::Attribute::Attribute(span, data) => (
                         span.clone(),
                         Some(
-                            context
-                                .preprocessor
-                                .resolve_span_to_string(data.key_span.clone()),
+                            context.resolve_span_to_string(data.key_span.clone()),
                         ),
                         Some(data),
                     ),
@@ -160,9 +158,7 @@ fn run_impl(
 
                     // Got the path
                     let import_path = html_escape::decode_html_entities(
-                        context
-                            .preprocessor
-                            .resolve_span_to_string(data.value.content),
+                        context.resolve_span_to_string(data.value.content),
                     )
                     .to_string();
                     let context_diag = Diagnostic {
@@ -176,9 +172,7 @@ fn run_impl(
                         }],
                     };
                     let imported =
-                        context
-                            .preprocessor
-                            .load_file(&import_path)
+                        context.import_file(&import_path)
                             .map_err(|x| match x {
                                 Either::Left(mut diag) => {
                                     diag.push(context_diag);

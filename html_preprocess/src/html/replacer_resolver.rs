@@ -56,12 +56,12 @@ pub fn run(
     
     util::iter_tree_mut(&mut tree, |(span, element)| {
         fn try_resolve_replacer(context: &mut FileContext, span: Span, replacer: &lexer::Replacer) -> Result<Option<String>, Diagnostic> {
-            let content = context.preprocessor.resolve_span_to_string(replacer.content);
+            let content = context.resolve_span_to_string(replacer.content);
             if content.starts_with("props") || content.starts_with("children") {
                 return Ok(None);
             }
             
-            if let Some(val) = context.preprocessor.get_env(content) {
+            if let Some(val) = context.get_env(content) {
                 return Ok(Some(val.clone()));
             } else {
                 return Err(ReplacerResolver::UnknownReplacer.to_diagnostic(&[

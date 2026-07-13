@@ -115,12 +115,12 @@ fn find_template_and_instances(
                                 ]);
                             }
                             parser::Attribute::Attribute(_, data) => {
-                                let key = context.preprocessor.resolve_span_to_string(data.key_span);
+                                let key = context.resolve_span_to_string(data.key_span);
                                 if key != "name" {
                                     continue;
                                 }
                             
-                                let name = html_escape::decode_html_entities(context.preprocessor.resolve_span_to_string(data.value.content));
+                                let name = html_escape::decode_html_entities(context.resolve_span_to_string(data.value.content));
                                 template_name = Some((name.to_string(), data.value_span));
                                 break;
                             }
@@ -317,7 +317,7 @@ fn expand_template(
     for (element_span, element) in template {
         match element {
             parser::ElementContent::Replacer(replacer) => {
-                let replacer = context.preprocessor.resolve_span_to_string(replacer.content);
+                let replacer = context.resolve_span_to_string(replacer.content);
                 if replacer.starts_with("children") {
                     output.extend_from_slice(&expansion_childs);
                 } else {
@@ -333,7 +333,7 @@ fn expand_template(
                 for attribute in &template_element.attributes {
                     match attribute {
                         parser::Attribute::Replacer(_, replacer) => {
-                            let replacer = context.preprocessor.resolve_span_to_string(replacer.content);
+                            let replacer = context.resolve_span_to_string(replacer.content);
                             if replacer.starts_with("props") {
                                 instance.attributes.extend_from_slice(expansion_attributes);
                             } else {

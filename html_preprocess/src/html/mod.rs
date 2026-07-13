@@ -61,6 +61,25 @@ struct FileContext<'a, 'env> {
     preprocessor: &'a mut Preprocessor<'env>,
 }
 
+impl<'env> FileContext<'_, 'env> {
+    // Same return value as HashMap::get
+    pub fn get_env<K: AsRef<str> + ?Sized>(&self, key: &K) -> Option<&String> {
+        self.preprocessor.get_env(key)
+    }
+    
+    pub fn import_file(
+        &mut self,
+        path: &str,
+    ) -> Result<Arc<(Arc<File>, Vec<(Span, ElementContent)>)>, Either<Vec<Diagnostic>, String>>
+    {
+        self.preprocessor.load_file(path)
+    }
+    
+    pub fn resolve_span_to_string(&self, span: Span) -> &str {
+        self.preprocessor.resolve_span_to_string(span)
+    }
+}
+
 #[repr(u16)]
 #[derive(Clone, Copy)]
 pub enum PreprocessorCodes {
