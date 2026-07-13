@@ -1,0 +1,17 @@
+#content_my_profile {
+  table-layout: fixed;
+  border-collapse: collapse;
+}
+
+#content_profile_pic {
+  padding-right: 8px;
+}
+
+#content_profile_fields {
+  vertical-align: top;
+}
+
+#content_profile_fields th {
+  text-align: left;
+}
+

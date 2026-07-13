@@ -1,9 +1,12 @@
 MAKEFLAGS += -rR --no-print-directory
 
 files := \
-	index.html
+	index.html \
+	css/global.css \
+	css/pages/home.css \
+	img/profile.gif
 
-root ?= https://localhost:8080/
+root ?= http://localhost:8080/
 current_dir := $(shell pwd)
 output_dir := $(current_dir)/output
 web_dir := $(output_dir)/web
@@ -15,12 +18,14 @@ deps_dir := $(output_dir)/deps
 all: create_dirs .WAIT $(addprefix $(web_dir)/,$(files))
 	@true
 
-$(output_dir)/%: $(input_dir)/%
+$(web_dir)/%: $(input_dir)/%
 	@echo "[ COPY ] $<"
+	@mkdir -p -- "$(dir $(@))"
 	@cp -- "$<" "$@"
 
 $(web_dir)/%.html: $(input_dir)/%.html $(current_dir)/target/release/html_preprocess
 	@echo "[ RUST ] Preprocessing '$@'"
+	@mkdir -p -- "$(dir $(@))"
 	@$(current_dir)/target/release/html_preprocess \
 		"-Droot=$(root)" \
 		-s "$(input_dir)" \
