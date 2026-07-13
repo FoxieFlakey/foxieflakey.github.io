@@ -100,9 +100,7 @@ fn run_impl(
 
                     parser::Attribute::Attribute(span, data) => (
                         span.clone(),
-                        Some(
-                            context.resolve_span_to_string(data.key_span.clone()),
-                        ),
+                        Some(context.resolve_span_to_string(data.key_span.clone())),
                         Some(data),
                     ),
 
@@ -173,7 +171,8 @@ fn run_impl(
                     };
                     let importer = context.find_src_file(element_span).clone();
                     let imported =
-                        context.import_file(&importer, &import_path)
+                        context
+                            .import_file(&importer, &import_path)
                             .map_err(|x| match x {
                                 Either::Left(mut diag) => {
                                     diag.push(context_diag);

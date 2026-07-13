@@ -12,24 +12,18 @@ pub enum TemplateResolver {
     TemplateNameMustBeNonEmpty = 0000,
     TemplateAlreadyDefined = 0001,
     CantFindNameAttribute = 0002,
-    UnknownTemplate = 0003
+    UnknownTemplate = 0003,
 }
 
 impl TemplateResolver {
     pub fn description(&self) -> &'static str {
         match self {
-            TemplateResolver::TemplateNameMustBeNonEmpty => {
-                "Name for template must not be empty"
-            }
-            TemplateResolver::TemplateAlreadyDefined => {
-                "Template already defined"
-            }
+            TemplateResolver::TemplateNameMustBeNonEmpty => "Name for template must not be empty",
+            TemplateResolver::TemplateAlreadyDefined => "Template already defined",
             TemplateResolver::CantFindNameAttribute => {
                 "Cannot find 'name' attribute in x-template element, there has to be one"
             }
-            TemplateResolver::UnknownTemplate => {
-                "Dont know what this template"
-            }
+            TemplateResolver::UnknownTemplate => "Dont know what this template",
         }
     }
 
@@ -63,7 +57,7 @@ fn find_template_and_instances(
     context: &mut FileContext,
     input: Vec<(Span, parser::ElementContent)>,
     output: &mut Vec<(Span, parser::ElementContent)>,
-    known_templates: &mut HashMap<String, (Span, Vec<(Span, parser::ElementContent)>)>
+    known_templates: &mut HashMap<String, (Span, Vec<(Span, parser::ElementContent)>)>,
 ) -> Result<(), Vec<Diagnostic>> {
     'outer_loop: for (element_span, content) in input {
         match content {
@@ -71,23 +65,39 @@ fn find_template_and_instances(
                 let Either::Left(name) = &element.name else {
                     let mut instance = element.clone();
                     let input = mem::take(&mut instance.childs);
-                    find_template_and_instances(context, input, &mut instance.childs, known_templates)?;
-                    output.push((element_span.clone(), parser::ElementContent::Element(instance)));
+                    find_template_and_instances(
+                        context,
+                        input,
+                        &mut instance.childs,
+                        known_templates,
+                    )?;
+                    output.push((
+                        element_span.clone(),
+                        parser::ElementContent::Element(instance),
+                    ));
                     continue;
                 };
-                
+
                 if !name.starts_with("x-") {
                     let mut instance = element.clone();
                     let input = mem::take(&mut instance.childs);
-                    find_template_and_instances(context, input, &mut instance.childs, known_templates)?;
-                    output.push((element_span.clone(), parser::ElementContent::Element(instance)));
+                    find_template_and_instances(
+                        context,
+                        input,
+                        &mut instance.childs,
+                        known_templates,
+                    )?;
+                    output.push((
+                        element_span.clone(),
+                        parser::ElementContent::Element(instance),
+                    ));
                     continue;
                 }
-                                
+
                 let attributes = &element.attributes;
                 let childs = &element.childs;
                 let element_name_span = element.name_span;
-            
+
                 if name == "x-template" {
                     let mut template_name = None;
                     for attr in attributes {
@@ -97,21 +107,21 @@ fn find_template_and_instances(
                                 // x-template dont replace anything inside it
                                 output.push((element_span.clone(), content));
                                 continue 'outer_loop;
-                            },
+                            }
                             parser::Attribute::EmptyAttribute(key_span) => {
                                 return Err(vec![
                                     TemplateResolver::TemplateNameMustBeNonEmpty.to_diagnostic(&[
                                         SpanLabel {
                                             label: None,
                                             span: *key_span,
-                                            style: codemap_diagnostic::SpanStyle::Primary
+                                            style: codemap_diagnostic::SpanStyle::Primary,
                                         },
                                         SpanLabel {
                                             label: Some("This template definition".to_string()),
                                             span: element_span,
-                                            style: codemap_diagnostic::SpanStyle::Secondary
-                                        }
-                                    ])
+                                            style: codemap_diagnostic::SpanStyle::Secondary,
+                                        },
+                                    ]),
                                 ]);
                             }
                             parser::Attribute::Attribute(_, data) => {
@@ -119,63 +129,71 @@ fn find_template_and_instances(
                                 if key != "name" {
                                     continue;
                                 }
-                            
-                                let name = html_escape::decode_html_entities(context.resolve_span_to_string(data.value.content));
+
+                                let name = html_escape::decode_html_entities(
+                                    context.resolve_span_to_string(data.value.content),
+                                );
                                 template_name = Some((name.to_string(), data.value_span));
                                 break;
                             }
                         }
                     }
-                
+
                     let Some((name, name_span)) = template_name else {
-                        return Err(vec![
-                            TemplateResolver::CantFindNameAttribute.to_diagnostic(&[
-                                SpanLabel {
-                                    label: None,
-                                    span: element_span,
-                                    style: codemap_diagnostic::SpanStyle::Primary
-                                }
-                            ])
-                        ]);
+                        return Err(vec![TemplateResolver::CantFindNameAttribute.to_diagnostic(
+                            &[SpanLabel {
+                                label: None,
+                                span: element_span,
+                                style: codemap_diagnostic::SpanStyle::Primary,
+                            }],
+                        )]);
                     };
-                
-                    if let Err(occupied) = known_templates.try_insert(name, (element_name_span, childs.clone())) {
+
+                    if let Err(occupied) =
+                        known_templates.try_insert(name, (element_name_span, childs.clone()))
+                    {
                         return Err(vec![
                             TemplateResolver::TemplateAlreadyDefined.to_diagnostic(&[
                                 SpanLabel {
                                     label: None,
                                     span: name_span,
-                                    style: codemap_diagnostic::SpanStyle::Primary
+                                    style: codemap_diagnostic::SpanStyle::Primary,
                                 },
                                 SpanLabel {
                                     label: Some("Previous defined here".to_string()),
                                     span: occupied.entry.get().0,
-                                    style: codemap_diagnostic::SpanStyle::Secondary
-                                }
-                            ])
+                                    style: codemap_diagnostic::SpanStyle::Secondary,
+                                },
+                            ]),
                         ]);
                     }
                 } else {
                     // Its instantiating template
                     let Some((def_span, template)) = known_templates.get(name) else {
-                        return Err(vec![
-                            TemplateResolver::UnknownTemplate.to_diagnostic(&[
-                                SpanLabel {
-                                    label: None,
-                                    span: element_name_span,
-                                    style: codemap_diagnostic::SpanStyle::Primary
-                                }
-                            ])
-                        ]);
+                        return Err(vec![TemplateResolver::UnknownTemplate.to_diagnostic(&[
+                            SpanLabel {
+                                label: None,
+                                span: element_name_span,
+                                style: codemap_diagnostic::SpanStyle::Primary,
+                            },
+                        ])]);
                     };
-                    
-                    expand_template(context, output, element_span, &childs, &attributes, *def_span, template)?;
+
+                    expand_template(
+                        context,
+                        output,
+                        element_span,
+                        &childs,
+                        &attributes,
+                        *def_span,
+                        template,
+                    )?;
                 }
             }
-            _ => output.push((element_span, content.clone()))
+            _ => output.push((element_span, content.clone())),
         }
     }
-    
+
     Ok(())
 }
 
@@ -183,11 +201,12 @@ pub fn run(
     context: &mut FileContext,
     tree: Vec<(Span, parser::ElementContent)>,
 ) -> Result<Vec<(Span, parser::ElementContent)>, Vec<Diagnostic>> {
-    let mut known_templates: HashMap<String, (Span, Vec<(Span, parser::ElementContent)>)> = HashMap::new();
+    let mut known_templates: HashMap<String, (Span, Vec<(Span, parser::ElementContent)>)> =
+        HashMap::new();
     let mut new_tree = Vec::new();
-    
+
     find_template_and_instances(context, tree, &mut new_tree, &mut known_templates)?;
-    
+
     // util::iter_tree_mut(&mut tree, |(element_span, element)| {
     //     match element {
     //         parser::ElementContent::Element(parser::Element {
@@ -200,7 +219,7 @@ pub fn run(
     //                 new_tree.push((element_span.clone(), element.clone()));
     //                 return true;
     //             }
-                
+
     //             if name == "x-template" {
     //                 let mut template_name = None;
     //                 for attr in attributes {
@@ -228,14 +247,14 @@ pub fn run(
     //                             if key != "name" {
     //                                 continue;
     //                             }
-                                
+
     //                             let name = html_escape::decode_html_entities(context.preprocessor.resolve_span_to_string(data.value.content));
     //                             template_name = Some((name.to_string(), data.value_span));
     //                             break;
     //                         }
     //                     }
     //                 }
-                    
+
     //                 let Some((name, name_span)) = template_name else {
     //                     errs.push(
     //                         TemplateResolver::CantFindNameAttribute.to_diagnostic(&[
@@ -248,7 +267,7 @@ pub fn run(
     //                     );
     //                     return false;
     //                 };
-                    
+
     //                 if let Err(occupied) = known_templates.try_insert(name, (*element_name_span, childs.clone())) {
     //                     errs.push(
     //                         TemplateResolver::TemplateAlreadyDefined.to_diagnostic(&[
@@ -281,7 +300,7 @@ pub fn run(
     //                     );
     //                     return false;
     //                 };
-                    
+
     //                 match expand_template(context, &mut new_tree, *element_span, &mem::take(childs), &mem::take(attributes), *def_span, template) {
     //                     Ok(_) => return true,
     //                     Err(e) => {
@@ -297,7 +316,7 @@ pub fn run(
     //         }
     //     }
     // });
-    
+
     Ok(new_tree)
 }
 
@@ -312,7 +331,7 @@ fn expand_template(
     expansion_attributes: &Vec<parser::Attribute>,
     // Where the template is defined
     defintion_span: Span,
-    template: &Vec<(Span, parser::ElementContent)>
+    template: &Vec<(Span, parser::ElementContent)>,
 ) -> Result<(), Vec<Diagnostic>> {
     for (element_span, element) in template {
         match element {
@@ -328,7 +347,7 @@ fn expand_template(
                 // Recurse handling
                 let mut instance = template_element.clone();
                 instance.attributes.clear();
-                
+
                 // Handle the attributes
                 for attribute in &template_element.attributes {
                     match attribute {
@@ -340,13 +359,13 @@ fn expand_template(
                                 instance.attributes.push(attribute.clone());
                             }
                         }
-                        _ => instance.attributes.push(attribute.clone())
+                        _ => instance.attributes.push(attribute.clone()),
                     }
                 }
-                
+
                 // We'll be readding it later, via nested recursion
                 instance.childs.clear();
-                
+
                 expand_template(
                     context,
                     &mut instance.childs,
@@ -354,14 +373,13 @@ fn expand_template(
                     &expansion_childs,
                     &expansion_attributes,
                     defintion_span,
-                    &template_element.childs
+                    &template_element.childs,
                 )?;
                 output.push((*element_span, parser::ElementContent::Element(instance)))
             }
             _ => output.push((*element_span, element.clone())),
         }
     }
-    
+
     Ok(())
 }
-

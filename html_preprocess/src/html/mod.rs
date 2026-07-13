@@ -32,7 +32,9 @@
 //    cannot be used to open a tag
 
 use std::{
-    collections::{HashMap, hash_map::Entry}, path::Path, sync::Arc
+    collections::{HashMap, hash_map::Entry},
+    path::Path,
+    sync::Arc,
 };
 
 use codemap::{CodeMap, File, Span};
@@ -41,19 +43,19 @@ use either::Either;
 
 use crate::html::{lexer::Token, parser::ElementContent};
 
+mod encoder;
 mod import_resolver;
 mod lexer;
 mod parser;
 mod replacer_resolver;
-mod util;
 mod template_resolver;
-mod encoder;
+mod util;
 
 pub struct Preprocessor<'a> {
     cached_files: HashMap<String, Arc<(Arc<File>, Vec<(Span, ElementContent)>)>>,
     code_map: CodeMap,
     fetcher: Box<dyn FnMut(&str) -> Result<String, String> + 'a>,
-    environment: HashMap<String, String>
+    environment: HashMap<String, String>,
 }
 
 struct FileContext<'a, 'env> {
@@ -65,11 +67,11 @@ impl<'env> FileContext<'_, 'env> {
     pub fn get_env<K: AsRef<str> + ?Sized>(&self, key: &K) -> Option<&String> {
         self.preprocessor.get_env(key)
     }
-    
+
     pub fn find_src_file(&self, span: Span) -> &Arc<File> {
         self.preprocessor.code_map.find_file(span.low())
     }
-    
+
     pub fn import_file(
         &mut self,
         importer: &File,
@@ -79,14 +81,16 @@ impl<'env> FileContext<'_, 'env> {
         if path.starts_with('/') {
             self.preprocessor.load_file(path)
         } else {
-            let importer_dir = Path::new(importer.name()).parent()
+            let importer_dir = Path::new(importer.name())
+                .parent()
                 .unwrap()
                 .to_str()
                 .unwrap();
-            self.preprocessor.load_file(&format!("{importer_dir}/{path}"))
+            self.preprocessor
+                .load_file(&format!("{importer_dir}/{path}"))
         }
     }
-    
+
     pub fn resolve_span_to_string(&self, span: Span) -> &str {
         self.preprocessor.resolve_span_to_string(span)
     }
@@ -142,7 +146,7 @@ impl<'a> Preprocessor<'a> {
             code_map: CodeMap::new(),
             cached_files: HashMap::new(),
             fetcher: Box::new(file_fetcher),
-            environment: HashMap::new()
+            environment: HashMap::new(),
         }
     }
 
@@ -152,15 +156,19 @@ impl<'a> Preprocessor<'a> {
     }
 
     // Same return value as HashMap::insert
-    pub fn set_env<S1: Into<String>, S2: Into<String>>(&mut self, key: S1, value: S2) -> Option<String> {
+    pub fn set_env<S1: Into<String>, S2: Into<String>>(
+        &mut self,
+        key: S1,
+        value: S2,
+    ) -> Option<String> {
         self.environment.insert(key.into(), value.into())
     }
-    
+
     // Same return value as HashMap::remove
     pub fn unset_env<S: AsRef<str>>(&mut self, key: S) -> Option<String> {
         self.environment.remove(key.as_ref())
     }
-    
+
     pub fn get_codemap(&self) -> &CodeMap {
         &self.code_map
     }
@@ -264,29 +272,27 @@ impl<'a> Preprocessor<'a> {
 
             // Check if next iteration is not needed
             current_iter += 1;
-            
+
             let mut need_reiter = false;
-            util::iter_tree_mut(&mut tree, |element| {
-                match &element.1 {
-                    ElementContent::Replacer(_) => {
+            util::iter_tree_mut(&mut tree, |element| match &element.1 {
+                ElementContent::Replacer(_) => {
+                    need_reiter = true;
+                    false
+                }
+
+                ElementContent::Element(elem) => {
+                    if let Either::Right(a) = &elem.name {
+                        let _: &lexer::Replacer = a;
                         need_reiter = true;
                         false
+                    } else {
+                        true
                     }
-                    
-                    ElementContent::Element(elem) => {
-                        if let Either::Right(a) = &elem.name {
-                            let _: &lexer::Replacer = a;
-                            need_reiter = true;
-                            false
-                        } else {
-                            true
-                        }
-                    }
-                    
-                    _ => true
                 }
+
+                _ => true,
             });
-            
+
             if !need_reiter {
                 // Nothing changes, quit iterating
                 break;
@@ -294,34 +300,31 @@ impl<'a> Preprocessor<'a> {
         }
 
         let mut buf = Vec::new();
-        encoder::encode(&mut ctx, &mut buf, &tree)
-            .map_err(|e| {
-                let error_span = file.span.subspan(0, util::inc_char_offset(0, file.source()));
-                let msg = match e {
-                    encoder::EncodeError::IO(e) => {
-                        format!("Cannot write to output: {e}")
-                    }
-                    
-                    encoder::EncodeError::Message(e) => {
-                        format!("Encoder met an error: {e}")
-                    }
-                };
-                
-                return vec![
-                    Diagnostic {
-                        code: None,
-                        level: Level::Error,
-                        message: msg,
-                        spans: vec![
-                            SpanLabel {
-                                label: None,
-                                span: error_span,
-                                style: SpanStyle::Primary
-                            }
-                        ]
-                    }
-                ]
-            })?;
+        encoder::encode(&mut ctx, &mut buf, &tree).map_err(|e| {
+            let error_span = file
+                .span
+                .subspan(0, util::inc_char_offset(0, file.source()));
+            let msg = match e {
+                encoder::EncodeError::IO(e) => {
+                    format!("Cannot write to output: {e}")
+                }
+
+                encoder::EncodeError::Message(e) => {
+                    format!("Encoder met an error: {e}")
+                }
+            };
+
+            return vec![Diagnostic {
+                code: None,
+                level: Level::Error,
+                message: msg,
+                spans: vec![SpanLabel {
+                    label: None,
+                    span: error_span,
+                    style: SpanStyle::Primary,
+                }],
+            }];
+        })?;
         Ok(String::from_utf8(buf).expect("HTML encoder written non valid UTF-8 bytes!"))
     }
 }

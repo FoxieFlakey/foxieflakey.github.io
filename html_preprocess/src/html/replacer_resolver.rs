@@ -16,9 +16,7 @@ pub enum ReplacerResolver {
 impl ReplacerResolver {
     pub fn description(&self) -> &'static str {
         match self {
-            ReplacerResolver::UnknownReplacer => {
-                "Unknown replacer variable"
-            }
+            ReplacerResolver::UnknownReplacer => "Unknown replacer variable",
         }
     }
 
@@ -53,27 +51,31 @@ pub fn run(
     mut tree: Vec<(Span, parser::ElementContent)>,
 ) -> Result<Vec<(Span, parser::ElementContent)>, Vec<Diagnostic>> {
     let mut diags = Vec::new();
-    
+
     util::iter_tree_mut(&mut tree, |(span, element)| {
-        fn try_resolve_replacer(context: &mut FileContext, span: Span, replacer: &lexer::Replacer) -> Result<Option<String>, Diagnostic> {
+        fn try_resolve_replacer(
+            context: &mut FileContext,
+            span: Span,
+            replacer: &lexer::Replacer,
+        ) -> Result<Option<String>, Diagnostic> {
             let content = context.resolve_span_to_string(replacer.content);
             if content.starts_with("props") || content.starts_with("children") {
                 return Ok(None);
             }
-            
+
             if let Some(val) = context.get_env(content) {
                 return Ok(Some(val.clone()));
             } else {
-                return Err(ReplacerResolver::UnknownReplacer.to_diagnostic(&[
-                    SpanLabel {
+                return Err(
+                    ReplacerResolver::UnknownReplacer.to_diagnostic(&[SpanLabel {
                         label: None,
                         span,
-                        style: SpanStyle::Primary
-                    }
-                ]));
+                        style: SpanStyle::Primary,
+                    }]),
+                );
             }
         }
-        
+
         match element {
             parser::ElementContent::Element(element) => {
                 if let Either::Right(replacer) = &element.name {
@@ -89,7 +91,7 @@ pub fn run(
                     }
                 }
             }
-            
+
             parser::ElementContent::Replacer(replacer) => {
                 match try_resolve_replacer(context, span.clone(), replacer) {
                     Ok(Some(val)) => {
@@ -101,12 +103,12 @@ pub fn run(
                         return false;
                     }
                 }
-            },
-            _ => ()
+            }
+            _ => (),
         }
         true
     });
-    
+
     if diags.len() > 0 {
         Err(diags)
     } else {
