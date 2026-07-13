@@ -1,4 +1,10 @@
-use std::{collections::{HashMap, hash_map::{Entry, OccupiedEntry}}, hash::Hash};
+use std::{
+    collections::{
+        HashMap,
+        hash_map::{Entry, OccupiedEntry},
+    },
+    hash::Hash,
+};
 
 use codemap::{CodeMap, File, Span};
 
@@ -57,15 +63,18 @@ pub struct OccupiedError<'a, K, V> {
 }
 
 pub trait TryInsertExt<K, V> {
-    fn try_insert<'a>(&'a mut self, key: K, value: V) -> Result<&'a mut V, OccupiedError<'a, K, V>>;
+    fn try_insert<'a>(&'a mut self, key: K, value: V)
+    -> Result<&'a mut V, OccupiedError<'a, K, V>>;
 }
 
 impl<K: Eq + Hash, V> TryInsertExt<K, V> for HashMap<K, V> {
-    fn try_insert<'a>(&'a mut self, key: K, value: V) -> Result<&'a mut V, OccupiedError<'a, K, V>> {
+    fn try_insert<'a>(
+        &'a mut self,
+        key: K,
+        value: V,
+    ) -> Result<&'a mut V, OccupiedError<'a, K, V>> {
         match self.entry(key) {
-            Entry::Occupied(entry) => Err(OccupiedError {
-                entry,
-            }),
+            Entry::Occupied(entry) => Err(OccupiedError { entry }),
             Entry::Vacant(entry) => Ok(entry.insert(value)),
         }
     }

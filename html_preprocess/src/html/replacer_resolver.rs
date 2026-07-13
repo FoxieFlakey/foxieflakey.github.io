@@ -4,7 +4,11 @@ use codemap::Span;
 use codemap_diagnostic::{Diagnostic, Level, SpanLabel, SpanStyle};
 use either::Either;
 
-use crate::html::{FileContext, lexer::{self, parse_only_replacers}, parser, util};
+use crate::html::{
+    FileContext,
+    lexer::{self, parse_only_replacers},
+    parser, util,
+};
 
 // Resolves replacer first, excluding one that starts with props and children
 // (those two are special for template resolver to handle)
@@ -20,7 +24,9 @@ impl ReplacerResolver {
     pub fn description(&self) -> &'static str {
         match self {
             ReplacerResolver::UnknownReplacer => "Unknown replacer variable",
-            ReplacerResolver::SpecialReplacerCannotBeUsed => "Special replacer variable like children and props cannot be used"
+            ReplacerResolver::SpecialReplacerCannotBeUsed => {
+                "Special replacer variable like children and props cannot be used"
+            }
         }
     }
 
@@ -61,7 +67,7 @@ pub fn run(
             context: &mut FileContext,
             span: Span,
             replacer: &lexer::Replacer,
-            is_in_attribute: bool
+            is_in_attribute: bool,
         ) -> Result<Option<String>, Diagnostic> {
             let content = context.resolve_span_to_string(replacer.content);
             if is_in_attribute && content.starts_with("props") {
@@ -98,41 +104,41 @@ pub fn run(
                         }
                     }
                 }
-                
+
                 // Replaces attributes in string, by reconstructing new one
                 for attribute in mem::take(&mut element.attributes) {
                     match attribute {
                         parser::Attribute::Attribute(span, mut data) => {
                             if let Either::Left(content) = &data.value.content {
                                 let file = context.find_src_file(data.value_span);
-                                let portions = parse_only_replacers(file, *content)
-                                    .map_err(|mut x| {
+                                let portions =
+                                    parse_only_replacers(file, *content).map_err(|mut x| {
                                         x.push(Diagnostic {
                                             code: None,
                                             level: Level::Error,
                                             message: "While parsing replacer in here".to_string(),
-                                            spans: vec![
-                                                SpanLabel {
-                                                    label: None,
-                                                    span: data.value_span,
-                                                    style: SpanStyle::Primary
-                                                }
-                                            ]
+                                            spans: vec![SpanLabel {
+                                                label: None,
+                                                span: data.value_span,
+                                                style: SpanStyle::Primary,
+                                            }],
                                         });
                                         x
                                     });
-                                
+
                                 let mut constructed = String::new();
                                 match portions {
                                     Err(e) => {
                                         diags.extend_from_slice(&e);
                                         return false;
                                     }
-                                    
+
                                     Ok(portions) => {
                                         for (span, maybe_replacer) in portions {
                                             if let Some(replacer) = maybe_replacer {
-                                                match try_resolve_replacer(context, span, &replacer, true) {
+                                                match try_resolve_replacer(
+                                                    context, span, &replacer, true,
+                                                ) {
                                                     Ok(Some(v)) => {
                                                         constructed.push_str(&v);
                                                     }
@@ -157,19 +163,21 @@ pub fn run(
                                                     }
                                                 }
                                             } else {
-                                                constructed.push_str(context.resolve_span_to_string(span));
+                                                constructed
+                                                    .push_str(context.resolve_span_to_string(span));
                                             }
                                         }
                                     }
                                 }
                                 data.value.content = Either::Right(constructed);
                             }
-                            element.attributes.push(parser::Attribute::Attribute(span, data))
+                            element
+                                .attributes
+                                .push(parser::Attribute::Attribute(span, data))
                         }
-                        x => element.attributes.push(x)
+                        x => element.attributes.push(x),
                     }
                 }
-                
             }
 
             parser::ElementContent::Replacer(replacer) => {

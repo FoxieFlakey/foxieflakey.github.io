@@ -302,39 +302,49 @@ where
 // string without duplicating functions)
 pub fn parse_only_replacers(
     file: &File,
-    span: Span
+    span: Span,
 ) -> Result<Vec<(Span, Option<Replacer>)>, Vec<Diagnostic>> {
     let initial_offset = span.low() - file.span.low();
     let end_offset = span.high() - file.span.low();
-    
-    let mut iterator = PushBackIterator::from(file.source_slice(span).char_indices().map(|(offset, c)| (u64::try_from(offset).unwrap() + initial_offset, c)));
+
+    let mut iterator = PushBackIterator::from(
+        file.source_slice(span)
+            .char_indices()
+            .map(|(offset, c)| (u64::try_from(offset).unwrap() + initial_offset, c)),
+    );
     let mut portions = Vec::new();
-    
+
     let mut last_start = None;
     loop {
         let Some((offset, char)) = iterator.next() else {
             break;
         };
-        
+
         match char {
             '$' => {
                 if let Some(last_offset) = last_start.take() {
                     portions.push((span.subspan(last_offset, offset), None));
                 }
-                
-                let (span, replacer) = parse_replacer(file, offset, Some(end_offset), &mut iterator, true)?;
+
+                let (span, replacer) =
+                    parse_replacer(file, offset, Some(end_offset), &mut iterator, true)?;
                 portions.push((span, Some(replacer)));
             }
-            _ => if last_start.is_none() {
-                last_start = Some(offset);
+            _ => {
+                if last_start.is_none() {
+                    last_start = Some(offset);
+                }
             }
         }
     }
-    
+
     if let Some(offset) = last_start {
-        portions.push((file.span.subspan(offset, span.high() - file.span.low()), None));
+        portions.push((
+            file.span.subspan(offset, span.high() - file.span.low()),
+            None,
+        ));
     }
-    
+
     Ok(portions)
 }
 
@@ -346,17 +356,23 @@ fn parse_replacer<I>(
     // only needed if EOF okay
     optional_end: Option<u64>,
     iterator: &mut PushBackIterator<I>,
-    is_eof_okay: bool
+    is_eof_okay: bool,
 ) -> Result<(Span, Replacer), Vec<Diagnostic>>
 where
     I: Iterator<Item = (u64, char)>,
 {
     if is_eof_okay {
-        assert!(optional_end.is_some(), "End offset is required if is_eof_okay is true (has to be Some(offset))");
+        assert!(
+            optional_end.is_some(),
+            "End offset is required if is_eof_okay is true (has to be Some(offset))"
+        );
     } else {
-        assert!(optional_end.is_none(), "End offset is not required if is_eof_okay is false (has to be None)");
+        assert!(
+            optional_end.is_none(),
+            "End offset is not required if is_eof_okay is false (has to be None)"
+        );
     }
-    
+
     if !file.source()[start.try_into().unwrap()..].starts_with('$') {
         return Err(vec![LexerCodes::ExpectingReplacer.to_diagnostic(&[
             SpanLabel {

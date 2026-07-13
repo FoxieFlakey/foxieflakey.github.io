@@ -32,7 +32,9 @@
 //    cannot be used to open a tag
 
 use std::{
-    collections::{HashMap, hash_map::Entry}, path::Path, sync::Arc
+    collections::{HashMap, hash_map::Entry},
+    path::Path,
+    sync::Arc,
 };
 
 use codemap::{CodeMap, File, Span};
@@ -54,7 +56,7 @@ pub struct Preprocessor<'a> {
     code_map: CodeMap,
     fetcher: Box<dyn FnMut(&str) -> Result<String, String> + 'a>,
     environment: HashMap<String, String>,
-    minify: bool
+    minify: bool,
 }
 
 struct FileContext<'a, 'env> {
@@ -146,7 +148,7 @@ impl<'a> Preprocessor<'a> {
             cached_files: HashMap::new(),
             fetcher: Box::new(file_fetcher),
             environment: HashMap::new(),
-            minify: can_minify
+            minify: can_minify,
         }
     }
 
@@ -285,20 +287,21 @@ impl<'a> Preprocessor<'a> {
                 spans: vec![],
             }];
         })?;
-        
-        
+
         if self.minify {
             let cfg = minify_html::Cfg {
                 ..Default::default()
             };
-            
+
             let input = &buf;
             str::from_utf8(input).expect("HTML encoder written non valid UTF-8 bytes!");
-            
+
             let output = minify_html::minify(&input, &cfg);
-            return Ok(String::from_utf8(output).expect("HTML minifier written non valid UTF-8 bytes!"));
+            return Ok(
+                String::from_utf8(output).expect("HTML minifier written non valid UTF-8 bytes!")
+            );
         }
-        
+
         Ok(String::from_utf8(buf).expect("HTML encoder written non valid UTF-8 bytes!"))
     }
 }

@@ -4,8 +4,8 @@ use codemap::Span;
 use codemap_diagnostic::{Diagnostic, Level, SpanLabel};
 use either::Either;
 
-use crate::html::{FileContext, parser};
 use crate::html::util::TryInsertExt;
+use crate::html::{FileContext, parser};
 
 #[repr(u16)]
 #[derive(Clone, Copy)]
@@ -132,7 +132,9 @@ fn find_template_and_instances(
                                 }
 
                                 let name = match &data.value.content {
-                                    Either::Left(span) => html_escape::decode_html_entities(context.resolve_span_to_string(*span)),
+                                    Either::Left(span) => html_escape::decode_html_entities(
+                                        context.resolve_span_to_string(*span),
+                                    ),
                                     Either::Right(v) => Cow::Borrowed(v.as_ref()),
                                 };
 
@@ -152,9 +154,11 @@ fn find_template_and_instances(
                         )]);
                     };
 
-                    if let Err(occupied) =
-                        TryInsertExt::try_insert(known_templates, name, (element_name_span, childs.clone()))
-                    {
+                    if let Err(occupied) = TryInsertExt::try_insert(
+                        known_templates,
+                        name,
+                        (element_name_span, childs.clone()),
+                    ) {
                         return Err(vec![
                             TemplateResolver::TemplateAlreadyDefined.to_diagnostic(&[
                                 SpanLabel {
