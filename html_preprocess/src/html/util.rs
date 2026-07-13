@@ -1,3 +1,5 @@
+use std::{collections::{HashMap, hash_map::{Entry, OccupiedEntry}}, hash::Hash};
+
 use codemap::{CodeMap, File, Span};
 
 use crate::html::parser;
@@ -44,6 +46,27 @@ where
 
         if let parser::ElementContent::Element(elem) = &mut current.1 {
             traverse_stack.push(elem.childs.iter_mut());
+        }
+    }
+}
+
+// Similar polyfill for unstable try_insert
+
+pub struct OccupiedError<'a, K, V> {
+    pub entry: OccupiedEntry<'a, K, V>,
+}
+
+pub trait TryInsertExt<K, V> {
+    fn try_insert<'a>(&'a mut self, key: K, value: V) -> Result<&'a mut V, OccupiedError<'a, K, V>>;
+}
+
+impl<K: Eq + Hash, V> TryInsertExt<K, V> for HashMap<K, V> {
+    fn try_insert<'a>(&'a mut self, key: K, value: V) -> Result<&'a mut V, OccupiedError<'a, K, V>> {
+        match self.entry(key) {
+            Entry::Occupied(entry) => Err(OccupiedError {
+                entry,
+            }),
+            Entry::Vacant(entry) => Ok(entry.insert(value)),
         }
     }
 }

@@ -1,5 +1,3 @@
-#![feature(map_try_insert)]
-
 use clap::Parser;
 use std::{
     env,

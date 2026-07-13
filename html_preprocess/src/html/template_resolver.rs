@@ -5,6 +5,7 @@ use codemap_diagnostic::{Diagnostic, Level, SpanLabel};
 use either::Either;
 
 use crate::html::{FileContext, parser};
+use crate::html::util::TryInsertExt;
 
 #[repr(u16)]
 #[derive(Clone, Copy)]
@@ -152,7 +153,7 @@ fn find_template_and_instances(
                     };
 
                     if let Err(occupied) =
-                        known_templates.try_insert(name, (element_name_span, childs.clone()))
+                        TryInsertExt::try_insert(known_templates, name, (element_name_span, childs.clone()))
                     {
                         return Err(vec![
                             TemplateResolver::TemplateAlreadyDefined.to_diagnostic(&[
