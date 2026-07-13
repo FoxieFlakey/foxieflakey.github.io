@@ -124,7 +124,12 @@ impl<'a> Preprocessor<'a> {
     pub fn set_env<S1: Into<String>, S2: Into<String>>(&mut self, key: S1, value: S2) -> Option<String> {
         self.environment.insert(key.into(), value.into())
     }
-
+    
+    // Same return value as HashMap::remove
+    pub fn unset_env<S: AsRef<str>>(&mut self, key: S) -> Option<String> {
+        self.environment.remove(key.as_ref())
+    }
+    
     pub fn get_codemap(&self) -> &CodeMap {
         &self.code_map
     }

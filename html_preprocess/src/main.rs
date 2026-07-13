@@ -1,6 +1,7 @@
 #![feature(map_try_insert)]
 
-use std::{fs::File, io::Read, path::Path};
+use std::{env, fs::File, io::{Read, Write}, path::Path, process::ExitCode, str::FromStr};
+use clap::Parser;
 
 use codemap_diagnostic::{ColorConfig, Emitter};
 use path_jail::JailError;
@@ -9,11 +10,104 @@ use crate::html::Preprocessor;
 
 mod html;
 
-fn main() {
-    let src_dir = "./web/";
+#[derive(Parser)]
+#[command(version, about)]
+struct Args {
+    /// Set environment values which replacer can find
+    /// -Dbweh=23 lets ${bweh} or $bweh in HTML turned
+    /// into 23. To unset use -D-bweh to remove
+    #[arg(short = 'D', action = clap::ArgAction::Append, verbatim_doc_comment)]
+    env_values: Vec<EnvValue>,
+    
+    /// Tells where the base directory for looking up imports
+    /// from and containing the input HTML. If omitted
+    /// current directory is used
+    #[arg(short, long, verbatim_doc_comment)]
+    source_dir: Option<String>,
+    
+    /// The HTML to be preprocessed. This has to be in source_dir
+    input: String,
+    
+    /// The output where preprocessed HTML be outputted
+    /// or stdout if '-' given
+    output: String
+}
+
+#[derive(Clone)]
+struct EnvValue {
+    key: String,
+    
+    // none, mean the 'key' is removed
+    value: Option<String>
+}
+
+impl FromStr for EnvValue {
+    type Err = String;
+    
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        if s.starts_with('-') {
+            let key = &s[1..];
+            if key.len() == 0 {
+                return Err("Key must be non empty".to_string());
+            }
+            
+            // Special syntax to undefine
+            return Ok(
+                EnvValue {
+                    key: key.to_string(),
+                    value: None
+                }
+            );
+        }
+        
+        let (key, val) = s.split_once('=')
+            .ok_or_else(|| format!("Environment must have both key and value '{}', to define empty omit the value keep the '='", s.escape_default()))?;
+        
+        if key.len() == 0 {
+            return Err("Key must be non empty".to_string());
+        }
+        
+        Ok(
+            EnvValue {
+                key: key.to_string(),
+                value: Some(val.to_string())
+            }
+        )
+    }
+}
+
+fn main() -> ExitCode {
+    let args = Args::parse();
+    let cwd;
+    match env::current_dir() {
+        Ok(x) => cwd = x,
+        Err(e) => {
+            eprintln!("Cannot find current directory: {e}");
+            return ExitCode::FAILURE;
+        }
+    };
+    
+    let src_dir = args.source_dir
+        .map(|x| Path::new(&x).to_path_buf())
+        .unwrap_or(cwd);
+    
+    let output_file;
+    if args.output != "-" {
+        match File::create(Path::new(&args.output)) {
+            Ok(x) => output_file = Some(x),
+            Err(e) => {
+                eprintln!("Cannot open output: {e}");
+                return ExitCode::FAILURE;
+            }
+        }
+    } else {
+        // Writes to stdout
+        output_file = None;
+    }
+    
     let mut preprocessor = Preprocessor::new(|path| {
         let path = Path::new(path);
-        let path = path_jail::join(src_dir, path)
+        let path = path_jail::join(&src_dir, path)
             .map_err(|e| {
                 match e {
                     JailError::BrokenSymlink(location) => {
@@ -71,11 +165,35 @@ fn main() {
         Ok(source_code.to_string())
     });
 
-    match preprocessor.process_file("index.html") {
-        Ok(x) => println!("File parsed succesfully. Result:\n{x}"),
+    // Process environments
+    for env_val in &args.env_values {
+        match &env_val.value {
+            Some(val) => {
+                preprocessor.set_env(&env_val.key, val);
+            }
+            
+            None => {
+                preprocessor.unset_env(&env_val.key);
+            }
+        }
+    }
+
+    match preprocessor.process_file(&args.input) {
+        Ok(x) => {
+            if let Some(mut file) = output_file {
+                if let Err(e) = file.write_all(&x.as_bytes()) {
+                    eprintln!("Error writing to output file: {e}");
+                    return ExitCode::FAILURE;
+                }
+            } else {
+                println!("{}", x);
+            }
+            ExitCode::SUCCESS
+        },
         Err(e) => {
-            println!("Failed parsing file");
+            eprintln!("Failed preprocessing file");
             Emitter::stderr(ColorConfig::Auto, Some(preprocessor.get_codemap())).emit(&e);
+            ExitCode::FAILURE
         }
     }
 }
