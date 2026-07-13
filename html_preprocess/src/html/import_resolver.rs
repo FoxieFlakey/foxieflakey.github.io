@@ -1,3 +1,5 @@
+use std::borrow::Cow;
+
 use codemap::Span;
 use codemap_diagnostic::{Diagnostic, Level, SpanLabel, SpanStyle};
 use either::Either;
@@ -155,10 +157,10 @@ fn run_impl(
                     }
 
                     // Got the path
-                    let import_path = html_escape::decode_html_entities(
-                        context.resolve_span_to_string(data.value.content),
-                    )
-                    .to_string();
+                    let import_path = match &data.value.content {
+                        Either::Left(span) => html_escape::decode_html_entities(context.resolve_span_to_string(*span)),
+                        Either::Right(v) => Cow::Borrowed(v.as_ref()),
+                    }.to_string();
                     let context_diag = Diagnostic {
                         code: None,
                         level: Level::Note,

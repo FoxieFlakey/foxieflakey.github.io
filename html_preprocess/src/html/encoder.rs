@@ -62,7 +62,10 @@ where
 
                         parser::Attribute::Attribute(_, data) => {
                             let key = file_context.resolve_span_to_string(data.key_span);
-                            let value = file_context.resolve_span_to_string(data.value.content);
+                            let value = match &data.value.content {
+                                Either::Left(span) => file_context.resolve_span_to_string(*span),
+                                Either::Right(v) => v.as_ref(),
+                            };
                             write!(writer, " {key}=")?;
 
                             if data.value.is_double_quote {

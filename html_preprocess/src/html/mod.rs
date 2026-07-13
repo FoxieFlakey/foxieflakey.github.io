@@ -39,7 +39,7 @@ use codemap::{CodeMap, File, Span};
 use codemap_diagnostic::{Diagnostic, Level, SpanLabel, SpanStyle};
 use either::Either;
 
-use crate::html::{lexer::Token, parser::ElementContent};
+use crate::html::parser::ElementContent;
 
 mod encoder;
 mod import_resolver;
@@ -171,39 +171,6 @@ impl<'a> Preprocessor<'a> {
 
     pub fn get_codemap(&self) -> &CodeMap {
         &self.code_map
-    }
-
-    #[expect(unused)]
-    fn dump_tokens(&self, file: &File, tokens: &[(Span, Token)]) {
-        for (idx, token) in tokens.iter().enumerate() {
-            let token_slice = file.source_slice(token.0);
-            print!("Token[{idx}] (raw: '{}') = ", token_slice.escape_default());
-
-            match &token.1 {
-                Token::Equal => println!("Equal"),
-                Token::LessThan => println!("LessThan"),
-                Token::GreaterThan => println!("GreaterThan"),
-                Token::Identifier => println!("Identifer('{}')", token_slice.escape_default()),
-                Token::Slash => println!("Slash"),
-                Token::Text => println!("Text('{}')", token_slice.escape_default()),
-                Token::Comment(comment) => {
-                    println!(
-                        "Comment('{}')",
-                        file.source_slice(comment.content).escape_default()
-                    )
-                }
-                Token::QuotedString(quoted_string) => println!(
-                    "QuotedString('{}', is_double_quote = {})",
-                    file.source_slice(quoted_string.content).escape_default(),
-                    quoted_string.is_double_quote
-                ),
-                Token::Replacer(replacer) => println!(
-                    "Replacer('{}', isSimple = {})",
-                    file.source_slice(replacer.content).escape_default(),
-                    replacer.is_simple
-                ),
-            }
-        }
     }
 
     fn resolve_span_to_string(&self, span: Span) -> &str {

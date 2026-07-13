@@ -1,4 +1,4 @@
-use std::{collections::HashMap, mem};
+use std::{borrow::Cow, collections::HashMap, mem};
 
 use codemap::Span;
 use codemap_diagnostic::{Diagnostic, Level, SpanLabel};
@@ -130,9 +130,11 @@ fn find_template_and_instances(
                                     continue;
                                 }
 
-                                let name = html_escape::decode_html_entities(
-                                    context.resolve_span_to_string(data.value.content),
-                                );
+                                let name = match &data.value.content {
+                                    Either::Left(span) => html_escape::decode_html_entities(context.resolve_span_to_string(*span)),
+                                    Either::Right(v) => Cow::Borrowed(v.as_ref()),
+                                };
+
                                 template_name = Some((name.to_string(), data.value_span));
                                 break;
                             }

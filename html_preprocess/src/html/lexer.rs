@@ -1,5 +1,6 @@
 use codemap::{File, Span};
 use codemap_diagnostic::{Diagnostic, Level, SpanLabel, SpanStyle};
+use either::Either;
 use pushback_iter::PushBackIterator;
 
 use crate::html::util;
@@ -12,7 +13,9 @@ pub struct Comment {
 
 #[derive(Clone)]
 pub struct QuotedString {
-    pub content: Span,
+    // Left is when the string is as it is in source
+    // Right is when its replaced
+    pub content: Either<Span, String>,
 
     // Whether the content enclosed by double quote
     // or single quote. Which dictates how content
@@ -25,6 +28,7 @@ pub struct QuotedString {
 pub struct Replacer {
     pub content: Span,
     // Is it just $abc or ${abc}
+    #[expect(unused)]
     pub is_simple: bool,
 }
 
@@ -293,16 +297,66 @@ where
     Ok(())
 }
 
+// Utility function reusing the same parse_replacer to parse replacers
+// inside arbitrary stuffs (mainly used by replacer_resolver to parse
+// string without duplicating functions)
+pub fn parse_only_replacers(
+    file: &File,
+    span: Span
+) -> Result<Vec<(Span, Option<Replacer>)>, Vec<Diagnostic>> {
+    let initial_offset = span.low() - file.span.low();
+    let end_offset = span.high() - file.span.low();
+    
+    let mut iterator = PushBackIterator::from(file.source_slice(span).char_indices().map(|(offset, c)| (u64::try_from(offset).unwrap() + initial_offset, c)));
+    let mut portions = Vec::new();
+    
+    let mut last_start = None;
+    loop {
+        let Some((offset, char)) = iterator.next() else {
+            break;
+        };
+        
+        match char {
+            '$' => {
+                if let Some(last_offset) = last_start.take() {
+                    portions.push((span.subspan(last_offset, offset), None));
+                }
+                
+                let (span, replacer) = parse_replacer(file, offset, Some(end_offset), &mut iterator, true)?;
+                portions.push((span, Some(replacer)));
+            }
+            _ => if last_start.is_none() {
+                last_start = Some(offset);
+            }
+        }
+    }
+    
+    if let Some(offset) = last_start {
+        portions.push((file.span.subspan(offset, span.high() - file.span.low()), None));
+    }
+    
+    Ok(portions)
+}
+
 // Assumed the caller already consumed the '$', so this parse
 // the start is pointing the position of character after $
 fn parse_replacer<I>(
     file: &File,
     start: u64,
+    // only needed if EOF okay
+    optional_end: Option<u64>,
     iterator: &mut PushBackIterator<I>,
+    is_eof_okay: bool
 ) -> Result<(Span, Replacer), Vec<Diagnostic>>
 where
     I: Iterator<Item = (u64, char)>,
 {
+    if is_eof_okay {
+        assert!(optional_end.is_some(), "End offset is required if is_eof_okay is true (has to be Some(offset))");
+    } else {
+        assert!(optional_end.is_none(), "End offset is not required if is_eof_okay is false (has to be None)");
+    }
+    
     if !file.source()[start.try_into().unwrap()..].starts_with('$') {
         return Err(vec![LexerCodes::ExpectingReplacer.to_diagnostic(&[
             SpanLabel {
@@ -363,19 +417,25 @@ where
         is_simple = true;
         content_start = offset;
         loop {
-            let (offset, c) = iterator.next().ok_or_else(|| {
-                vec![LexerCodes::UnterminatedReplacer.to_diagnostic(&[
-                    SpanLabel {
-                        label: Some("Here!".to_string()),
-                        span: file.span.subspan(
-                            file.span.high() - file.span.low(),
-                            file.span.high() - file.span.low(),
-                        ),
-                        style: SpanStyle::Primary,
-                    },
-                    context_span.clone(),
-                ])]
-            })?;
+            let Some((offset, c)) = iterator.next() else {
+                if !is_eof_okay {
+                    return Err(vec![LexerCodes::UnterminatedReplacer.to_diagnostic(&[
+                        SpanLabel {
+                            label: Some("Here!".to_string()),
+                            span: file.span.subspan(
+                                file.span.high() - file.span.low(),
+                                file.span.high() - file.span.low(),
+                            ),
+                            style: SpanStyle::Primary,
+                        },
+                        context_span.clone(),
+                    ])]);
+                } else {
+                    end = optional_end.unwrap();
+                    content_end = optional_end.unwrap();
+                    break;
+                }
+            };
 
             if !is_identifier(c) {
                 end = offset;
@@ -608,7 +668,7 @@ pub fn run(file: &File) -> Result<Vec<(Span, Token)>, Vec<Diagnostic>> {
 
             '$' => {
                 token = WhatToDoWithText::SaveThenPushTokenIgnoreCurrent(
-                    parse_replacer(file, offset, &mut iterator)
+                    parse_replacer(file, offset, None, &mut iterator, false)
                         .map(|(x, y)| (x, Token::Replacer(y)))?,
                 );
             }
@@ -660,7 +720,7 @@ pub fn run(file: &File) -> Result<Vec<(Span, Token)>, Vec<Diagnostic>> {
                     file.span.subspan(start, end),
                     Token::QuotedString(QuotedString {
                         is_double_quote: closing_char == '"',
-                        content: file.span.subspan(content_start, content_end),
+                        content: Either::Left(file.span.subspan(content_start, content_end)),
                     }),
                 ));
             }
