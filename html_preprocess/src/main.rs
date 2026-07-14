@@ -1,3 +1,5 @@
+#[forbid(unsafe_code)]
+
 use clap::Parser;
 use std::{
     collections::HashSet, env, fs::File, io::{self, Read, Write}, path::{Path, PathBuf}, process::ExitCode, str::FromStr
