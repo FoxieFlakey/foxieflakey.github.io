@@ -37,6 +37,25 @@ $(current_dir)/target/release/html_preprocess:
 	@echo "[ CARGO ] Building preprocessor"
 	@cargo build --release
 
+.PHONY: watch_host
+watch_host: all
+	@echo "[ WATCH ] Watching"
+	@SERVER_PID=""; \
+	trap 'if [ -n "$$SERVER_PID" ]; then kill $$SERVER_PID 2>/dev/null; fi; exit' INT TERM; \
+	$(MAKE) host & SERVER_PID=$$!; \
+	while true; do \
+		if ! $(MAKE) -q $(addprefix $(web_dir)/,$(files)); then \
+			echo "[ WATCH ] There changes, rebuilding"; \
+			$(MAKE) all; \
+			if [ -n "$$SERVER_PID" ]; then \
+				kill $$SERVER_PID 2> /dev/null || true; \
+			fi; \
+			wait "$$SERVER_PID" 2> /dev/null; \
+			$(MAKE) host & SERVER_PID=$$!; \
+		fi; \
+		sleep 0.5; \
+	done
+
 .PHONY: create_dirs
 create_dirs:
 	@mkdir -p -- "$(output_dir)"
@@ -47,6 +66,8 @@ create_dirs:
 clean:
 	@echo "[ RM   ] Removing $(output_dir)"
 	@rm -rf -- "$(output_dir)"
+	@echo "[ CARGO ] Cargo cleaning"
+	@cargo clean
 
 .PHONY: host
 host: all
