@@ -16,6 +16,6 @@ pub fn sanify_path(path: &str) -> String {
         "{}{}{}",
         if joined.starts_with('/') { "" } else { "/" },
         joined,
-        if path.ends_with('/') { "/" } else { "" }
+        if path.ends_with('/') && joined.len() > 1 { "/" } else { "" }
     )
 }
