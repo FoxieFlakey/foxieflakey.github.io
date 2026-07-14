@@ -1,0 +1,15 @@
+[package]
+name = "web"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+axum = { version = "0.8.9", features = ["macros"] }
+axum-extra = { version = "0.12.6", features = ["typed-header"] }
+axum-range = "1.0.0"
+codemap = "0.1.3"
+codemap-diagnostic = "0.1.2"
+html_preprocess = { path = "../html_preprocess" }
+infer = { version = "0.19.0", default-features = false, features = ["alloc"] }
+mime = "0.3.17"
+tokio = { version = "1.52.3", features = ["net", "rt"] }

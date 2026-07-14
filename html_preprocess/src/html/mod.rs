@@ -316,4 +316,9 @@ impl<'a> Preprocessor<'a> {
 
         Ok(String::from_utf8(buf).expect("HTML encoder written non valid UTF-8 bytes!"))
     }
+    
+    // This one way convert the Preprocess into CodeMap for diagnostics
+    pub fn to_codemap(self) -> CodeMap {
+        self.code_map
+    }
 }
