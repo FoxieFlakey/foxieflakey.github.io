@@ -254,12 +254,19 @@ impl<'a> Preprocessor<'a> {
                 }
 
                 ElementContent::Element(elem) => {
-                    if let Either::Right(a) = &elem.name {
-                        let _: &lexer::Replacer = a;
-                        need_reiter = true;
-                        false
-                    } else {
-                        true
+                    match &elem.name {
+                        Either::Left(name) => {
+                            if name.starts_with("x-") {
+                                need_reiter = true;
+                                false
+                            } else {
+                                true
+                            }
+                        },
+                        Either::Right(_) => {
+                            need_reiter = true;
+                            false
+                        }
                     }
                 }
 
