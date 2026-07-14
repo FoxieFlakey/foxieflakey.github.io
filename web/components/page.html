@@ -5,5 +5,39 @@
   <link href="$root/favicon.ico" rel="icon" />
 </x-template>
 
+<x-template name="x-navbar-entry">
+  
+</x-template>
+
+<x-template name="x-navbar">
+  <table class="navbar" id="navbar">
+    <tr>
+      <x-navbar-entry href="$root" icon="$root/favicon.ico" height="60" />
+      <th style="width: 100%;"></th>
+    </tr>
+  </table>
+</x-template>
+
+<x-template name="x-page">
+  <!-- Page header -->
+  <div id="page_header">
+    <x-navbar />
+  </div>
+  
+  <!-- Page content -->
+  <hr class="no_css" />
+  <div id="page_content">
+    ${children}
+  </div>
+  
+  <div style="flex: 1;"></div>
+  <hr class="no_css" />
+  
+  <!-- Page footer -->
+  <div id="page_footer">
+    Site made with love by MEEE &lt;3<br />
+    Copyright 2025<br />
+  </div>
+</x-template>
 
 
