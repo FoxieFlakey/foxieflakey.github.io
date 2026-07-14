@@ -1,4 +1,4 @@
-use std::{borrow::Cow, collections::HashMap, mem};
+use std::{borrow::Cow, mem};
 
 use codemap::Span;
 use codemap_diagnostic::{Diagnostic, Level, SpanLabel};
@@ -58,7 +58,6 @@ fn find_template_and_instances(
     context: &mut FileContext,
     input: Vec<(Span, parser::ElementContent)>,
     output: &mut Vec<(Span, parser::ElementContent)>,
-    known_templates: &mut HashMap<String, (Span, Vec<(Span, parser::ElementContent)>)>,
 ) -> Result<(), Vec<Diagnostic>> {
     'outer_loop: for (element_span, content) in input {
         match content {
@@ -70,7 +69,6 @@ fn find_template_and_instances(
                         context,
                         input,
                         &mut instance.childs,
-                        known_templates,
                     )?;
                     output.push((
                         element_span.clone(),
@@ -86,7 +84,6 @@ fn find_template_and_instances(
                         context,
                         input,
                         &mut instance.childs,
-                        known_templates,
                     )?;
                     output.push((
                         element_span.clone(),
@@ -155,7 +152,7 @@ fn find_template_and_instances(
                     };
 
                     if let Err(occupied) = TryInsertExt::try_insert(
-                        known_templates,
+                        &mut context.known_templates,
                         name,
                         (element_name_span, childs.clone()),
                     ) {
@@ -176,7 +173,7 @@ fn find_template_and_instances(
                     }
                 } else {
                     // Its instantiating template
-                    let Some((def_span, template)) = known_templates.get(name) else {
+                    let Some((def_span, template)) = context.known_templates.get(name) else {
                         return Err(vec![TemplateResolver::UnknownTemplate.to_diagnostic(&[
                             SpanLabel {
                                 label: None,
@@ -208,11 +205,9 @@ pub fn run(
     context: &mut FileContext,
     tree: Vec<(Span, parser::ElementContent)>,
 ) -> Result<Vec<(Span, parser::ElementContent)>, Vec<Diagnostic>> {
-    let mut known_templates: HashMap<String, (Span, Vec<(Span, parser::ElementContent)>)> =
-        HashMap::new();
     let mut new_tree = Vec::new();
 
-    find_template_and_instances(context, tree, &mut new_tree, &mut known_templates)?;
+    find_template_and_instances(context, tree, &mut new_tree)?;
 
     // util::iter_tree_mut(&mut tree, |(element_span, element)| {
     //     match element {
@@ -328,7 +323,7 @@ pub fn run(
 }
 
 fn expand_template(
-    context: &mut FileContext,
+    context: &FileContext,
     output: &mut Vec<(Span, parser::ElementContent)>,
     // Where the template expanded,
     expansion_span: Span,

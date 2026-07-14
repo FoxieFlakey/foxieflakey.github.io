@@ -61,6 +61,7 @@ pub struct Preprocessor<'a> {
 
 struct FileContext<'a, 'env> {
     preprocessor: &'a mut Preprocessor<'env>,
+    known_templates: HashMap<String, (Span, Vec<(Span, parser::ElementContent)>)>
 }
 
 impl<'env> FileContext<'_, 'env> {
@@ -215,7 +216,10 @@ impl<'a> Preprocessor<'a> {
         let file = &loaded.0;
         let mut tree = loaded.1.clone();
 
-        let mut ctx = FileContext { preprocessor: self };
+        let mut ctx = FileContext {
+            preprocessor: self,
+            known_templates: HashMap::new(),
+        };
 
         let max_iter = 512;
         let mut current_iter = 0;
