@@ -1,3 +1,5 @@
+use std::time::Duration;
+
 pub fn sanify_path(path: &str) -> String {
     let mut segments = Vec::new();
 
@@ -19,3 +21,11 @@ pub fn sanify_path(path: &str) -> String {
         if path.ends_with('/') && joined.len() > 1 { "/" } else { "" }
     )
 }
+
+pub fn round_duration_to_ms(duration: Duration) -> Duration {
+    Duration::new(
+        duration.as_secs(),
+        duration.subsec_millis() * 1_000_000
+    )
+}
+
