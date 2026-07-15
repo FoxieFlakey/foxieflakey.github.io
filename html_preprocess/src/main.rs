@@ -8,9 +8,7 @@ use std::{
 use codemap_diagnostic::{ColorConfig, Emitter};
 use path_jail::JailError;
 
-use crate::html::Preprocessor;
-
-mod html;
+use html_preprocess::Preprocessor;
 
 #[derive(Parser)]
 #[command(version, about)]
