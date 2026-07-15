@@ -3,7 +3,7 @@ macro_rules! html {
         (
             $path,
             Resource {
-                data: &include_bytes!(concat!("../", $path))[..],
+                data: &include_bytes!(concat!("../data/", $path))[..],
                 do_preprocess: true,
                 do_include: true,
             },
@@ -16,7 +16,7 @@ macro_rules! raw {
         (
             $path,
             Resource {
-                data: &include_bytes!(concat!("../", $path))[..],
+                data: &include_bytes!(concat!("../data/", $path))[..],
                 do_preprocess: false,
                 do_include: true,
             },
@@ -29,7 +29,7 @@ macro_rules! html_dep {
         (
             $path,
             Resource {
-                data: &include_bytes!(concat!("../", $path))[..],
+                data: &include_bytes!(concat!("../data/", $path))[..],
                 do_preprocess: false,
                 do_include: false,
             },
