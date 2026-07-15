@@ -1,15 +1,22 @@
 #[forbid(unsafe_code)]
 use std::{
-    path::PathBuf,
     net::{IpAddr, Ipv4Addr},
+    path::PathBuf,
     process::ExitCode,
 };
 
-use std::{borrow::Cow, collections::HashMap, fs::{self, File}, io::Write, path::Path, time::Instant};
-use codemap_diagnostic::{ColorConfig, Emitter};
 use clap::{Parser, Subcommand};
+use codemap_diagnostic::{ColorConfig, Emitter};
 use human_bytes::human_bytes;
 use mime::Mime;
+use std::{
+    borrow::Cow,
+    collections::HashMap,
+    fs::{self, File},
+    io::Write,
+    path::Path,
+    time::Instant,
+};
 
 use crate::{builder::BuildError, config::Config, server::ServerConfig};
 
@@ -43,8 +50,8 @@ enum Cmd {
         #[arg(default_value_t = IpAddr::V4(Ipv4Addr::LOCALHOST))]
         ip: IpAddr,
         #[arg(default_value_t = 8080)]
-        port: u16
-    }
+        port: u16,
+    },
 }
 
 #[derive(Parser)]
@@ -56,19 +63,15 @@ struct Args {
 
 fn main() -> Result<ExitCode, ExitCode> {
     let cmd = Args::parse().command;
-    
+
     let config;
-    
+
     match &cmd {
-        Cmd::Dump { root, .. } => {
-            config = Config {
-                root: root.clone()
-            }
-        }
-        
+        Cmd::Dump { root, .. } => config = Config { root: root.clone() },
+
         Cmd::Serve { ip, port } => {
             config = Config {
-                root: format!("http://{ip}:{port}")
+                root: format!("http://{ip}:{port}"),
             }
         }
     }
@@ -85,18 +88,18 @@ fn main() -> Result<ExitCode, ExitCode> {
         }
     }
     let time = util::round_duration_to_ms(Instant::now() - start);
-    println!("Built the website. Took {:.2}", humantime::format_duration(time));
+    println!(
+        "Built the website. Took {:.2}",
+        humantime::format_duration(time)
+    );
 
     match cmd {
-        Cmd::Dump { output_directory, .. } => {
-            dump(data, &output_directory)
-        }
-        
+        Cmd::Dump {
+            output_directory, ..
+        } => dump(data, &output_directory),
+
         Cmd::Serve { ip, port } => {
-            let server_config = ServerConfig {
-                ip,
-                port,
-            };
+            let server_config = ServerConfig { ip, port };
             server::serve(&server_config, data)?;
             Ok(ExitCode::SUCCESS)
         }
@@ -105,7 +108,7 @@ fn main() -> Result<ExitCode, ExitCode> {
 
 fn dump(
     data: HashMap<&str, (Cow<'_, [u8]>, Option<Mime>)>,
-    output: &Path
+    output: &Path,
 ) -> Result<ExitCode, ExitCode> {
     println!("Dumping files to '{}'", output.display());
     let mut written_bytes = 0;
@@ -113,32 +116,42 @@ fn dump(
     for (path, (bytes, _)) in data {
         let path_raw = util::sanify_path(path);
         let path = output.join(format!("./{path_raw}"));
-        
+
         if let Some(parent) = path.parent() {
             // Create parent directories, if not exist
             if !parent.is_empty() && !path.exists() {
-                fs::create_dir_all(parent)
-                    .map_err(|e| {
-                        eprintln!("Error: Cannot create parent directory for '{path_raw}' at '{}': {e}", path.display());
-                        ExitCode::FAILURE
-                    })?;
+                fs::create_dir_all(parent).map_err(|e| {
+                    eprintln!(
+                        "Error: Cannot create parent directory for '{path_raw}' at '{}': {e}",
+                        path.display()
+                    );
+                    ExitCode::FAILURE
+                })?;
             }
         }
-        
-        let mut file = File::create(&path)
-            .map_err(|e| {
-                eprintln!("Error: Cannot create file for '{path_raw}' at '{}': {e}", path.display());
-                ExitCode::FAILURE
-            })?;
-        file.write_all(&bytes)
-            .map_err(|e| {
-                eprintln!("Error: Cannot dump file '{path_raw}' to '{}': {e}", path.display());
-                ExitCode::FAILURE
-            })?;
+
+        let mut file = File::create(&path).map_err(|e| {
+            eprintln!(
+                "Error: Cannot create file for '{path_raw}' at '{}': {e}",
+                path.display()
+            );
+            ExitCode::FAILURE
+        })?;
+        file.write_all(&bytes).map_err(|e| {
+            eprintln!(
+                "Error: Cannot dump file '{path_raw}' to '{}': {e}",
+                path.display()
+            );
+            ExitCode::FAILURE
+        })?;
         written_bytes += bytes.len();
     }
     let time = util::round_duration_to_ms(Instant::now() - start);
-    
-    println!("Done dumping files. Written {} in {}", human_bytes(written_bytes as f64), humantime::format_duration(time));
+
+    println!(
+        "Done dumping files. Written {} in {}",
+        human_bytes(written_bytes as f64),
+        humantime::format_duration(time)
+    );
     Ok(ExitCode::SUCCESS)
 }

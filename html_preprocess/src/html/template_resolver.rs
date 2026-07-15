@@ -65,11 +65,7 @@ fn find_template_and_instances(
                 let Either::Left(name) = &element.name else {
                     let mut instance = element.clone();
                     let input = mem::take(&mut instance.childs);
-                    find_template_and_instances(
-                        context,
-                        input,
-                        &mut instance.childs,
-                    )?;
+                    find_template_and_instances(context, input, &mut instance.childs)?;
                     output.push((
                         element_span.clone(),
                         parser::ElementContent::Element(instance),
@@ -80,11 +76,7 @@ fn find_template_and_instances(
                 if !name.starts_with("x-") {
                     let mut instance = element.clone();
                     let input = mem::take(&mut instance.childs);
-                    find_template_and_instances(
-                        context,
-                        input,
-                        &mut instance.childs,
-                    )?;
+                    find_template_and_instances(context, input, &mut instance.childs)?;
                     output.push((
                         element_span.clone(),
                         parser::ElementContent::Element(instance),

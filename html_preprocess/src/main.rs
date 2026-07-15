@@ -1,8 +1,13 @@
 #[forbid(unsafe_code)]
-
 use clap::Parser;
 use std::{
-    collections::HashSet, env, fs::File, io::{self, Read, Write}, path::{Path, PathBuf}, process::ExitCode, str::FromStr
+    collections::HashSet,
+    env,
+    fs::File,
+    io::{self, Read, Write},
+    path::{Path, PathBuf},
+    process::ExitCode,
+    str::FromStr,
 };
 
 use codemap_diagnostic::{ColorConfig, Emitter};
@@ -35,11 +40,11 @@ struct Args {
     /// Whether to minify the output HTML or not
     #[arg(short, long)]
     minify: bool,
-    
+
     /// Dependency file, whether to generate makefile depedency or not
     /// On stdout, this no-op
     #[arg(long)]
-    makefile_depedency: Option<PathBuf>
+    makefile_depedency: Option<PathBuf>,
 }
 
 #[derive(Clone)]
@@ -204,7 +209,7 @@ fn main() -> Result<ExitCode, ExitCode> {
                 // Writes to stdout
                 output_file = None;
             }
-            
+
             if let Some(file) = &mut output_file {
                 if let Err(e) = file.write_all(&x.as_bytes()) {
                     eprintln!("Error writing to output file: {e}");
@@ -213,7 +218,7 @@ fn main() -> Result<ExitCode, ExitCode> {
             } else {
                 println!("{}", x);
             }
-            
+
             if output_file.is_some() {
                 if let Some(path) = args.makefile_depedency {
                     let mut dep_file;
@@ -224,18 +229,19 @@ fn main() -> Result<ExitCode, ExitCode> {
                             return Err(ExitCode::FAILURE);
                         }
                     }
-                    
+
                     fn handle_err(err: io::Error) -> ExitCode {
                         eprintln!("Cannot write to makefile dependency file: {err}");
                         ExitCode::FAILURE
                     }
-                    
-                    writeln!(dep_file, "{}: \\", Path::new(&args.output).display()).map_err(handle_err)?;
-                    
+
+                    writeln!(dep_file, "{}: \\", Path::new(&args.output).display())
+                        .map_err(handle_err)?;
+
                     drop(preprocessor);
                     for (idx, dep) in dependencies.iter().enumerate() {
                         write!(dep_file, "\t{} ", dep.display()).map_err(handle_err)?;
-                        
+
                         // All except last entry needs \
                         if idx < dependencies.len() - 1 {
                             writeln!(dep_file, "\\").map_err(handle_err)?;
@@ -243,7 +249,7 @@ fn main() -> Result<ExitCode, ExitCode> {
                             writeln!(dep_file).map_err(handle_err)?;
                         }
                     }
-                    
+
                     for dep in dependencies {
                         writeln!(dep_file, "{}:", dep.display()).map_err(handle_err)?;
                     }

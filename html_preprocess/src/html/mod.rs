@@ -61,7 +61,7 @@ pub struct Preprocessor<'a> {
 
 struct FileContext<'a, 'env> {
     preprocessor: &'a mut Preprocessor<'env>,
-    known_templates: HashMap<String, (Span, Vec<(Span, parser::ElementContent)>)>
+    known_templates: HashMap<String, (Span, Vec<(Span, parser::ElementContent)>)>,
 }
 
 impl<'env> FileContext<'_, 'env> {
@@ -253,22 +253,20 @@ impl<'a> Preprocessor<'a> {
                     false
                 }
 
-                ElementContent::Element(elem) => {
-                    match &elem.name {
-                        Either::Left(name) => {
-                            if name.starts_with("x-") {
-                                need_reiter = true;
-                                false
-                            } else {
-                                true
-                            }
-                        },
-                        Either::Right(_) => {
+                ElementContent::Element(elem) => match &elem.name {
+                    Either::Left(name) => {
+                        if name.starts_with("x-") {
                             need_reiter = true;
                             false
+                        } else {
+                            true
                         }
                     }
-                }
+                    Either::Right(_) => {
+                        need_reiter = true;
+                        false
+                    }
+                },
 
                 _ => true,
             });
@@ -316,7 +314,7 @@ impl<'a> Preprocessor<'a> {
 
         Ok(String::from_utf8(buf).expect("HTML encoder written non valid UTF-8 bytes!"))
     }
-    
+
     // This one way convert the Preprocess into CodeMap for diagnostics
     pub fn to_codemap(self) -> CodeMap {
         self.code_map

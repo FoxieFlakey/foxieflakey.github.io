@@ -18,14 +18,14 @@ pub fn sanify_path(path: &str) -> String {
         "{}{}{}",
         if joined.starts_with('/') { "" } else { "/" },
         joined,
-        if path.ends_with('/') && joined.len() > 1 { "/" } else { "" }
+        if path.ends_with('/') && joined.len() > 1 {
+            "/"
+        } else {
+            ""
+        }
     )
 }
 
 pub fn round_duration_to_ms(duration: Duration) -> Duration {
-    Duration::new(
-        duration.as_secs(),
-        duration.subsec_millis() * 1_000_000
-    )
+    Duration::new(duration.as_secs(), duration.subsec_millis() * 1_000_000)
 }
-
