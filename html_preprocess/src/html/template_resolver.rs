@@ -5,7 +5,7 @@ use codemap_diagnostic::{Diagnostic, Level, SpanLabel};
 use either::Either;
 
 use crate::html::util::TryInsertExt;
-use crate::html::{FileContext, parser};
+use crate::html::{FileContext, Template, parser};
 
 #[repr(u16)]
 #[derive(Clone, Copy)]
@@ -146,26 +146,48 @@ fn find_template_and_instances(
                     if let Err(occupied) = TryInsertExt::try_insert(
                         &mut context.known_templates,
                         name,
-                        (element_name_span, childs.clone()),
+                        Template::FromSource(element_name_span, Cow::Owned(childs.clone())),
                     ) {
-                        return Err(vec![
-                            TemplateResolver::TemplateAlreadyDefined.to_diagnostic(&[
-                                SpanLabel {
-                                    label: None,
-                                    span: name_span,
-                                    style: codemap_diagnostic::SpanStyle::Primary,
-                                },
-                                SpanLabel {
-                                    label: Some("Previous defined here".to_string()),
-                                    span: occupied.entry.get().0,
-                                    style: codemap_diagnostic::SpanStyle::Secondary,
-                                },
-                            ]),
-                        ]);
+                        match occupied.entry.get() {
+                            Template::FromSource(span, _) =>{
+                                return Err(vec![
+                                    TemplateResolver::TemplateAlreadyDefined.to_diagnostic(&[
+                                        SpanLabel {
+                                            label: None,
+                                            span: name_span,
+                                            style: codemap_diagnostic::SpanStyle::Primary,
+                                        },
+                                        SpanLabel {
+                                            label: Some("Previous defined here".to_string()),
+                                            span: *span,
+                                            style: codemap_diagnostic::SpanStyle::Secondary,
+                                        },
+                                    ]),
+                                ]);
+                            }
+                            
+                            Template::Generator(location, _) => {
+                                return Err(vec![
+                                    TemplateResolver::TemplateAlreadyDefined.to_diagnostic(&[
+                                        SpanLabel {
+                                            label: None,
+                                            span: name_span,
+                                            style: codemap_diagnostic::SpanStyle::Primary,
+                                        },
+                                    ]),
+                                    Diagnostic {
+                                        code: None,
+                                        level: Level::Note,
+                                        message: format!("The template was defined by generator at {location}"),
+                                        spans: vec![]
+                                    }
+                                ]);
+                            }
+                        }
                     }
                 } else {
                     // Its instantiating template
-                    let Some((def_span, template)) = context.known_templates.get(name) else {
+                    let Some(template) = context.known_templates.get(name) else {
                         return Err(vec![TemplateResolver::UnknownTemplate.to_diagnostic(&[
                             SpanLabel {
                                 label: None,
@@ -181,7 +203,6 @@ fn find_template_and_instances(
                         element_span,
                         &childs,
                         &attributes,
-                        *def_span,
                         template,
                     )?;
                 }
@@ -323,11 +344,14 @@ fn expand_template(
     expansion_childs: &Vec<(Span, parser::ElementContent)>,
     // Attribute at expansion point
     expansion_attributes: &Vec<parser::Attribute>,
-    // Where the template is defined
-    defintion_span: Span,
-    template: &Vec<(Span, parser::ElementContent)>,
+    template: &Template,
 ) -> Result<(), Vec<Diagnostic>> {
-    for (element_span, element) in template {
+    let (def_span, template) = match template {
+        Template::FromSource(def_span, template) => (def_span, template),
+        Template::Generator(_, _) => unimplemented!("Generator is in progress")
+    };
+    
+    for (element_span, element) in template.iter() {
         match element {
             parser::ElementContent::Replacer(replacer) => {
                 let replacer = context.resolve_span_to_string(replacer.content);
@@ -366,8 +390,7 @@ fn expand_template(
                     expansion_span,
                     &expansion_childs,
                     &expansion_attributes,
-                    defintion_span,
-                    &template_element.childs,
+                    &Template::FromSource(*def_span, Cow::Borrowed(&template_element.childs))
                 )?;
                 output.push((*element_span, parser::ElementContent::Element(instance)))
             }

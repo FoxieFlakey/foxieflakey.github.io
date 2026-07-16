@@ -32,9 +32,7 @@
 //    cannot be used to open a tag
 
 use std::{
-    collections::{HashMap, hash_map::Entry},
-    path::Path,
-    sync::Arc,
+    borrow::Cow, collections::{HashMap, hash_map::Entry}, panic::Location, path::Path, sync::Arc
 };
 
 use codemap::{CodeMap, File, Span};
@@ -45,8 +43,8 @@ use crate::html::parser::ElementContent;
 
 mod encoder;
 mod import_resolver;
-mod lexer;
-mod parser;
+pub mod lexer;
+pub mod parser;
 mod replacer_resolver;
 mod template_resolver;
 mod util;
@@ -59,9 +57,28 @@ pub struct Preprocessor<'a> {
     minify: bool,
 }
 
+ #[expect(unused)]
+pub struct GeneratorArgs<'a> {
+    pub childs: &'a Vec<(Span, parser::ElementContent)>,
+    pub attributes: &'a Vec<parser::Attribute>,
+}
+
+pub enum Template<'a> {
+    FromSource(Span, Cow<'a, Vec<(Span, parser::ElementContent)>>),
+    #[expect(unused)]
+    Generator(
+        // Where the generator defined
+        &'static Location<'static>,
+        // Return a string of encoded HTML. Yes this is somewhat inefficient
+        // but saner than reconstructing the AST tree manually in code. and
+        // verifying data from there is not bogus/invalid
+        Box<dyn FnMut(GeneratorArgs) -> Result<String, String> + 'static>
+    )
+}
+
 struct FileContext<'a, 'env> {
     preprocessor: &'a mut Preprocessor<'env>,
-    known_templates: HashMap<String, (Span, Vec<(Span, parser::ElementContent)>)>,
+    known_templates: HashMap<String, Template<'static>>,
 }
 
 impl<'env> FileContext<'_, 'env> {

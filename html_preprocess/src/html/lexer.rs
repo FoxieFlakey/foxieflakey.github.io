@@ -28,7 +28,6 @@ pub struct QuotedString {
 pub struct Replacer {
     pub content: Span,
     // Is it just $abc or ${abc}
-    #[expect(unused)]
     pub is_simple: bool,
 }
 
