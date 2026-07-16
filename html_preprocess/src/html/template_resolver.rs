@@ -4,8 +4,9 @@ use codemap::Span;
 use codemap_diagnostic::{Diagnostic, Level, SpanLabel};
 use either::Either;
 
+use crate::Preprocessor;
 use crate::html::util::TryInsertExt;
-use crate::html::{FileContext, Template, parser};
+use crate::html::{FileContext, GeneratorArgs, Template, parser};
 
 #[repr(u16)]
 #[derive(Clone, Copy)]
@@ -14,6 +15,7 @@ pub enum TemplateResolver {
     TemplateAlreadyDefined = 0001,
     CantFindNameAttribute = 0002,
     UnknownTemplate = 0003,
+    FailedExpandingGenerator = 0004,
 }
 
 impl TemplateResolver {
@@ -25,6 +27,7 @@ impl TemplateResolver {
                 "Cannot find 'name' attribute in x-template element, there has to be one"
             }
             TemplateResolver::UnknownTemplate => "Dont know what this template",
+            TemplateResolver::FailedExpandingGenerator => "Failed expanding generaator",
         }
     }
 
@@ -149,7 +152,7 @@ fn find_template_and_instances(
                         Template::FromSource(element_name_span, Cow::Owned(childs.clone())),
                     ) {
                         match occupied.entry.get() {
-                            Template::FromSource(span, _) =>{
+                            Template::FromSource(span, _) => {
                                 return Err(vec![
                                     TemplateResolver::TemplateAlreadyDefined.to_diagnostic(&[
                                         SpanLabel {
@@ -165,7 +168,7 @@ fn find_template_and_instances(
                                     ]),
                                 ]);
                             }
-                            
+
                             Template::Generator(location, _) => {
                                 return Err(vec![
                                     TemplateResolver::TemplateAlreadyDefined.to_diagnostic(&[
@@ -178,9 +181,11 @@ fn find_template_and_instances(
                                     Diagnostic {
                                         code: None,
                                         level: Level::Note,
-                                        message: format!("The template was defined by generator at {location}"),
-                                        spans: vec![]
-                                    }
+                                        message: format!(
+                                            "The template was defined by generator at {location}"
+                                        ),
+                                        spans: vec![],
+                                    },
                                 ]);
                             }
                         }
@@ -198,7 +203,7 @@ fn find_template_and_instances(
                     };
 
                     expand_template(
-                        context,
+                        context.preprocessor,
                         output,
                         element_span,
                         &childs,
@@ -336,7 +341,7 @@ pub fn run(
 }
 
 fn expand_template(
-    context: &FileContext,
+    preprocessor: &mut Preprocessor,
     output: &mut Vec<(Span, parser::ElementContent)>,
     // Where the template expanded,
     expansion_span: Span,
@@ -348,13 +353,52 @@ fn expand_template(
 ) -> Result<(), Vec<Diagnostic>> {
     let (def_span, template) = match template {
         Template::FromSource(def_span, template) => (def_span, template),
-        Template::Generator(_, _) => unimplemented!("Generator is in progress")
+        Template::Generator(location, func) => {
+            let generated_src = func(GeneratorArgs {
+                attributes: expansion_attributes,
+                childs: expansion_childs,
+            })
+            .map_err(|e| {
+                return vec![Diagnostic {
+                    code: Some(TemplateResolver::FailedExpandingGenerator.to_code()),
+                    level: Level::Error,
+                    message: format!(
+                        "{}: {e}",
+                        TemplateResolver::FailedExpandingGenerator.description()
+                    ),
+                    spans: vec![SpanLabel {
+                        label: None,
+                        span: expansion_span,
+                        style: codemap_diagnostic::SpanStyle::Primary,
+                    }],
+                }];
+            })?;
+
+            let generated = preprocessor
+                .add_generated_code(location, generated_src)
+                .map_err(|mut diags| {
+                    diags.push(Diagnostic {
+                        code: None,
+                        level: Level::Note,
+                        message: format!(
+                            "Parsing code generated at {}:{}:{}",
+                            location.file(),
+                            location.line(),
+                            location.column()
+                        ),
+                        spans: vec![],
+                    });
+                    diags
+                })?;
+            output.extend_from_slice(&generated);
+            return Ok(());
+        }
     };
-    
+
     for (element_span, element) in template.iter() {
         match element {
             parser::ElementContent::Replacer(replacer) => {
-                let replacer = context.resolve_span_to_string(replacer.content);
+                let replacer = preprocessor.resolve_span_to_string(replacer.content);
                 if replacer.starts_with("children") {
                     output.extend_from_slice(&expansion_childs);
                 } else {
@@ -370,7 +414,7 @@ fn expand_template(
                 for attribute in &template_element.attributes {
                     match attribute {
                         parser::Attribute::Replacer(_, replacer) => {
-                            let replacer = context.resolve_span_to_string(replacer.content);
+                            let replacer = preprocessor.resolve_span_to_string(replacer.content);
                             if replacer.starts_with("props") {
                                 instance.attributes.extend_from_slice(expansion_attributes);
                             } else {
@@ -385,12 +429,12 @@ fn expand_template(
                 instance.childs.clear();
 
                 expand_template(
-                    context,
+                    preprocessor,
                     &mut instance.childs,
                     expansion_span,
                     &expansion_childs,
                     &expansion_attributes,
-                    &Template::FromSource(*def_span, Cow::Borrowed(&template_element.childs))
+                    &mut Template::FromSource(*def_span, Cow::Borrowed(&template_element.childs)),
                 )?;
                 output.push((*element_span, parser::ElementContent::Element(instance)))
             }

@@ -32,7 +32,12 @@
 //    cannot be used to open a tag
 
 use std::{
-    borrow::Cow, collections::{HashMap, hash_map::Entry}, panic::Location, path::Path, sync::Arc
+    borrow::Cow,
+    collections::{HashMap, hash_map::Entry},
+    panic::Location,
+    path::Path,
+    rc::Rc,
+    sync::Arc,
 };
 
 use codemap::{CodeMap, File, Span};
@@ -57,7 +62,6 @@ pub struct Preprocessor<'a> {
     minify: bool,
 }
 
- #[expect(unused)]
 pub struct GeneratorArgs<'a> {
     pub childs: &'a Vec<(Span, parser::ElementContent)>,
     pub attributes: &'a Vec<parser::Attribute>,
@@ -65,15 +69,14 @@ pub struct GeneratorArgs<'a> {
 
 pub enum Template<'a> {
     FromSource(Span, Cow<'a, Vec<(Span, parser::ElementContent)>>),
-    #[expect(unused)]
     Generator(
         // Where the generator defined
         &'static Location<'static>,
         // Return a string of encoded HTML. Yes this is somewhat inefficient
         // but saner than reconstructing the AST tree manually in code. and
         // verifying data from there is not bogus/invalid
-        Box<dyn FnMut(GeneratorArgs) -> Result<String, String> + 'static>
-    )
+        Rc<dyn Fn(GeneratorArgs) -> Result<String, String> + 'static>,
+    ),
 }
 
 struct FileContext<'a, 'env> {
@@ -100,6 +103,15 @@ impl<'env> FileContext<'_, 'env> {
         if path.starts_with('/') {
             self.preprocessor.load_file(path)
         } else {
+            // Special: code got from generator. It does not have
+            // path for relative imports
+            if importer.name().starts_with("generator:") {
+                return Err(Either::Right(format!(
+                    "Generated code ('{}'), cannot relatively import",
+                    importer.name()
+                )));
+            }
+
             let importer_dir = Path::new(importer.name())
                 .parent()
                 .unwrap()
@@ -197,6 +209,25 @@ impl<'a> Preprocessor<'a> {
         util::resolve_span_to_string(&self.code_map, span)
     }
 
+    // Parses the src code, and return AST
+    // does not cache it
+    fn add_generated_code(
+        &mut self,
+        location: &Location,
+        src: String,
+    ) -> Result<Vec<(Span, ElementContent)>, Vec<Diagnostic>> {
+        let file = self.code_map.add_file(
+            format!(
+                "generator:{}:{}:{}",
+                location.file(),
+                location.line(),
+                location.column()
+            ),
+            src,
+        );
+        Ok(parser::run(file.clone(), lexer::run(&file)?)?)
+    }
+
     // Merely only loads file, parses it and caches it.
     fn load_file(
         &mut self,
@@ -218,7 +249,17 @@ impl<'a> Preprocessor<'a> {
         }
     }
 
-    pub fn process_file(&mut self, path: &str) -> Result<String, Vec<Diagnostic>> {
+    pub fn process_file(
+        &mut self,
+        path: &str,
+        generators: &HashMap<
+            String,
+            (
+                &'static Location<'static>,
+                Rc<dyn Fn(GeneratorArgs) -> Result<String, String> + 'static>,
+            ),
+        >,
+    ) -> Result<String, Vec<Diagnostic>> {
         let loaded = self.load_file(path).map_err(|x| match x {
             Either::Left(diag) => diag,
             Either::Right(err) => {
@@ -237,6 +278,11 @@ impl<'a> Preprocessor<'a> {
             preprocessor: self,
             known_templates: HashMap::new(),
         };
+
+        for (key, (location, func)) in generators {
+            ctx.known_templates
+                .insert(format!("x-{key}"), Template::Generator(location, func.clone()));
+        }
 
         let max_iter = 512;
         let mut current_iter = 0;

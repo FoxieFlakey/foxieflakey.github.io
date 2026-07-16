@@ -1,5 +1,6 @@
 use std::{borrow::Cow, collections::HashMap, str::FromStr};
 
+use chrono::Utc;
 use codemap::CodeMap;
 use codemap_diagnostic::Diagnostic;
 use html_preprocess::Preprocessor;
@@ -30,8 +31,14 @@ pub fn build(
     );
 
     // Some stuffs for the preprocessor :3 //
+    let build_time = Utc::now().to_rfc2822();
 
     preprocessor.set_env("root", &config.root);
+    let mut generators = HashMap::new();
+    generators.insert(
+        "build-time".to_string(),
+        html_preprocess::create_generator(move |_| Ok(format!("<p>Built on {build_time}</p>"))),
+    );
 
     /////////////////////////////////////////
 
@@ -40,7 +47,7 @@ pub fn build(
         let mime;
 
         if resource.do_preprocess {
-            let result = preprocessor.process_file(path);
+            let result = preprocessor.process_file(path, &generators);
             data = match result {
                 Ok(data) => Cow::<'_, [u8]>::Owned(data.into_bytes()).into(),
                 Err(diags) => {

@@ -45,6 +45,7 @@ host: $(web_binary)
 .PHONY: clean
 clean:
 	cargo clean
+	rm -rf $(output_dir)
 
 $(web_binary):
 	cargo build --release --package web

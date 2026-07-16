@@ -1,7 +1,7 @@
 #[forbid(unsafe_code)]
 use clap::Parser;
 use std::{
-    collections::HashSet,
+    collections::{HashMap, HashSet},
     env,
     fs::File,
     io::{self, Read, Write},
@@ -194,7 +194,7 @@ fn main() -> Result<ExitCode, ExitCode> {
         }
     }
 
-    match preprocessor.process_file(&args.input) {
+    match preprocessor.process_file(&args.input, &HashMap::new()) {
         Ok(x) => {
             let mut output_file;
             if args.output != "-" {
