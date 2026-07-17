@@ -8,6 +8,8 @@ use mime::Mime;
 
 use crate::{config, util};
 
+mod navbar;
+
 pub enum BuildError {
     PreprocessFailed(&'static str, CodeMap, Vec<Diagnostic>),
 }
@@ -39,6 +41,9 @@ pub fn build(
         "build-time".to_string(),
         html_preprocess::create_generator(move |_| Ok(format!("<p>Built on {build_time}</p>"))),
     );
+
+    // Relating to navbars
+    navbar::init(config, &mut generators);
 
     /////////////////////////////////////////
 

@@ -9,6 +9,10 @@ pub static RESOURCES: LazyLock<HashMap<&str, Resource>> = LazyLock::new(|| {
         raw!("/img/profile.gif"),
         raw!("/css/global.css"),
         raw!("/css/pages/home.css"),
+        raw!("/favicon.ico"),
+        raw!("/favicon_for_opengraph.png"),
+        raw!("/img/Gallery_Icon.png"),
+        raw!("/img/Home_Icon.png"),
     ];
 
     let mut map = HashMap::new();
