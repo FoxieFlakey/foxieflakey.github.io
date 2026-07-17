@@ -1,10 +1,12 @@
 <import src="/components/page.html" />
+<import src="/components/popup.html" />
+<import src="../popup.html" />
 
 <html>
   <head>
     <title>CSS Animation</title>
     <x-base-metadata />
-    <link  rel="stylesheet" />
+    <x-popup-headers />
     <link href="$root/creations/CSS_animation/popup.css" rel="stylesheet" blocking="render" />
   </head>
   
@@ -73,5 +75,7 @@
       <summary>Header</summary>
       Content
     </details>
+    
+    <x-popup-to-primary />
   </body>
 </html>

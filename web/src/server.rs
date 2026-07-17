@@ -71,13 +71,12 @@ async fn handler(
         sanified = util::sanify_path(&sanified);
     }
 
-    let fetched = state.data.get(sanified.as_str())
-        .or_else(|| {
-            // Maybe its a directory (then fetch the index.html)
-            let new_path = util::sanify_path(&format!("{sanified}/index.html"));
-            state.data.get(new_path.as_str())
-        });
-    
+    let fetched = state.data.get(sanified.as_str()).or_else(|| {
+        // Maybe its a directory (then fetch the index.html)
+        let new_path = util::sanify_path(&format!("{sanified}/index.html"));
+        state.data.get(new_path.as_str())
+    });
+
     let Some((data, mime)) = fetched.cloned() else {
         if let Some((not_found_page, mime)) = state.data.get("/404.html").cloned() {
             let mut headers = HeaderMap::new();

@@ -15,7 +15,9 @@ pub enum BuildError {
     PreprocessFailed(&'static str, CodeMap, Vec<Diagnostic>),
 }
 
-fn init_generators(config: &config::Config, generators: &mut HashMap<
+fn init_generators(
+    config: &config::Config,
+    generators: &mut HashMap<
         String,
         (
             &Location<'_>,
@@ -75,7 +77,7 @@ pub fn build(
 
             false
         }
-        
+
         is_svg(buf)
     });
 
@@ -90,10 +92,12 @@ pub fn build(
             let build_time = build_time.clone();
             generators.insert(
                 "build-time".to_string(),
-                html_preprocess::create_generator(move |_| Ok(format!("<p>Built on {build_time}</p>"))),
+                html_preprocess::create_generator(move |_| {
+                    Ok(format!("<p>Built on {build_time}</p>"))
+                }),
             );
             init_generators(config, &mut generators);
-            
+
             let result = preprocessor.process_file(path, &generators);
             data = match result {
                 Ok(data) => Cow::<'_, [u8]>::Owned(data.into_bytes()).into(),
@@ -107,9 +111,9 @@ pub fn build(
             };
             mime = Some(mime::TEXT_HTML_UTF_8);
         } else {
-            
             data = Cow::Borrowed(resource.data);
-            mime = inferrer.get(resource.data)
+            mime = inferrer
+                .get(resource.data)
                 .map(|ty| Mime::from_str(ty.mime_type()).ok())
                 .flatten();
         }

@@ -1,9 +1,12 @@
 <import src="/components/page.html" />
+<import src="/components/popup.html" />
+<import src="../popup.html" />
 
 <html>
   <head>
     <title>Server Dashboard</title>
     <x-base-metadata />
+    <x-popup-headers />
     <link href="$root/creations/InteraksiManusiaKomputer_ServerDashboard/css/global.css" rel="stylesheet" blocking="render" />
   </head>
   
@@ -160,5 +163,6 @@
         </div>
       </div>
     </div>
+    <x-popup-to-primary />
   </body>
 </html>
