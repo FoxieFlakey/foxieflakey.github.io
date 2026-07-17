@@ -32,12 +32,7 @@
 //    cannot be used to open a tag
 
 use std::{
-    borrow::Cow,
-    collections::{HashMap, hash_map::Entry},
-    panic::Location,
-    path::Path,
-    rc::Rc,
-    sync::Arc,
+    borrow::Cow, collections::{HashMap, hash_map::Entry}, io::Write, panic::Location, path::Path, rc::Rc, sync::Arc
 };
 
 use codemap::{CodeMap, File, Span};
@@ -372,6 +367,7 @@ impl<'a> Preprocessor<'a> {
         }
 
         let mut buf = Vec::new();
+        buf.write_all(b"<!DOCTYPE html>").unwrap();
         encoder::encode(&mut ctx, &mut buf, &tree).map_err(|e| {
             let msg = match e {
                 encoder::EncodeError::IO(e) => {
