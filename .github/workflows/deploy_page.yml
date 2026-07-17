@@ -1,0 +1,45 @@
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      
+      - name: Build the website!
+        # Run my Rust based site generator, which is orchestrated
+        # by make
+        run: |
+          make root="https://foxieflakey.github.io" all
+      
+      - name: Generate Directory Listings UwU
+        uses: jayanta525/github-pages-directory-listing@v4.0.0
+        with:
+          FOLDER: output/web
+      
+      - name: Upload to GitHub pages
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: output/web
+  
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    # Permission for GITHUB_TOKEN
+    # to allow deploy to GitHub pages
+    permissions:
+      pages: write
+      id-token: write
+    
+    # Only one deploy can run at any time
+    concurrency:
+      group: "pages"
+      cancel-in-progress: true
+    steps:
+      - name: Deploy the pages
+        id: deployment
+        uses: actions/deploy-pages@v4
