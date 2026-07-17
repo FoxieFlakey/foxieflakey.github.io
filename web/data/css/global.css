@@ -44,6 +44,10 @@ body {
   line-height: 0px;
 }
 
+#navbar_page_icon > a {
+  display: inline-block;
+}
+
 #navbar_page_icon > a > img, .navbar_icon {
   display: block;
 }
@@ -62,6 +66,7 @@ body {
 .navbar_item > a, .navbar_item > a:visited, .navbar_item > a:hover, .navbar_item > a:active {
   color: inherit;
   text-decoration: none;
+  display: inline-block;
 }
 
 .navbar_item > a > table, .navbar_item > a > table > tbody, .navbar_item > a > table > tr {
@@ -78,5 +83,9 @@ body {
   padding-right: 5px;
   padding-top: 0px;
   padding-bottom: 0px;
+}
+
+#page_content {
+  margin: 5px;
 }
 

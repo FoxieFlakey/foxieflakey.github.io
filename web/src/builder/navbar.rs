@@ -100,7 +100,7 @@ pub fn init(
                     r#"<table role="presentation" class="navbar" id="navbar">
     <tr>
         <!-- Synchronize 'height' in this with one in navbar.css! -->
-        <th style="padding: 0%"><a href="$root" aria-label="Open home page of my website"><img width="60" height="60" alt="{}" src="$root/favicon.ico" /></a></th>
+        <th id="navbar_page_icon" style="padding: 0%"><a href="$root" aria-label="Open home page of my website"><img width="60" height="60" alt="{}" src="$root/favicon.ico" /></a></th>
     
         <th style="padding: 0%; height: 100%">
             <nav role="navigation" style="height: 100%">
