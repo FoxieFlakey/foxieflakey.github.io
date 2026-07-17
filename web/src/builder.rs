@@ -1,9 +1,9 @@
-use std::{borrow::Cow, collections::HashMap, str::FromStr};
+use std::{borrow::Cow, collections::HashMap, panic::Location, rc::Rc, str::FromStr};
 
 use chrono::Utc;
 use codemap::CodeMap;
 use codemap_diagnostic::Diagnostic;
-use html_preprocess::Preprocessor;
+use html_preprocess::{GeneratorArgs, Preprocessor};
 use infer::Infer;
 use mime::Mime;
 
@@ -13,6 +13,18 @@ mod navbar;
 
 pub enum BuildError {
     PreprocessFailed(&'static str, CodeMap, Vec<Diagnostic>),
+}
+
+fn init_generators(config: &config::Config, generators: &mut HashMap<
+        String,
+        (
+            &Location<'_>,
+            Rc<dyn Fn(GeneratorArgs<'_>) -> Result<String, String>>,
+        ),
+    >,
+) {
+    // Relating to navbars
+    navbar::init(config, generators);
 }
 
 pub fn build(
@@ -33,20 +45,15 @@ pub fn build(
         true,
     );
 
-    // Some stuffs for the preprocessor :3 //
     let build_time = Utc::now().to_rfc2822();
-
     preprocessor.set_env("root", &config.root);
     let mut generators = HashMap::new();
+    let build_time2 = build_time.clone();
     generators.insert(
         "build-time".to_string(),
-        html_preprocess::create_generator(move |_| Ok(format!("<p>Built on {build_time}</p>"))),
+        html_preprocess::create_generator(move |_| Ok(format!("<p>Built on {build_time2}</p>"))),
     );
-
-    // Relating to navbars
-    navbar::init(config, &mut generators);
-
-    /////////////////////////////////////////
+    init_generators(config, &mut generators);
 
     let mut inferrer = Infer::new();
     inferrer.add("image/svg+xml", "svg", |buf| {
@@ -77,6 +84,16 @@ pub fn build(
         let mime;
 
         if resource.do_preprocess {
+            // Each instance of generator, store state
+            // relating to each file
+            generators.clear();
+            let build_time = build_time.clone();
+            generators.insert(
+                "build-time".to_string(),
+                html_preprocess::create_generator(move |_| Ok(format!("<p>Built on {build_time}</p>"))),
+            );
+            init_generators(config, &mut generators);
+            
             let result = preprocessor.process_file(path, &generators);
             data = match result {
                 Ok(data) => Cow::<'_, [u8]>::Owned(data.into_bytes()).into(),
