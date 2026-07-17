@@ -7,6 +7,15 @@ macro_rules! html {
     };
 }
 
+macro_rules! css {
+    ($path:expr) => {
+        (
+            $path,
+            Resource::Css(&include_bytes!(concat!("../data/", $path))[..]),
+        )
+    };
+}
+
 macro_rules! raw {
     ($path:expr) => {
         (
@@ -28,3 +37,4 @@ macro_rules! html_dep {
 pub(crate) use html;
 pub(crate) use html_dep;
 pub(crate) use raw;
+pub(crate) use css;

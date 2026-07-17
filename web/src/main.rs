@@ -86,6 +86,29 @@ fn main() -> Result<ExitCode, ExitCode> {
             Emitter::stderr(ColorConfig::Auto, Some(&codemap)).emit(&diags);
             return Err(ExitCode::FAILURE);
         }
+        Err(BuildError::LoadCSSNonUtf8(file, err)) => {
+            eprintln!("Failed to minify CSS for: '{}'", file.escape_default());
+            eprintln!("Error is: {err}");
+            return Err(ExitCode::FAILURE);
+        }
+        
+        Err(BuildError::ParseCSSFailed(file, err)) => {
+            eprintln!("Failed to parse CSS for: '{}'", file.escape_default());
+            eprintln!("Error is: {err}");
+            return Err(ExitCode::FAILURE);
+        }
+        
+        Err(BuildError::EncodeCSSFailed(file, err)) => {
+            eprintln!("Failed to encode CSS for: '{}'", file.escape_default());
+            eprintln!("Error is: {err}");
+            return Err(ExitCode::FAILURE);
+        }
+        
+        Err(BuildError::MinifyCSSFailed(file, err)) => {
+            eprintln!("Failed to minify CSS for: '{}'", file.escape_default());
+            eprintln!("Error is: {err}");
+            return Err(ExitCode::FAILURE);
+        }
     }
     let time = util::round_duration_to_ms(Instant::now() - start);
     println!(

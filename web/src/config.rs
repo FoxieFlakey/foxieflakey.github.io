@@ -1,6 +1,6 @@
 use std::{collections::HashMap, sync::LazyLock};
 
-use crate::macros::{html, html_dep, raw};
+use crate::macros::{html, html_dep, raw, css};
 
 pub static RESOURCES: LazyLock<HashMap<&str, Resource>> = LazyLock::new(|| {
     let entries = [
@@ -8,8 +8,8 @@ pub static RESOURCES: LazyLock<HashMap<&str, Resource>> = LazyLock::new(|| {
         html!("/404.html"),
         html_dep!("/components/page.html"),
         raw!("/img/profile.gif"),
-        raw!("/css/global.css"),
-        raw!("/css/pages/home.css"),
+        css!("/css/global.css"),
+        css!("/css/pages/home.css"),
         raw!("/favicon.ico"),
         raw!("/favicon_for_opengraph.png"),
         raw!("/img/Gallery_Icon.png"),
@@ -43,13 +43,13 @@ pub static RESOURCES: LazyLock<HashMap<&str, Resource>> = LazyLock::new(|| {
         raw!("/creations/InteraksiManusiaKomputer_ServerDashboard/img/AdminPfp.png"),
         raw!("/creations/InteraksiManusiaKomputer_ServerDashboard/img/Edit.png"),
         raw!("/creations/InteraksiManusiaKomputer_ServerDashboard/img/Placeholder.png"),
-        raw!("/creations/InteraksiManusiaKomputer_ServerDashboard/css/global.css"),
+        css!("/creations/InteraksiManusiaKomputer_ServerDashboard/css/global.css"),
         raw!("/creations/InteraksiManusiaKomputer_ServerDashboard/css/font.ttf"),
         html!("/creations/CSS_animation/index.html"),
-        raw!("/creations/CSS_animation/popup.css"),
+        css!("/creations/CSS_animation/popup.css"),
         raw!("/creations/CSS_animation/left_arrow.png"),
         raw!("/creations/CSS_animation/right_arrow.png"),
-        raw!("/css/popup.css"),
+        css!("/css/popup.css"),
         html_dep!("/components/popup.html"),
         html_dep!("/creations/popup.html"),
         raw!("/img/popup/left_arrow.png"),
@@ -77,7 +77,8 @@ pub struct Config {
 pub enum Resource {
     RawBytes(&'static [u8]),
     HtmlBuildResource(&'static [u8]),
-    PreprocessAndIncludeHtml(&'static [u8])
+    PreprocessAndIncludeHtml(&'static [u8]),
+    Css(&'static [u8])
 }
 
 impl Resource {
@@ -85,6 +86,7 @@ impl Resource {
         match self {
             Resource::RawBytes(items)  |
             Resource::HtmlBuildResource(items) |
+            Resource::Css(items) |
             Resource::PreprocessAndIncludeHtml(items) => items,
         }
     }
