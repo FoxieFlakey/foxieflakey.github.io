@@ -32,10 +32,7 @@ body {
 
 /* Nav bar stuffs */
 .navbar {
-  width: 100%;
   border-collapse: collapse;
-  
-  /* Synchronize 'height' in this with one in navbar.css! */
   height: 60px;
 }
 
@@ -43,13 +40,13 @@ body {
   height: 100%;
 }
 
-.navbar > tbody > tr > th {
-  padding: 0%;
+.navbar > tbody > tr > th > nav > table {
+  border-collapse: collapse;
+  height: 60px;
 }
 
-#navbar_page_icon {
-  width: min-content;
-  padding-right: 2px;
+.navbar > tbody > tr > th {
+  padding: 0%;
 }
 
 #navbar_page_icon > a > img, .navbar_icon {

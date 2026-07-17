@@ -8,24 +8,24 @@
 
 <x-template name="x-page">
   <!-- Page header -->
-  <div id="page_header">
+  <header role="heading" id="page_header">
     <x-navbar />
-  </div>
+  </header>
   
   <!-- Page content -->
   <hr class="no_css" />
-  <div id="page_content">
+  <main role="main" id="page_content">
     ${children}
-  </div>
+  </main>
   
   <div style="flex: 1;"></div>
   <hr class="no_css" />
   
   <!-- Page footer -->
-  <div id="page_footer">
+  <footer role="contentinfo" id="page_footer">
     Site made with love by MEEE &lt;3<br />
     Copyright 2025<br />
-  </div>
+  </footer>
 </x-template>
 
 

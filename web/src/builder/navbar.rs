@@ -97,15 +97,20 @@ pub fn init(
                 }
 
                 Ok(format!(
-                    r#"<table class="navbar" id="navbar">
+                    r#"<table role="presentation" class="navbar" id="navbar">
     <tr>
-    <!-- Synchronize 'height' in this with one in navbar.css! -->
-    <th id="navbar_page_icon"><a href="$root" aria-label="Open home page of my website"><img width="60" height="60" alt="{}" src="$root/favicon.ico" /></a></th>
+        <!-- Synchronize 'height' in this with one in navbar.css! -->
+        <th><a href="$root" aria-label="Open home page of my website"><img width="60" height="60" alt="{}" src="$root/favicon.ico" /></a></th>
     
-    {content}
-
-    <!-- Contain absolutely nothing, it fills the rest of space -->
-    <th style="width: 100%;"></th>
+        <th>
+            <nav role="navigation">
+                <table role="presentation">
+                    <tr>
+                        {content}
+                    </tr>
+                </table>
+            </nav>
+        </th>
     </tr>
 </table>
 "#, config::FAVICON_ALT_TEXT))
