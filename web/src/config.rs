@@ -68,6 +68,8 @@ pub static RESOURCES: LazyLock<HashMap<&str, Resource>> = LazyLock::new(|| {
     map
 });
 
+pub const FAVICON_ALT_TEXT: &'static str = "Pixel art picture of a fox named Foxie with right eye colored brown and left colored blue. She wears a blue collar, and red bow on left ear. With heart emote on floating top of the head.";
+
 pub struct Config {
     pub root: String,
 }

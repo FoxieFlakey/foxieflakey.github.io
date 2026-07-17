@@ -20,6 +20,14 @@ impl NavBarState {
         }
     }
 
+    pub fn alt_name_for_icon(&self) -> &'static str {
+        match self {
+            NavBarState::Home => "A picture of Foxie's fox tail with a red bow, tied at near the end.",
+            NavBarState::Gallery |
+            NavBarState::Creations => "Picture of palette with brush and the palette has fox ears and a heart emote on top right."
+        }
+    }
+
     pub fn target_url(&self) -> &'static str {
         match self {
             NavBarState::Home => "$root",
@@ -66,6 +74,7 @@ pub fn init(
                     let icon = variant.icon_url();
                     let url = variant.target_url();
                     let name = variant.as_ref();
+                    let alt_text = variant.alt_name_for_icon();
                     let is_active = state.get().map(|active| active == variant).unwrap_or(false);
 
                     content.push_str(&format!(
@@ -75,7 +84,7 @@ pub fn init(
                                 <table>
                                     <tr>
                                         <th>
-                                            <img class="navbar_icon" src="{icon}" height="50" width="50" />
+                                            <img class="navbar_icon" alt="{alt_text}" src="{icon}" height="50" width="50" />
                                         </th>
                                         <th>{name}</th>
                                     </tr>
@@ -91,7 +100,7 @@ pub fn init(
                     r#"<table class="navbar" id="navbar">
     <tr>
     <!-- Synchronize 'height' in this with one in navbar.css! -->
-    <th id="navbar_page_icon"><a href="$root"><img width="60" height="60" src="$root/favicon.ico" /></a></th>
+    <th id="navbar_page_icon"><a href="$root" aria-label="Open home page of my website"><img width="60" height="60" alt="{}" src="$root/favicon.ico" /></a></th>
     
     {content}
 
@@ -99,8 +108,7 @@ pub fn init(
     <th style="width: 100%;"></th>
     </tr>
 </table>
-"#
-                ))
+"#, config::FAVICON_ALT_TEXT))
             }),
         )
         .expect_none("Expecting navbar template not set");
