@@ -4,6 +4,7 @@ use chrono::Utc;
 use codemap::CodeMap;
 use codemap_diagnostic::Diagnostic;
 use html_preprocess::Preprocessor;
+use infer::Infer;
 use mime::Mime;
 
 use crate::{config, util};
@@ -47,6 +48,30 @@ pub fn build(
 
     /////////////////////////////////////////
 
+    let mut inferrer = Infer::new();
+    inferrer.add("image/svg+xml", "svg", |buf| {
+        // From https://github.com/bojand/infer/pull/119
+        // hasnt been merged yet
+        pub fn is_svg(buf: &[u8]) -> bool {
+            if buf.starts_with(b"<svg") {
+                return true;
+            }
+
+            // Avoid conflicts with other XML types while detecting SVGs.
+            if buf.starts_with(b"<?xml") {
+                return buf
+                    .get(..256)
+                    .unwrap_or(buf)
+                    .windows(4)
+                    .any(|w| w == b"<svg");
+            }
+
+            false
+        }
+        
+        is_svg(buf)
+    });
+
     for (&path, resource) in config::RESOURCES.iter() {
         let data;
         let mime;
@@ -65,8 +90,9 @@ pub fn build(
             };
             mime = Some(mime::TEXT_HTML_UTF_8);
         } else {
+            
             data = Cow::Borrowed(resource.data);
-            mime = infer::get(resource.data)
+            mime = inferrer.get(resource.data)
                 .map(|ty| Mime::from_str(ty.mime_type()).ok())
                 .flatten();
         }
