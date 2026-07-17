@@ -38,7 +38,7 @@ impl<T> ExpectNone for Option<T> {
     #[track_caller]
     fn expect_none(self, msg: &str) {
         if self.is_some() {
-            panic!("Expecting None got Some")
+            panic!("Expecting None got Some: {msg}")
         }
     }
 }
