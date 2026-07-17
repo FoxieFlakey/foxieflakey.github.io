@@ -1,0 +1,97 @@
+* {
+  image-rendering: pixelated;
+}
+
+.popup {
+  display: flex;
+  flex-direction: column;
+  align-items: end;
+  overflow-x: hidden;
+}
+
+.popup > div.popup_content {
+  display: flex;
+  align-items: start;
+  padding: 10px;
+  background-color: #555555;
+}
+
+.popup > div.popup_content > details > summary {
+  list-style: none;
+  white-space: nowrap;
+  padding-right: 10px;
+}
+
+/* For the button */
+.popup > div.popup_content > details:not([open]) > summary > .popup_deactivate_button {
+  display: none;
+}
+
+.popup > div.popup_content > details[open] > summary > .popup_activate_button {
+  display: none;
+}
+
+.popup > div.popup_content > details:not([open]) > summary > .popup_activate_button {
+  display: block;
+  cursor: pointer;
+  position: sticky;
+}
+
+.popup > div.popup_content > details[open] > summary > .popup_deactivate_button {
+  display: block;
+  cursor: pointer;
+  position: sticky;
+  right: 0px;
+}
+
+/* The content of pop up */
+.popup > div.popup_content:has(details:not([open])) > div {
+  position: absolute;
+  width: max-content;
+  right: -100%;
+  transition: all 2s;
+}
+
+.popup > div.popup_content:has(details[open]) > div {
+  position: relative;
+  width: max-content;
+  right: 0%;
+  transition: all 2s;
+}
+
+/* Simplest pop up */
+.popup_simple {
+  display: flex;
+  padding: 10px;
+  background-color: #555555;
+  width: fit-content;
+}
+
+.popup_simple > summary {
+  list-style: none;
+  white-space: nowrap;
+}
+
+.popup_simple > summary > .popup_no_css_message {
+  display: none;
+}
+
+.popup_simple[open] > summary {
+  padding-right: 10px;
+}
+
+.popup_simple[open] > summary > .popup_activate_button {
+  display: none;
+}
+
+.popup_simple:not([open]) > summary > .popup_deactivate_button {
+  display: none;
+}
+
+/* Additional modification, customize for per popup */
+.arrow {
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
