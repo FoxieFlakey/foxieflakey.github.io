@@ -44,7 +44,7 @@ use codemap::{CodeMap, File, Span};
 use codemap_diagnostic::{Diagnostic, Level, SpanLabel, SpanStyle};
 use either::Either;
 
-use crate::html::parser::ElementContent;
+use crate::html::{lexer::parse_only_replacers, parser::ElementContent};
 
 mod encoder;
 mod import_resolver;
@@ -280,8 +280,10 @@ impl<'a> Preprocessor<'a> {
         };
 
         for (key, (location, func)) in generators {
-            ctx.known_templates
-                .insert(format!("x-{key}"), Template::Generator(location, func.clone()));
+            ctx.known_templates.insert(
+                format!("x-{key}"),
+                Template::Generator(location, func.clone()),
+            );
         }
 
         let max_iter = 512;
@@ -316,20 +318,49 @@ impl<'a> Preprocessor<'a> {
                     false
                 }
 
-                ElementContent::Element(elem) => match &elem.name {
-                    Either::Left(name) => {
-                        if name.starts_with("x-") {
+                ElementContent::Element(elem) => {
+                    match &elem.name {
+                        Either::Left(name) => {
+                            if name.starts_with("x-") {
+                                need_reiter = true;
+                                return false;
+                            }
+                        }
+                        Either::Right(_) => {
                             need_reiter = true;
-                            false
-                        } else {
-                            true
+                            return false;
                         }
                     }
-                    Either::Right(_) => {
-                        need_reiter = true;
-                        false
+
+                    // Check if attribute has replacer in it
+                    for attribute in &elem.attributes {
+                        match attribute {
+                            parser::Attribute::Replacer(_, _) => {
+                                need_reiter = true;
+                                return false;
+                            }
+
+                            parser::Attribute::Attribute(_, data) => {
+                                if let Either::Left(content_span) = data.value.content {
+                                    let file = ctx.find_src_file(content_span);
+                                    let Ok(portions) = parse_only_replacers(file, content_span)
+                                    else {
+                                        // Lets rerun iteration to let the error surface up later
+                                        need_reiter = true;
+                                        return false;
+                                    };
+
+                                    // Check is there Replacer somewhere
+                                    need_reiter |=
+                                        portions.iter().find(|x| x.1.is_some()).is_some();
+                                }
+                            }
+
+                            parser::Attribute::EmptyAttribute(_) => (),
+                        }
                     }
-                },
+                    true
+                }
 
                 _ => true,
             });
