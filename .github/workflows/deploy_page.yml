@@ -8,7 +8,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       
-      - name: "Install stable Rust toolchain"
+      - name: "Install nightly Rust toolchain"
         uses: dtolnay/rust-toolchain@nightly
       
       - name: "Enable caching on Rust stuffs"
