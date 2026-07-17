@@ -3,14 +3,7 @@
 </x-template>
 
 <x-template name="x-popup">
-  <details open class="parasitic_popup_simple"
-    style="
-      position: fixed;
-      right: 0px;
-      top: 20px;
-      max-width: 400px;
-      border: 2px solid white;
-    ">
+  <details open class="parasitic_popup_simple" $props>
     <summary>
       <span class="parasitic_popup_no_css_message">This is a popup box, but CSS isn't enabled</span>
       <span class="parasitic_popup_arrow parasitic_popup_activate_button" hidden>

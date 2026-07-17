@@ -1,5 +1,5 @@
-<x-template name="x-popup-to-primary">
-  <x-popup>
+<x-template name="x-popup-to-primary-free">
+  <x-popup $props>
     This is one of Foxie's creations :3<br />
     I made it myself, you are viewing one my creations<br />
     
@@ -10,3 +10,12 @@
     (this instance) or <a href="https://foxieflakey.github.io/creations">here to primary instance</a>
   </x-popup>
 </x-template>
+
+<x-template name="x-popup-to-primary">
+  <x-popup-to-primary-free style="
+      position: fixed;
+      right: 0px;
+      top: 20px;
+    " />
+</x-template>
+
