@@ -81,9 +81,9 @@ pub fn init(
                         r#"
                         <th class="navbar_item {}">
                             <a href="{url}">
-                                <table>
+                                <table role="presentation">
                                     <tr>
-                                        <th>
+                                        <th style="line-height: 0px; padding: 0px">
                                             <img class="navbar_icon" alt="{alt_text}" src="{icon}" height="50" width="50" />
                                         </th>
                                         <th>{name}</th>
@@ -100,14 +100,16 @@ pub fn init(
                     r#"<table role="presentation" class="navbar" id="navbar">
     <tr>
         <!-- Synchronize 'height' in this with one in navbar.css! -->
-        <th><a href="$root" aria-label="Open home page of my website"><img width="60" height="60" alt="{}" src="$root/favicon.ico" /></a></th>
+        <th style="padding: 0%"><a href="$root" aria-label="Open home page of my website"><img width="60" height="60" alt="{}" src="$root/favicon.ico" /></a></th>
     
-        <th>
-            <nav role="navigation">
-                <table role="presentation">
-                    <tr>
-                        {content}
-                    </tr>
+        <th style="padding: 0%; height: 100%">
+            <nav role="navigation" style="height: 100%">
+                <table role="presentation" style="border-collapse: collapse; height: 100%">
+                    <tbody>
+                        <tr>
+                            {content}
+                        </tr>
+                    </tbody>
                 </table>
             </nav>
         </th>
