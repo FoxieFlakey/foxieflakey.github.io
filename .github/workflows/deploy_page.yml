@@ -7,8 +7,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
-      - uses: Swatinem/rust-cache@v2
+      
+      - name: "Install stable Rust toolchain"
+        uses: dtolnay/rust-toolchain@nightly
+      
+      - name: "Enable caching on Rust stuffs"
+        uses: Swatinem/rust-cache@v2
       
       - name: Build the website!
         # Run my Rust based site generator, which is orchestrated
