@@ -5,6 +5,7 @@ use crate::macros::{html, html_dep, raw};
 pub static RESOURCES: LazyLock<HashMap<&str, Resource>> = LazyLock::new(|| {
     let entries = [
         html!("/index.html"),
+        html!("/404.html"),
         html_dep!("/components/page.html"),
         raw!("/img/profile.gif"),
         raw!("/css/global.css"),
