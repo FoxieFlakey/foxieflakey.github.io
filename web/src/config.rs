@@ -54,6 +54,7 @@ pub static RESOURCES: LazyLock<HashMap<&str, Resource>> = LazyLock::new(|| {
         html_dep!("/creations/popup.html"),
         raw!("/img/popup/left_arrow.png"),
         raw!("/img/popup/right_arrow.png"),
+        html!("/arts/index.html"),
     ];
 
     let mut map = HashMap::new();
