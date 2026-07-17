@@ -2,11 +2,7 @@ macro_rules! html {
     ($path:expr) => {
         (
             $path,
-            Resource {
-                data: &include_bytes!(concat!("../data/", $path))[..],
-                do_preprocess: true,
-                do_include: true,
-            },
+            Resource::PreprocessAndIncludeHtml(&include_bytes!(concat!("../data/", $path))[..]),
         )
     };
 }
@@ -15,11 +11,7 @@ macro_rules! raw {
     ($path:expr) => {
         (
             $path,
-            Resource {
-                data: &include_bytes!(concat!("../data/", $path))[..],
-                do_preprocess: false,
-                do_include: true,
-            },
+            Resource::RawBytes(&include_bytes!(concat!("../data/", $path))[..]),
         )
     };
 }
@@ -28,11 +20,7 @@ macro_rules! html_dep {
     ($path:expr) => {
         (
             $path,
-            Resource {
-                data: &include_bytes!(concat!("../data/", $path))[..],
-                do_preprocess: false,
-                do_include: false,
-            },
+            Resource::HtmlBuildResource(&include_bytes!(concat!("../data/", $path))[..]),
         )
     };
 }

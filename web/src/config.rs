@@ -74,13 +74,19 @@ pub struct Config {
     pub root: String,
 }
 
-pub struct Resource {
-    pub data: &'static [u8],
-
-    // Whether this resource be preprocessed
-    pub do_preprocess: bool,
-
-    // Whether this resource be included in
-    // final output
-    pub do_include: bool,
+pub enum Resource {
+    RawBytes(&'static [u8]),
+    HtmlBuildResource(&'static [u8]),
+    PreprocessAndIncludeHtml(&'static [u8])
 }
+
+impl Resource {
+    pub fn data(&self) -> &[u8] {
+        match self {
+            Resource::RawBytes(items)  |
+            Resource::HtmlBuildResource(items) |
+            Resource::PreprocessAndIncludeHtml(items) => items,
+        }
+    }
+}
+

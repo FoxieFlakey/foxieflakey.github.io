@@ -40,7 +40,7 @@ pub fn build(
                 .get(util::sanify_path(name).as_str())
                 .ok_or(())
                 .map_err(|_| format!("Cannot find file '{name}'"))
-                .map(|x| str::from_utf8(x.data))?
+                .map(|x| str::from_utf8(x.data()))?
                 .map_err(|e| format!("File '{name}' has invalid UTF8 format: {e}"))
                 .map(|x| x.to_string())
         },
@@ -82,43 +82,47 @@ pub fn build(
     });
 
     for (&path, resource) in config::RESOURCES.iter() {
-        let data;
-        let mime;
+        let resource_result: Option<(Option<Mime>, Cow<'static, [u8]>)> = match resource {
+            config::Resource::PreprocessAndIncludeHtml(_) => {
+                // Each instance of generator, store state
+                // relating to each file
+                generators.clear();
+                let build_time = build_time.clone();
+                generators.insert(
+                    "build-time".to_string(),
+                    html_preprocess::create_generator(move |_| {
+                        Ok(format!("<p>Built on {build_time}</p>"))
+                    }),
+                );
+                init_generators(config, &mut generators);
 
-        if resource.do_preprocess {
-            // Each instance of generator, store state
-            // relating to each file
-            generators.clear();
-            let build_time = build_time.clone();
-            generators.insert(
-                "build-time".to_string(),
-                html_preprocess::create_generator(move |_| {
-                    Ok(format!("<p>Built on {build_time}</p>"))
-                }),
-            );
-            init_generators(config, &mut generators);
+                let result = preprocessor.process_file(path, &generators);
+                let data = match result {
+                    Ok(data) => Cow::<'_, [u8]>::Owned(data.into_bytes()),
+                    Err(diags) => {
+                        return Err(BuildError::PreprocessFailed(
+                            path,
+                            preprocessor.to_codemap(),
+                            diags,
+                        ));
+                    }
+                };
+                Some((Some(mime::TEXT_HTML_UTF_8), data))
+            }
+            
+            config::Resource::RawBytes(data) => {
+                let mime = inferrer
+                    .get(data)
+                    .map(|ty| Mime::from_str(ty.mime_type()).ok())
+                    .flatten();
+                Some((mime, Cow::Borrowed(data)))
+            }
+            
+            // The HTML is dependency needed by other preprocessable html
+            config::Resource::HtmlBuildResource(_) => None
+        };
 
-            let result = preprocessor.process_file(path, &generators);
-            data = match result {
-                Ok(data) => Cow::<'_, [u8]>::Owned(data.into_bytes()).into(),
-                Err(diags) => {
-                    return Err(BuildError::PreprocessFailed(
-                        path,
-                        preprocessor.to_codemap(),
-                        diags,
-                    ));
-                }
-            };
-            mime = Some(mime::TEXT_HTML_UTF_8);
-        } else {
-            data = Cow::Borrowed(resource.data);
-            mime = inferrer
-                .get(resource.data)
-                .map(|ty| Mime::from_str(ty.mime_type()).ok())
-                .flatten();
-        }
-
-        if resource.do_include {
+        if let Some((mime, data)) = resource_result {
             map.insert(path, (data, mime));
         }
     }
