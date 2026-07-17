@@ -75,7 +75,7 @@ pub fn init(
                                 <table>
                                     <tr>
                                         <th>
-                                            <img class="navbar_icon" src="{icon}" height="50" />
+                                            <img class="navbar_icon" src="{icon}" height="50" width="50" />
                                         </th>
                                         <th>{name}</th>
                                     </tr>
@@ -91,7 +91,7 @@ pub fn init(
                     r#"<table class="navbar" id="navbar">
     <tr>
     <!-- Synchronize 'height' in this with one in navbar.css! -->
-    <th id="navbar_page_icon"><a href="$root"><img height="60" src="$root/favicon.ico" /></a></th>
+    <th id="navbar_page_icon"><a href="$root"><img width="60" height="60" src="$root/favicon.ico" /></a></th>
     
     {content}
 
