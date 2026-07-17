@@ -6,7 +6,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       
       - name: "Install stable Rust toolchain"
         uses: dtolnay/rust-toolchain@nightly
@@ -20,13 +20,8 @@ jobs:
         run: |
           make root="https://foxieflakey.github.io" all
       
-      - name: Generate Directory Listings UwU
-        uses: jayanta525/github-pages-directory-listing@v4.0.0
-        with:
-          FOLDER: output/web
-      
       - name: Upload to GitHub pages
-        uses: actions/upload-pages-artifact@v4
+        uses: actions/upload-pages-artifact@v5
         with:
           path: output/web
   
@@ -46,4 +41,4 @@ jobs:
     steps:
       - name: Deploy the pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
