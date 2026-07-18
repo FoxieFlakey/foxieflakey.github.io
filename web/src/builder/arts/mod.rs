@@ -60,7 +60,7 @@ fn gen_full_listing() -> String {
                 .unwrap_or("".to_string());
             let height = art
                 .render_height
-                .map(|x| format!("width='{x}'"))
+                .map(|x| format!("height='{x}'"))
                 .unwrap_or("".to_string());
 
             match mime.type_() {
