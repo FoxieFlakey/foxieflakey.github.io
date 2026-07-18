@@ -1,4 +1,7 @@
-use std::time::Duration;
+use std::{str::FromStr, sync::LazyLock, time::Duration};
+
+use infer::Infer;
+use mime::Mime;
 
 pub fn sanify_path(path: &str) -> String {
     let mut segments = Vec::new();
@@ -42,3 +45,38 @@ impl<T> ExpectNone for Option<T> {
         }
     }
 }
+
+pub fn infer(data: &[u8]) -> Option<mime::Mime> {
+    INFERRER
+        .get(data)
+        .map(|ty| Mime::from_str(ty.mime_type()).ok())
+        .flatten()
+}
+
+static INFERRER: LazyLock<Infer> = LazyLock::new(|| {
+    let mut inferrer = Infer::new();
+    inferrer.add("image/svg+xml", "svg", |buf| {
+        // From https://github.com/bojand/infer/pull/119
+        // hasnt been merged yet
+        pub fn is_svg(buf: &[u8]) -> bool {
+            if buf.starts_with(b"<svg") {
+                return true;
+            }
+
+            // Avoid conflicts with other XML types while detecting SVGs.
+            if buf.starts_with(b"<?xml") {
+                return buf
+                    .get(..256)
+                    .unwrap_or(buf)
+                    .windows(4)
+                    .any(|w| w == b"<svg");
+            }
+
+            false
+        }
+
+        is_svg(buf)
+    });
+
+    inferrer
+});

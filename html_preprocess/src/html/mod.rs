@@ -32,7 +32,13 @@
 //    cannot be used to open a tag
 
 use std::{
-    borrow::Cow, collections::{HashMap, hash_map::Entry}, io::Write, panic::Location, path::Path, rc::Rc, sync::Arc
+    borrow::Cow,
+    collections::{HashMap, hash_map::Entry},
+    io::Write,
+    panic::Location,
+    path::Path,
+    rc::Rc,
+    sync::Arc,
 };
 
 use codemap::{CodeMap, File, Span};

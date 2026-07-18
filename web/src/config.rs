@@ -1,6 +1,8 @@
 use std::{collections::HashMap, sync::LazyLock};
 
-use crate::macros::{html, html_dep, raw, css};
+use crate::macros::{css, html, html_dep, raw};
+
+pub mod arts;
 
 pub static RESOURCES: LazyLock<HashMap<String, Resource>> = LazyLock::new(|| {
     let entries = [
@@ -10,6 +12,7 @@ pub static RESOURCES: LazyLock<HashMap<String, Resource>> = LazyLock::new(|| {
         raw!("/img/profile.gif"),
         css!("/css/global.css"),
         css!("/css/pages/home.css"),
+        css!("/css/pages/arts.css"),
         raw!("/favicon.ico"),
         raw!("/favicon_for_opengraph.png"),
         raw!("/img/Gallery_Icon.png"),
@@ -63,8 +66,10 @@ pub static RESOURCES: LazyLock<HashMap<String, Resource>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.reserve(entries.len());
 
-    let iter = entries.into_iter()
-        .map(|x| (x.0.to_string(), x.1));
+    let iter = entries
+        .into_iter()
+        .map(|x| (x.0.to_string(), x.1))
+        .chain(arts::gen_resources_list().into_iter());
 
     for (path, resource) in iter {
         map.insert(path, resource);
@@ -83,17 +88,16 @@ pub enum Resource {
     RawBytes(&'static [u8]),
     HtmlBuildResource(&'static [u8]),
     PreprocessAndIncludeHtml(&'static [u8]),
-    Css(&'static [u8])
+    Css(&'static [u8]),
 }
 
 impl Resource {
     pub fn data(&self) -> &[u8] {
         match self {
-            Resource::RawBytes(items)  |
-            Resource::HtmlBuildResource(items) |
-            Resource::Css(items) |
-            Resource::PreprocessAndIncludeHtml(items) => items,
+            Resource::RawBytes(items)
+            | Resource::HtmlBuildResource(items)
+            | Resource::Css(items)
+            | Resource::PreprocessAndIncludeHtml(items) => items,
         }
     }
 }
-

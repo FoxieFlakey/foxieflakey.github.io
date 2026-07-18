@@ -1,16 +1,27 @@
-use std::{borrow::Cow, collections::HashMap, panic::Location, rc::Rc, str::Utf8Error, sync::{Arc, RwLock}};
+use std::{
+    borrow::Cow,
+    collections::HashMap,
+    panic::Location,
+    rc::Rc,
+    str::Utf8Error,
+    sync::{Arc, RwLock},
+};
 
 use chrono::Utc;
 use codemap::CodeMap;
 use codemap_diagnostic::Diagnostic;
 use html_preprocess::{GeneratorArgs, Preprocessor};
-use lightningcss::{error::{MinifyErrorKind, ParserError, PrinterErrorKind}, printer::PrinterOptions, stylesheet::{MinifyOptions, ParserOptions, StyleSheet}};
+use lightningcss::{
+    error::{MinifyErrorKind, ParserError, PrinterErrorKind},
+    printer::PrinterOptions,
+    stylesheet::{MinifyOptions, ParserOptions, StyleSheet},
+};
 use mime::Mime;
 
 use crate::{config, util};
 
-mod navbar;
 mod arts;
+mod navbar;
 
 pub enum BuildError {
     PreprocessFailed(String, CodeMap, Vec<Diagnostic>),
@@ -91,38 +102,45 @@ pub fn build(
                 };
                 Some((Some(mime::TEXT_HTML_UTF_8), data))
             }
-            
+
             config::Resource::Css(data) => {
                 let source = str::from_utf8(data)
                     .map_err(|e| BuildError::LoadCSSNonUtf8(path.clone(), e))?;
-                
+
                 let warnings = Arc::new(RwLock::new(Vec::new()));
-                
+
                 // Parse CSS first
-                let mut css = StyleSheet::parse(source, ParserOptions {
-                    filename: path.to_string(),
-                    warnings: Some(warnings.clone()),
-                    ..Default::default()
-                }).map_err(|e| BuildError::ParseCSSFailed(path.clone(), e))?;
-                
+                let mut css = StyleSheet::parse(
+                    source,
+                    ParserOptions {
+                        filename: path.to_string(),
+                        warnings: Some(warnings.clone()),
+                        ..Default::default()
+                    },
+                )
+                .map_err(|e| BuildError::ParseCSSFailed(path.clone(), e))?;
+
                 // Minify CSS
                 css.minify(MinifyOptions::default())
                     .map_err(|e| BuildError::MinifyCSSFailed(path.clone(), e))?;
-                
+
                 // Encode back to CSS code
-                let minified = css.to_css(PrinterOptions {
-                    minify: true,
-                    ..Default::default()
-                }).map_err(|e| BuildError::EncodeCSSFailed(path.clone(), e))?;
-                Some((Some(mime::TEXT_CSS_UTF_8), Cow::Owned(minified.code.into_bytes())))
+                let minified = css
+                    .to_css(PrinterOptions {
+                        minify: true,
+                        ..Default::default()
+                    })
+                    .map_err(|e| BuildError::EncodeCSSFailed(path.clone(), e))?;
+                Some((
+                    Some(mime::TEXT_CSS_UTF_8),
+                    Cow::Owned(minified.code.into_bytes()),
+                ))
             }
-            
-            config::Resource::RawBytes(data) => {
-                Some((util::infer(data), Cow::Borrowed(data)))
-            }
-            
+
+            config::Resource::RawBytes(data) => Some((util::infer(data), Cow::Borrowed(data))),
+
             // The HTML is dependency needed by other preprocessable html
-            config::Resource::HtmlBuildResource(_) => None
+            config::Resource::HtmlBuildResource(_) => None,
         };
 
         if let Some((mime, data)) = resource_result {

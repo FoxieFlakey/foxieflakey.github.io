@@ -22,9 +22,12 @@ impl NavBarState {
 
     pub fn alt_name_for_icon(&self) -> &'static str {
         match self {
-            NavBarState::Home => "A picture of Foxie's fox tail with a red bow, tied at near the end.",
-            NavBarState::Gallery |
-            NavBarState::Creations => "Picture of palette with brush and the palette has fox ears and a heart emote on top right."
+            NavBarState::Home => {
+                "A picture of Foxie's fox tail with a red bow, tied at near the end."
+            }
+            NavBarState::Gallery | NavBarState::Creations => {
+                "Picture of palette with brush and the palette has fox ears and a heart emote on top right."
+            }
         }
     }
 

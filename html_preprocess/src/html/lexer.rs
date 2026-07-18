@@ -254,14 +254,16 @@ where
         // Numeric HTML entity
         fn parse_html_entity_inner(input: &str) -> Option<char> {
             if let Some(hex_str) = input.strip_prefix("#x") {
-                u32::from_str_radix(hex_str, 16).ok().and_then(char::from_u32)
+                u32::from_str_radix(hex_str, 16)
+                    .ok()
+                    .and_then(char::from_u32)
             } else if let Some(dec_str) = input.strip_prefix('#') {
                 dec_str.parse::<u32>().ok().and_then(char::from_u32)
             } else {
                 None
             }
         }
-        
+
         replacement = parse_html_entity_inner(&name);
     } else {
         // Named HTML entity

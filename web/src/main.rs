@@ -92,19 +92,19 @@ fn main() -> Result<ExitCode, ExitCode> {
             eprintln!("Error is: {err}");
             return Err(ExitCode::FAILURE);
         }
-        
+
         Err(BuildError::ParseCSSFailed(file, err)) => {
             eprintln!("Failed to parse CSS for: '{}'", file.escape_default());
             eprintln!("Error is: {err}");
             return Err(ExitCode::FAILURE);
         }
-        
+
         Err(BuildError::EncodeCSSFailed(file, err)) => {
             eprintln!("Failed to encode CSS for: '{}'", file.escape_default());
             eprintln!("Error is: {err}");
             return Err(ExitCode::FAILURE);
         }
-        
+
         Err(BuildError::MinifyCSSFailed(file, err)) => {
             eprintln!("Failed to minify CSS for: '{}'", file.escape_default());
             eprintln!("Error is: {err}");

@@ -34,7 +34,7 @@ macro_rules! html_dep {
     };
 }
 
+pub(crate) use css;
 pub(crate) use html;
 pub(crate) use html_dep;
 pub(crate) use raw;
-pub(crate) use css;
