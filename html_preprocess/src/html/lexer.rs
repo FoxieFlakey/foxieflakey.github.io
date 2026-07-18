@@ -248,11 +248,29 @@ where
         }
     };
 
-    let replacement = html_escape::NAMED_ENTITIES
-        .binary_search_by_key(&name.as_bytes(), |x| x.0)
-        .ok()
-        .map(|found_idx| html_escape::NAMED_ENTITIES[found_idx].1)
-        .map(|string| string.chars().next().unwrap());
+    let replacement;
+    if name.starts_with('#') {
+        // Gemini AI slop, generated
+        // Numeric HTML entity
+        fn parse_html_entity_inner(input: &str) -> Option<char> {
+            if let Some(hex_str) = input.strip_prefix("#x") {
+                u32::from_str_radix(hex_str, 16).ok().and_then(char::from_u32)
+            } else if let Some(dec_str) = input.strip_prefix('#') {
+                dec_str.parse::<u32>().ok().and_then(char::from_u32)
+            } else {
+                None
+            }
+        }
+        
+        replacement = parse_html_entity_inner(&name);
+    } else {
+        // Named HTML entity
+        replacement = html_escape::NAMED_ENTITIES
+            .binary_search_by_key(&name.as_bytes(), |x| x.0)
+            .ok()
+            .map(|found_idx| html_escape::NAMED_ENTITIES[found_idx].1)
+            .map(|string| string.chars().next().unwrap());
+    }
 
     let this_span = file.span.subspan(start, end);
     if let Some(c) = replacement {
@@ -261,7 +279,7 @@ where
         Err(vec![LexerCodes::UnknownEntityName.to_diagnostic(&[
             SpanLabel {
                 label: Some("Here!".to_string()),
-                span: util::one_char_span(file, start),
+                span: this_span,
                 style: SpanStyle::Primary,
             },
         ])])
