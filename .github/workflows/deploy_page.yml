@@ -9,7 +9,7 @@ jobs:
       - uses: actions/checkout@v7
       
       - name: "Install nightly Rust toolchain"
-        uses: dtolnay/rust-toolchain@nightly
+        uses: dtolnay/rust-toolchain@1.97.1
       
       - name: "Enable caching on Rust stuffs"
         uses: Swatinem/rust-cache@v2

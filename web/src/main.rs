@@ -143,7 +143,7 @@ fn dump(
 
         if let Some(parent) = path.parent() {
             // Create parent directories, if not exist
-            if !parent.is_empty() && !path.exists() {
+            if !parent.as_os_str().is_empty() && !path.exists() {
                 fs::create_dir_all(parent).map_err(|e| {
                     eprintln!(
                         "Error: Cannot create parent directory for '{path_raw}' at '{}': {e}",
