@@ -1,23 +1,23 @@
-use std::{borrow::Cow, collections::HashMap, panic::Location, rc::Rc, str::{FromStr, Utf8Error}, sync::{Arc, RwLock}};
+use std::{borrow::Cow, collections::HashMap, panic::Location, rc::Rc, str::Utf8Error, sync::{Arc, RwLock}};
 
 use chrono::Utc;
 use codemap::CodeMap;
 use codemap_diagnostic::Diagnostic;
 use html_preprocess::{GeneratorArgs, Preprocessor};
-use infer::Infer;
 use lightningcss::{error::{MinifyErrorKind, ParserError, PrinterErrorKind}, printer::PrinterOptions, stylesheet::{MinifyOptions, ParserOptions, StyleSheet}};
 use mime::Mime;
 
 use crate::{config, util};
 
 mod navbar;
+mod arts;
 
 pub enum BuildError {
-    PreprocessFailed(&'static str, CodeMap, Vec<Diagnostic>),
-    LoadCSSNonUtf8(&'static str, Utf8Error),
-    ParseCSSFailed(&'static str, lightningcss::error::Error<ParserError<'static>>),
-    MinifyCSSFailed(&'static str, lightningcss::error::Error<MinifyErrorKind>),
-    EncodeCSSFailed(&'static str, lightningcss::error::Error<PrinterErrorKind>),
+    PreprocessFailed(String, CodeMap, Vec<Diagnostic>),
+    LoadCSSNonUtf8(String, Utf8Error),
+    ParseCSSFailed(String, lightningcss::error::Error<ParserError<'static>>),
+    MinifyCSSFailed(String, lightningcss::error::Error<MinifyErrorKind>),
+    EncodeCSSFailed(String, lightningcss::error::Error<PrinterErrorKind>),
 }
 
 fn init_generators(
@@ -32,11 +32,12 @@ fn init_generators(
 ) {
     // Relating to navbars
     navbar::init(config, generators);
+    arts::init(config, generators);
 }
 
 pub fn build(
     config: &config::Config,
-) -> Result<HashMap<&'static str, (Cow<'static, [u8]>, Option<Mime>)>, BuildError> {
+) -> Result<HashMap<String, (Cow<'static, [u8]>, Option<Mime>)>, BuildError> {
     let mut map = HashMap::new();
 
     let mut preprocessor = Preprocessor::new(
@@ -62,31 +63,7 @@ pub fn build(
     );
     init_generators(config, &mut generators);
 
-    let mut inferrer = Infer::new();
-    inferrer.add("image/svg+xml", "svg", |buf| {
-        // From https://github.com/bojand/infer/pull/119
-        // hasnt been merged yet
-        pub fn is_svg(buf: &[u8]) -> bool {
-            if buf.starts_with(b"<svg") {
-                return true;
-            }
-
-            // Avoid conflicts with other XML types while detecting SVGs.
-            if buf.starts_with(b"<?xml") {
-                return buf
-                    .get(..256)
-                    .unwrap_or(buf)
-                    .windows(4)
-                    .any(|w| w == b"<svg");
-            }
-
-            false
-        }
-
-        is_svg(buf)
-    });
-
-    for (&path, resource) in config::RESOURCES.iter() {
+    for (path, resource) in config::RESOURCES.iter() {
         let resource_result: Option<(Option<Mime>, Cow<'static, [u8]>)> = match resource {
             config::Resource::PreprocessAndIncludeHtml(_) => {
                 // Each instance of generator, store state
@@ -101,12 +78,12 @@ pub fn build(
                 );
                 init_generators(config, &mut generators);
 
-                let result = preprocessor.process_file(path, &generators);
+                let result = preprocessor.process_file(&path, &generators);
                 let data = match result {
                     Ok(data) => Cow::<'_, [u8]>::Owned(data.into_bytes()),
                     Err(diags) => {
                         return Err(BuildError::PreprocessFailed(
-                            path,
+                            path.clone(),
                             preprocessor.to_codemap(),
                             diags,
                         ));
@@ -117,7 +94,7 @@ pub fn build(
             
             config::Resource::Css(data) => {
                 let source = str::from_utf8(data)
-                    .map_err(|e| BuildError::LoadCSSNonUtf8(path, e))?;
+                    .map_err(|e| BuildError::LoadCSSNonUtf8(path.clone(), e))?;
                 
                 let warnings = Arc::new(RwLock::new(Vec::new()));
                 
@@ -126,26 +103,22 @@ pub fn build(
                     filename: path.to_string(),
                     warnings: Some(warnings.clone()),
                     ..Default::default()
-                }).map_err(|e| BuildError::ParseCSSFailed(path, e))?;
+                }).map_err(|e| BuildError::ParseCSSFailed(path.clone(), e))?;
                 
                 // Minify CSS
                 css.minify(MinifyOptions::default())
-                    .map_err(|e| BuildError::MinifyCSSFailed(path, e))?;
+                    .map_err(|e| BuildError::MinifyCSSFailed(path.clone(), e))?;
                 
                 // Encode back to CSS code
                 let minified = css.to_css(PrinterOptions {
                     minify: true,
                     ..Default::default()
-                }).map_err(|e| BuildError::EncodeCSSFailed(path, e))?;
+                }).map_err(|e| BuildError::EncodeCSSFailed(path.clone(), e))?;
                 Some((Some(mime::TEXT_CSS_UTF_8), Cow::Owned(minified.code.into_bytes())))
             }
             
             config::Resource::RawBytes(data) => {
-                let mime = inferrer
-                    .get(data)
-                    .map(|ty| Mime::from_str(ty.mime_type()).ok())
-                    .flatten();
-                Some((mime, Cow::Borrowed(data)))
+                Some((util::infer(data), Cow::Borrowed(data)))
             }
             
             // The HTML is dependency needed by other preprocessable html
@@ -153,7 +126,7 @@ pub fn build(
         };
 
         if let Some((mime, data)) = resource_result {
-            map.insert(path, (data, mime));
+            map.insert(path.clone(), (data, mime));
         }
     }
 

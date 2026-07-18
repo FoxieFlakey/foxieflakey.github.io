@@ -2,7 +2,7 @@ use std::{collections::HashMap, sync::LazyLock};
 
 use crate::macros::{html, html_dep, raw, css};
 
-pub static RESOURCES: LazyLock<HashMap<&str, Resource>> = LazyLock::new(|| {
+pub static RESOURCES: LazyLock<HashMap<String, Resource>> = LazyLock::new(|| {
     let entries = [
         html!("/index.html"),
         html!("/404.html"),
@@ -63,7 +63,10 @@ pub static RESOURCES: LazyLock<HashMap<&str, Resource>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.reserve(entries.len());
 
-    for (path, resource) in entries {
+    let iter = entries.into_iter()
+        .map(|x| (x.0.to_string(), x.1));
+
+    for (path, resource) in iter {
         map.insert(path, resource);
     }
 

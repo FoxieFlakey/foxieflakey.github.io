@@ -29,12 +29,12 @@ pub struct ServerConfig {
 
 #[derive(Clone)]
 pub struct ServeContext {
-    data: Arc<HashMap<&'static str, (Arc<Cow<'static, [u8]>>, Option<Mime>)>>,
+    data: Arc<HashMap<String, (Arc<Cow<'static, [u8]>>, Option<Mime>)>>,
 }
 
 async fn serve_async(
     config: &ServerConfig,
-    data: Arc<HashMap<&'static str, (Arc<Cow<'static, [u8]>>, Option<Mime>)>>,
+    data: Arc<HashMap<String, (Arc<Cow<'static, [u8]>>, Option<Mime>)>>,
 ) -> Result<(), ExitCode> {
     let socket_addr = SocketAddr::new(config.ip, config.port);
     let listener = TcpListener::bind(socket_addr).await.map_err(|x| {
@@ -106,7 +106,7 @@ async fn handler(
 
 pub fn serve(
     config: &ServerConfig,
-    data: HashMap<&'static str, (Cow<'static, [u8]>, Option<Mime>)>,
+    data: HashMap<String, (Cow<'static, [u8]>, Option<Mime>)>,
 ) -> Result<(), ExitCode> {
     let rt = tokio::runtime::Builder::new_current_thread()
         .enable_all()

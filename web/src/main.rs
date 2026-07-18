@@ -79,6 +79,7 @@ fn main() -> Result<ExitCode, ExitCode> {
     println!("Building the website");
     let start = Instant::now();
     let data;
+    config::arts::init();
     match builder::build(&config) {
         Ok(ok) => data = ok,
         Err(BuildError::PreprocessFailed(file, codemap, diags)) => {
@@ -130,14 +131,14 @@ fn main() -> Result<ExitCode, ExitCode> {
 }
 
 fn dump(
-    data: HashMap<&str, (Cow<'_, [u8]>, Option<Mime>)>,
+    data: HashMap<String, (Cow<'_, [u8]>, Option<Mime>)>,
     output: &Path,
 ) -> Result<ExitCode, ExitCode> {
     println!("Dumping files to '{}'", output.display());
     let mut written_bytes = 0;
     let start = Instant::now();
     for (path, (bytes, _)) in data {
-        let path_raw = util::sanify_path(path);
+        let path_raw = util::sanify_path(&path);
         let path = output.join(format!("./{path_raw}"));
 
         if let Some(parent) = path.parent() {
