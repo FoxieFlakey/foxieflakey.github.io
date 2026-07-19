@@ -55,11 +55,11 @@ fn gen_full_listing() -> String {
         // The art preview
         if let Some(mime) = art.mime() {
             let width = art
-                .render_width
+                .render_width()
                 .map(|x| format!("width='{x}'"))
                 .unwrap_or("".to_string());
             let height = art
-                .render_height
+                .render_height()
                 .map(|x| format!("height='{x}'"))
                 .unwrap_or("".to_string());
 
