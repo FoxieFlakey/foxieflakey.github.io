@@ -141,7 +141,7 @@ impl Art {
 
 pub const ARTS_BASE_DIR: &'static str = "/arts";
 
-pub static ARTS: [Art; 265] = [
+pub static ARTS: [Art; 266] = [
     art! {
         posted_on: NaiveDate::from_ymd_opt(2026, 7, 19).unwrap(),
         data: include_bytes!("data/ArtFight_2026__Kit-Kat.png"),
@@ -213,6 +213,13 @@ pub static ARTS: [Art; 265] = [
         title: "ArtFight 2026: Slime Kuga",
         page_id: "artfight2026_slime_kuga",
         description_long: "An attack to kuga :3",
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 7, 1).unwrap(),
+        data: include_bytes!("data/FlatteningSanfieClock1920x1080.mp4"),
+        title: "Flattening Sanfie Clock!",
+        page_id: "flat_sanfie_clock",
+        description_long: "flattening sanfie clock :3 Thanks to Kuga to borrow his RTX 2060 to render this <3"
     },
     art! {
         posted_on: NaiveDate::from_ymd_opt(2026, 7, 1).unwrap(),
