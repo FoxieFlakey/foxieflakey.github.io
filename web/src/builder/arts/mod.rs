@@ -65,10 +65,10 @@ fn gen_full_listing() -> String {
 
             match mime.type_() {
                 mime::IMAGE => {
-                    writeln!(&mut listing, "<img loading=\"lazy\" src=\"{data_url}\" {width} {height} />").unwrap();
+                    writeln!(&mut listing, "<img class=\"art_preview\" loading=\"lazy\" src=\"{data_url}\" {width} {height} />").unwrap();
                 }
                 mime::VIDEO => {
-                    writeln!(&mut listing, "<video controls loading=\"lazy\" src=\"{data_url}\" {width} {height} />").unwrap();
+                    writeln!(&mut listing, "<video class=\"art_preview\" controls loading=\"lazy\" src=\"{data_url}\" {width} {height} />").unwrap();
                 }
                 _ => writeln!(&mut listing, "<strong>&lt;Unknwon type for preview. <a href=\"{data_url}\">Download first</a> to see&gt;</strong><br />").unwrap()
             }
