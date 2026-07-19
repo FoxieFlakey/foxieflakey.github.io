@@ -243,7 +243,7 @@ fun fact, this one is my attempt to apply body horror to foxie but it ended up c
         data: include_bytes!("data/tab_sun_commision.png"),
         title: "[Comission #3] Tab!",
         page_id: "sun_commision_3rd",
-        description_long: "so someone on discord comissioned me to make a new character for &dollar;5 (its 2 weeks ago) ",
+        description_long: "so someone on discord comissioned me to make a new character for $5 (its 2 weeks ago) ",
     },
     art! {
         posted_on: NaiveDate::from_ymd_opt(2026, 5, 10).unwrap(),
@@ -669,7 +669,7 @@ Kuga asked to be transformed into AC",
         description_short: Some("So I tried first commision on art"),
         description_long: r#"I closed it now due no activity
 
-Prices: you name your price :3 between &dollar;5 to &dollar;15, any amount is appreciated (more than &dollar;5 there nothing additional added, just a lil tip if you want or you think my arts worth more :3)
+Prices: you name your price :3 between $5 to $15, any amount is appreciated (more than $5 there nothing additional added, just a lil tip if you want or you think my arts worth more :3)
 Payment methods: PayPal or Ko-Fi donations (at https://ko-fi.com/foxieflakey) at the moment[1]
 Queuing: first come first serve (FurAffinity comment and notes sorted by date and time sent, make it clear too :3, if you're one of first three but unable to pay/whatever/didn't proceed, the slot would be given to the 4th but if 4th, 5th, or 6th can't pay then the corresponding slot would be unused hopefully i won't reach there :3)
 ETA when i complete: uhhh... im trying... >w<
