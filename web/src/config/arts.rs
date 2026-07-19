@@ -7,7 +7,7 @@ use chrono::{Datelike, NaiveDate};
 use crate::{config::Resource, util};
 
 // NOTE: This contains unescaped HTML characters
-#[derive(Clone)]
+#[derive(Clone, Default)]
 pub struct Art {
     pub posted_on: NaiveDate,
     pub title: &'static str,
@@ -62,7 +62,640 @@ impl Art {
 
 pub const ARTS_BASE_DIR: &'static str = "/arts";
 
-pub static ARTS: [Art; 193] = [
+pub static ARTS: [Art; 265] = [
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 7, 19).unwrap(),
+        data: include_bytes!("data/ArtFight_2026__Kit-Kat.png"),
+        title: "ArtFight 2026: Kit-kat KitKat",
+        page_id: "artfight2026_kitkat_kitkat",
+        description_long: "So I turned Kit-Kat into KitKat for EllensToybox",
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 7, 19).unwrap(),
+        data: include_bytes!("data/ArtFight_2026__Waffle.png"),
+        title: "ArtFight 2026: Waffle and Cupcake ",
+        page_id: "artfight2026_waffle_and_cupcake",
+        description_long: "Waffle and a cupcake :3",
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 7, 14).unwrap(),
+        data: include_bytes!("data/squirrel_foxie.png"),
+        title: "Squirrel Foxie Flakey",
+        page_id: "squirrel_foxie",
+        description_long: "Foxie but she is a squirrel",
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 7, 13).unwrap(),
+        data: include_bytes!("data/artfight2026_card.png"),
+        title: "ArtFight 2026 Forgot to upload this BWBEHHEHWEHWEHBBHW",
+        page_id: "artfight2026_card",
+        description_long: "HBWBHWEUBIOINOINEB WEF FOR BWHEHW BWEH BWEH WBEH",
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 7, 6).unwrap(),
+        data: include_bytes!("data/ArtFight_2026__Gargoyle_David.png"),
+        title: "ArtFight 2026: Gargoyle David",
+        page_id: "artfight2026_gargoyle_david",
+        description_long: "proteccc the door well!",
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 7, 6).unwrap(),
+        data: include_bytes!("data/ArtFight_2026__Flattened_Sanfie.png"),
+        title: "ArtFight 2026: Flattened Sanfie",
+        page_id: "artfight2026_flat_sanfie",
+        description_long: "*WHAM* you flat",
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 7, 6).unwrap(),
+        data: include_bytes!("data/ArtFight_2026_Lamp_Kuga.png"),
+        title: "ArtFight 2026: LAMP Kuga :3",
+        page_id: "artfight2026_lamp_kuga",
+        description_long: "Lampy lamp",
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 7, 3).unwrap(),
+        data: include_bytes!("data/ArtFight_2026__Cake_Lucky.png"),
+        render_width: Some(300),
+        render_height: Some(300),
+        title: "ArtFight 2026: Cake Lucky!",
+        page_id: "artfight2026_cake_lucky",
+        description_long: "So Lucky found he fell into an cake oven, and turned into cake x3 ",
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 7, 3).unwrap(),
+        data: include_bytes!("data/ArtFight_2026_Credit_Card_Tanuki.png"),
+        title: "ArtFight 2026: Credit Card Tanuki",
+        page_id: "artfight2026_credit_card_tanuki",
+        description_long: "Carded!",
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 7, 3).unwrap(),
+        data: include_bytes!("data/Artfight_2026__Kuga_Slime.png"),
+        title: "ArtFight 2026: Slime Kuga",
+        page_id: "artfight2026_slime_kuga",
+        description_long: "An attack to kuga :3",
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 7, 1).unwrap(),
+        data: include_bytes!("data/Alarm_Clock_Foxie.png"),
+        title: "Alarm Clock Foxie",
+        page_id: "alarm_clock_foxie",
+        description_long: "So i turned into digital alarm clock :3",
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 6, 30).unwrap(),
+        data: include_bytes!("data/sanfie_liquid_and_kuga_jar.png"),
+        title: "Liquid Sanfie and Jar Kuga",
+        page_id: "liquid_sanfie_and_kuga_jar",
+        description_long: "In some random roleplay, my friend Sanfie turned into liquid and Kuga in other roleplay got into jar :3",
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 6, 30).unwrap(),
+        data: include_bytes!("data/File_Cabinet_Floaf.png"),
+        title: "Floaf Cabinet",
+        page_id: "floaf_cabinet",
+        description_long: "So i turned floaf into filing cabinet",
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 6, 30).unwrap(),
+        data: include_bytes!("data/Meowth_Foxie.png"),
+        title: "Meowth Foxie",
+        page_id: "meowth_foxie",
+        description_long: "Probably rare pieces I turn myself into other species :3",
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 6, 25).unwrap(),
+        data: include_bytes!("data/Foxie_Try_Straitjacket.png"),
+        title: "Foxie Try Straitjacket",
+        page_id: "straitjacket_and_foxie",
+        description_long: "lil funny thing i thought, asked Kuga to put on the straitjacket and now i cant take it off @w@ ",
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 6, 20).unwrap(),
+        data: include_bytes!("data/infectious_tree_foxie.png"),
+        title: "Infectious Spruce Tree :3",
+        page_id: "scp867_foxie",
+        description_long: "scp 867 meet foxie and make pretty strange result :3
+
+the scp 867 foxie, still can infect other in same way normal blood spruce does and has same limitation like normal instance like basically a tree stuck in one place :3 ",
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 6, 9).unwrap(),
+        data: include_bytes!("data/Floppy_Disk_Foxie.png"),
+        title: "Floppy Disk Foxie",
+        page_id: "floppy_disk_foxie",
+        description_long: "Floppy Disk :3",
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 6, 4).unwrap(),
+        data: include_bytes!("data/Quirky_Foxie.png"),
+        title: "Quirky Foxie",
+        page_id: "quirky_foxie",
+        description_long: "so Foxie looked outside ~~purposely~~ and get tf'ed into cute monster (a reference from my friend that is fitting here lol)
+
+fun fact, this one is my attempt to apply body horror to foxie but it ended up cute ",
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 5, 31).unwrap(),
+        data: include_bytes!("data/Scroll_Moodsau.png"),
+        title: "Scroll Moodsau!",
+        page_id: "scroll_moodsau",
+        description_long: "A request for Moodsau he turned into scrollll ",
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 5, 31).unwrap(),
+        data: include_bytes!("data/Scroll_Kuga.png"),
+        title: "Scroll Kuga!",
+        page_id: "scroll_kuga",
+        description_long: "another lil request from Kuga",
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 5, 27).unwrap(),
+        data: include_bytes!("data/Scroll_Foxie.png"),
+        title: "Scroll Foxie!",
+        page_id: "scroll_foxie",
+        description_long: "Scrolllllll Foxie :3",
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 5, 21).unwrap(),
+        data: include_bytes!("data/cave_entry.png"),
+        title: "Entry to Cave",
+        page_id: "entry_to_cave",
+        render_width: Some(1366),
+        render_height: Some(768),
+        description_long: "Run these commands if you want to get this perspective :3 use minecraft 26.1.2 (create world with seed of -311818737 and FOV of 39 and 16:9 game window aspect ratio)
+
+/tp @s -1423.135720 86.280566 766.146850 -176.8 10.1
+/time set 5400
+/gamemode spectator ",
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 5, 19).unwrap(),
+        data: include_bytes!("data/road_kuga_and_traffic_cone_foxie.png"),
+        title: "Kuga Road and Traffic Cone Foxie",
+        page_id: "road_kuga_and_traffic_cone_foxie",
+        render_width: Some(1366),
+        render_height: Some(768),
+        description_long: "So a random gift for Kuga where he become the road, while im the traffic cone :3",
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 5, 19).unwrap(),
+        data: include_bytes!("data/tab_sun_commision.png"),
+        title: "[Comission #3] Tab!",
+        page_id: "sun_commision_3rd",
+        description_long: "so someone on discord comissioned me to make a new character for &dollar;5 (its 2 weeks ago) ",
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 5, 10).unwrap(),
+        data: include_bytes!("data/puppet_foxie.png"),
+        title: "Puppet Foxie",
+        page_id: "puppet_foxie",
+        description_long: "puppepttt",
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 5, 10).unwrap(),
+        data: include_bytes!("data/stretchy_kuga.png"),
+        title: "Stretchy Kuga!",
+        page_id: "stretchy_kuga",
+        description_long: "My part of trade for Foxie uwu about stretchy",
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 5, 10).unwrap(),
+        data: include_bytes!("data/table_foxie.png"),
+        render_width: Some(300),
+        render_height: Some(270),
+        title: "Table Foxie",
+        page_id: "table_foxie",
+        description_long: "stuffs on me!",
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 5, 4).unwrap(),
+        data: include_bytes!("data/Traffic_Cone_Foxie.png"),
+        title: "Traffic Cone",
+        page_id: "traffic_cone",
+        description_long: "so i saw a traffic cone exists :3",
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 5, 2).unwrap(),
+        data: include_bytes!("data/Rope_Jumping.png"),
+        title: "Rope Jumping",
+        page_id: "rope_jumping",
+        description_long: "An idea came to mind, rope jumping with my own tongue",
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 5, 2).unwrap(),
+        data: include_bytes!("data/Mysterious_Potion.png"),
+        title: "Mysterious Potion",
+        page_id: "mysterious_potion",
+        description_long: "So has idea where the potion lengthen my tongue pretty long and now it become hard to talk -w- and floor tastes awful",
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 5, 1).unwrap(),
+        data: include_bytes!("data/round_girl.png"),
+        title: "Round Girl",
+        page_id: "round_girl",
+        description_long: "idea from https://www.furaffinity.net/view/32010204/ (and i like their arts) ",
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 5, 1).unwrap(),
+        data: include_bytes!("data/marker_foxie.png"),
+        title: "Marker Foxie",
+        page_id: "marker_foxie",
+        description_long: "Marker Foxie! she is useful to write with ",
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 5, 1).unwrap(),
+        data: include_bytes!("data/Box_Body.png"),
+        title: "Box Body",
+        page_id: "box_body",
+        description_long: "I like the two intemediate steps from https://www.furaffinity.net/view/47832913/
+
+where im nothing than just box with limbs and one where my body starts turning into more rectangular :3",
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 4, 30).unwrap(),
+        data: include_bytes!("data/Firework_Foxie_new_year.png"),
+        title: "Firework Foxie New Year 2026",
+        page_id: "firework_foxie_explode",
+        description_long: "An older drawing intended for 2026, which i forgot to digitialize and here is Foxie transformed into firework and launched and exploded :3",
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 4, 30).unwrap(),
+        data: include_bytes!("data/Cheese_Foxie.png"),
+        title: "Cheese Foxie",
+        page_id: "cheese_foxie",
+        description_long: "Soo 🧀🧀🧀 version of me",
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 4, 30).unwrap(),
+        data: include_bytes!("data/trampoline_jump_v2.png"),
+        title: "Trampoline Jump! but trampoline is Tym!",
+        page_id: "trampoline_jump_v2",
+        description_long: "Weeee the color is tooo https://www.deviantart.com/tympiu like so be it i drawn one with Tym's color :>",
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 4, 30).unwrap(),
+        data: include_bytes!("data/trampoline_jump.png"),
+        title: "Trampoline Jump!",
+        page_id: "trampoline_jump",
+        description_long: "Weeee",
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 4, 29).unwrap(),
+        data: include_bytes!("data/Frame_Geo.png"),
+        title: "Frame Geo!",
+        page_id: "frame_geo",
+        description_long: "Frame Geo for my friend, Geo!",
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 4, 28).unwrap(),
+        data: include_bytes!("data/Flappy_Bird_Pipe_Foxie.png"),
+        title: "Flappy Bird Pipe Foxie",
+        page_id: "flappy_bird_pipe",
+        description_long: "soooo i turned foxie into those pipes that are in flappy bird :3",
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 4, 28).unwrap(),
+        data: include_bytes!("data/Accordion_Flattened_Foxie.png"),
+        title: "Accordion Flattened Foxie",
+        page_id: "accordion_flattened_foxie",
+        description_long: "\\*make noises\\* :3 ",
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 4, 28).unwrap(),
+        data: include_bytes!("data/Sofa_Foxie.png"),
+        title: "Sofa Foxie",
+        page_id: "sofa_foxie_by_dolly",
+        description_long: "So this was https://www.deviantart.com/thesillydollykatana side of trade, i forgot to upload after she said its fine
+
+here this one i sofa foxie :3",
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 4, 26).unwrap(),
+        data: include_bytes!("data/Lamp_Foxie.png"),
+        title: "Lamps Foxie",
+        page_id: "lamp_foxie",
+        description_long: "So I turned into lamps",
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 4, 20).unwrap(),
+        data: include_bytes!("data/Frame_Kuga.png"),
+        title: "Frame Kuga",
+        page_id: "frame_kuga",
+        description_long: "Another person want to be framed which is Kuga",
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 4, 18).unwrap(),
+        data: include_bytes!("data/Frame_Lucky_and_Spyro.png"),
+        title: "Frame Lucky and Spyro",
+        page_id: "frame_lucky_and_spyro",
+        description_long: "A random gift for Lucky and Spyro",
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 4, 18).unwrap(),
+        data: include_bytes!("data/Dolly_Pancake_Normal_Butter_&_Syrup.png"),
+        title: "Dolly Pancake!",
+        page_id: "dolly_pancake",
+        description_long: "An art trade with Dolly",
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 4, 14).unwrap(),
+        data: include_bytes!("data/Mattress_Foxie_mixed.png"),
+        title: "Mattress Foxie",
+        page_id: "mattress_foxie",
+        description_long: "So i have an idea to transform into mattress :3",
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 4, 13).unwrap(),
+        data: include_bytes!("data/Frame_Antho.png"),
+        title: "Frame Antho",
+        page_id: "frame_antho",
+        description_long: "So a little thing i drawn for anthfoxo :3 so we both match be a frame ",
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 4, 12).unwrap(),
+        data: include_bytes!("data/Chat_or_Speech_bubble_foxie.png"),
+        title: "Speech/Chat bubble Foxie",
+        page_id: "speech_bubble_foxie",
+        description_long: "So next silly thing, chat/speech bubble tf :3 ",
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 4, 10).unwrap(),
+        data: include_bytes!("data/vrchat_avatar_frame_foxie.png"),
+        title: "VRChat avatar: Frame Foxie",
+        page_id: "vrchat_frame_foxie",
+        description_long: "Oh forgot to tell, i also can make avatars for VRC :3 (this one also has emotes too mainly just affects eyes and thinking of curtains to close lol the inner of frame) ",
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 4, 8).unwrap(),
+        data: include_bytes!("data/Frame_Foxie.png"),
+        title: "What if Foxie is a frame?",
+        page_id: "frame_foxie",
+        description_long: "framey frame :3 foxie ",
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 4, 6).unwrap(),
+        data: include_bytes!("data/Cinder_Block_Foxie.png"),
+        title: "Cinder Block Foxie",
+        page_id: "cinder_block_foxie",
+        description_long: "so was in a little roleplay somewhere, that went all way around and people turning into cinder blocks :3 ",
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 4, 5).unwrap(),
+        data: include_bytes!("data/Floaf_Bracelet_combined.png"),
+        title: "Bracelet Floaf UwU",
+        page_id: "bracelet_floaf",
+        description_long: "I turned my friend into a bracelet!",
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 4, 4).unwrap(),
+        data: include_bytes!("data/Kuga_Commision.png"),
+        title: "[Comission #2] Hi, Kuga! :3",
+        page_id: "kuga_commision",
+        description_long: "A lil commision for Kuga about drawing his character for 6.39 USD",
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 4, 1).unwrap(),
+        data: include_bytes!("data/LiveTF_P10.png"),
+        title: "Live TF Page 10: transform Foxie's head tobe made out of lego",
+        page_id: "livetf_page10",
+        description_long: r#"legofied and kinda took awhile to decide nice lego density
+
+# im copy pasting this on every page -w- about what this is about
+
+
+so i started silly game idea where anyone can tell me a "step" to do to myself named "Live Transform" so its live because people slowly stacking changes on me continously transforming/changing me into something so a pretty long sequences lol!
+
+so there a magic pencil and eraser, one person can either choose to add/change (magic pencil) or erase (magic eraser), but cannot be both at same time
+
+each of the step is from someone saying what next is :3 "#,
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 3, 31).unwrap(),
+        data: include_bytes!("data/Pool_Table_Ball_Foxie.png"),
+        title: "Pool Table Ball Foxie",
+        page_id: "pool_table_ball_me",
+        description_long: r#"does anyone know what this called? "Pool Table Ball" seems long ;w;"#,
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 3, 31).unwrap(),
+        data: include_bytes!("data/collar_design.png"),
+        title: "Foxie's Collar",
+        page_id: "foxie_collar",
+        description_long: "hmmm a lil design",
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 3, 30).unwrap(),
+        data: include_bytes!("data/LiveTF_P09.png"),
+        title: "Live TF Page 9: Tie the legs together to look like 🎀",
+        page_id: "livetf_page9",
+        description_long: r#"bwehh
+
+# im copy pasting this on every page -w- about what this is about
+
+
+so i started silly game idea where anyone can tell me a "step" to do to myself named "Live Transform" so its live because people slowly stacking changes on me continously transforming/changing me into something so a pretty long sequences lol!
+
+so there a magic pencil and eraser, one person can either choose to add/change (magic pencil) or erase (magic eraser), but cannot be both at same time
+
+each of the step is from someone saying what next is :3 "#,
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 3, 30).unwrap(),
+        data: include_bytes!("data/LiveTF_P08.png"),
+        title: "Live TF Page 8: Rollls up both of hand paws",
+        page_id: "livetf_page8",
+        description_long: r#"another rolls? Owo
+
+# im copy pasting this on every page -w- about what this is about
+
+
+so i started silly game idea where anyone can tell me a "step" to do to myself named "Live Transform" so its live because people slowly stacking changes on me continously transforming/changing me into something so a pretty long sequences lol!
+
+so there a magic pencil and eraser, one person can either choose to add/change (magic pencil) or erase (magic eraser), but cannot be both at same time
+
+each of the step is from someone saying what next is :3 "#,
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 3, 30).unwrap(),
+        data: include_bytes!("data/LiveTF_P07.png"),
+        title: "Live TF Page 7: Rollls up partially",
+        page_id: "livetf_page7",
+        description_long: r#"partially rolled i wonder whats next happen to bottom half Owo
+
+# im copy pasting this on every page -w- about what this is about
+
+
+so i started silly game idea where anyone can tell me a "step" to do to myself named "Live Transform" so its live because people slowly stacking changes on me continously transforming/changing me into something so a pretty long sequences lol!
+
+so there a magic pencil and eraser, one person can either choose to add/change (magic pencil) or erase (magic eraser), but cannot be both at same time
+
+each of the step is from someone saying what next is :3 "#,
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 3, 30).unwrap(),
+        data: include_bytes!("data/LiveTF_P06.png"),
+        title: "Live TF Page 6: Flat as paper",
+        page_id: "livetf_page6",
+        description_long: r#"Flattttt....
+
+# im copy pasting this on every page -w- about what this is about
+
+
+so i started silly game idea where anyone can tell me a "step" to do to myself named "Live Transform" so its live because people slowly stacking changes on me continously transforming/changing me into something so a pretty long sequences lol!
+
+so there a magic pencil and eraser, one person can either choose to add/change (magic pencil) or erase (magic eraser), but cannot be both at same time
+
+each of the step is from someone saying what next is :3 "#,
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 3, 30).unwrap(),
+        data: include_bytes!("data/LiveTF_P05.png"),
+        title: "Live TF Page 5: Make paw larger ",
+        page_id: "livetf_page5",
+        description_long: r#"So here again large paws :3
+
+# im copy pasting this on every page -w- about what this is about
+
+
+so i started silly game idea where anyone can tell me a "step" to do to myself named "Live Transform" so its live because people slowly stacking changes on me continously transforming/changing me into something so a pretty long sequences lol!
+
+so there a magic pencil and eraser, one person can either choose to add/change (magic pencil) or erase (magic eraser), but cannot be both at same time
+
+each of the step is from someone saying what next is :3 "#,
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 3, 30).unwrap(),
+        data: include_bytes!("data/LiveTF_P04.png"),
+        title: "Live TF Page 4: S t r e t c h that body long",
+        page_id: "livetf_page4",
+        description_long: r#"Looooooooong body
+
+# im copy pasting this on every page -w- about what this is about
+
+
+so i started silly game idea where anyone can tell me a "step" to do to myself named "Live Transform" so its live because people slowly stacking changes on me continously transforming/changing me into something so a pretty long sequences lol!
+
+so there a magic pencil and eraser, one person can either choose to add/change (magic pencil) or erase (magic eraser), but cannot be both at same time
+
+each of the step is from someone saying what next is :3 "#,
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 3, 29).unwrap(),
+        data: include_bytes!("data/LiveTF_P03_v3.png"),
+        title: "Live TF Page 3: Insert that pooltoy smile",
+        page_id: "livetf_page3",
+        description_long: r#"EEK owo not again
+
+# im copy pasting this on every page -w- about what this is about
+
+
+so i started silly game idea where anyone can tell me a "step" to do to myself named "Live Transform" so its live because people slowly stacking changes on me continously transforming/changing me into something so a pretty long sequences lol!
+
+so there a magic pencil and eraser, one person can either choose to add/change (magic pencil) or erase (magic eraser), but cannot be both at same time
+
+each of the step is from someone saying what next is :3 "#,
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 3, 29).unwrap(),
+        data: include_bytes!("data/LiveTF_P02.png"),
+        title: "Live TF Page 2: Detach the head",
+        page_id: "livetf_page2",
+        description_long: r#"Okay so her head is detached
+
+# im copy pasting this on every page -w- about what this is about
+
+
+so i started silly game idea where anyone can tell me a "step" to do to myself named "Live Transform" so its live because people slowly stacking changes on me continously transforming/changing me into something so a pretty long sequences lol!
+
+so there a magic pencil and eraser, one person can either choose to add/change (magic pencil) or erase (magic eraser), but cannot be both at same time
+
+each of the step is from someone saying what next is :3 "#,
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 3, 29).unwrap(),
+        data: include_bytes!("data/LiveTF_P01.png"),
+        title: "Live TF Page 1: A good start as the base",
+        page_id: "livetf_page1",
+        description_long: r#" so i started silly game idea yesterday where anyone can tell me a "step" to do to myself named "Live Transform" so its live because people slowly stacking changes on me continously transforming/changing me into something so a pretty long sequences lol!
+
+so there a magic pencil and eraser, one person can either choose to add/change (magic pencil) or erase (magic eraser), but cannot be both at same time
+
+each of the step is from someone saying what next is :3"#,
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 3, 25).unwrap(),
+        data: include_bytes!("data/Non_verbal_communication.png"),
+        title: "Non Verbal Way of Communicating ",
+        page_id: "talk_by_writing",
+        description_long: "psst foxie isnt mute, she just choosen to write",
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 3, 21).unwrap(),
+        data: include_bytes!("data/Pumpkin_Foxie_Inflate.png"),
+        title: "Foxie turning pumpkin :3",
+        page_id: "pumpking_foxie",
+        description_long: "random idea from https://www.furaffinity.net/view/33248741, was looking for reference/idea for this one https://www.furaffinity.net/view/64308834/ and decided to make another one basing same idea as that one Uwu
+
+i maybe bit weird idk",
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 3, 17).unwrap(),
+        data: include_bytes!("data/Pretty_hard_to_move_as_faceless_fox.png"),
+        title: "I am faceless and keep bumping to stuffs...",
+        page_id: "faceless_foxie_crashed",
+        description_long: "i cant see where im moving...",
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 3, 13).unwrap(),
+        data: include_bytes!("data/Too_thirsty.png"),
+        title: "Foxie was too thirsty and hungry!",
+        page_id: "thirsty_foxie_at_a_ship",
+        description_long: "So silly idea of Foxie wakes up at 2 AM and starts eating literal 130mm HE+SAP shells which belongs to local naval fleet, and drank alot of water and heavy fuel oils. ",
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 3, 8).unwrap(),
+        data: include_bytes!("data/Air_Conditioner_Kuga_2.png"),
+        title: "[Art Trade] Air Conditioner Kuga",
+        page_id: "air_conditioner_kuga",
+        description_long: "so this is my part of the trade see https://www.furaffinity.net/view/64243463/ :3
+Kuga asked to be transformed into AC",
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 3, 4).unwrap(),
+        data: include_bytes!("data/First_open_commision.png"),
+        title: "[Closde Comision #1due inactivity] Lets start why waiting :3",
+        page_id: "first_commision",
+        description_short: Some("So I tried first commision on art"),
+        description_long: r#"I closed it now due no activity
+
+Prices: you name your price :3 between &dollar;5 to &dollar;15, any amount is appreciated (more than &dollar;5 there nothing additional added, just a lil tip if you want or you think my arts worth more :3)
+Payment methods: PayPal or Ko-Fi donations (at https://ko-fi.com/foxieflakey) at the moment[1]
+Queuing: first come first serve (FurAffinity comment and notes sorted by date and time sent, make it clear too :3, if you're one of first three but unable to pay/whatever/didn't proceed, the slot would be given to the 4th but if 4th, 5th, or 6th can't pay then the corresponding slot would be unused hopefully i won't reach there :3)
+ETA when i complete: uhhh... im trying... >w<
+Contact: send me a note and also pay only when im done with it before making it public
+
+its for one drawing of art for each slot, it must be only SFW and within reasonable limit plus few themes which i say its fine (just ask me) on any of your OC or Foxie, it can be about inanimate TF situation or other kind i do. I may or may not reject and refunds
+
+so uhhh after thinking alot i decided i should just "do it" instead overthinking but... hopefully this leads to somewhere :3
+
+there only 3 open tho, because not sure how my unstable brain will do if i let uncapped amount -w-
+
+LARGE NOTE for PayPal payments: please choose the good & service type of payment atleast because paypal has "refund" button if you mistakenly sent wrong amount for some reason or cancel and for this purpose which i hope it works but im not sure so better dont send till i say so other than that it is required too because user agreement -w- (open https://www.paypal.com/us/legalhub/.....agreement-full and search "You must not send money")
+
+another note: if someone can help me with paypal, you may tell me why it didnt let me use my paypal's balance to send out money :3
+
+[1]: If you're Indonesian, other method like QRIS could be available just not for this open commision. only PayPal/Ko-Fi for now, I do not accept direct GoPay, Dana, ShopeePay or whatever "#,
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 3, 3).unwrap(),
+        title: "Tired and Sleeping Pet Foxie",
+        page_id: "pet_foxie",
+        data: include_bytes!("data/Sleeping_Pet_Foxie.png"),
+        render_width: Some(1366),
+        render_height: Some(768),
+        description_long: "Foxie is pretty sleep and sleeps on her bed ",
+    },
     art! {
         posted_on: NaiveDate::from_ymd_opt(2026, 2, 12).unwrap(),
         title: "Filing Cabinet or Drawer Foxie (Blender)",
