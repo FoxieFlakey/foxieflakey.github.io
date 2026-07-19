@@ -46,7 +46,7 @@ impl Art {
     pub fn path_to_data(&self) -> String {
         let year = self.posted_on.year();
         let month = self.posted_on.format("%b");
-        let id = html_escape::encode_safe(self.page_id);
+        let id = util::encode_html(self.page_id);
         let page_base = format!("{}/{year}/{month}/{id}", ARTS_BASE_DIR);
 
         let ext = self

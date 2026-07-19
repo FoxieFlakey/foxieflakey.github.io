@@ -5,7 +5,7 @@ use std::{borrow::Cow, collections::HashMap, fmt::Write, panic::Location, rc::Rc
 use chrono::Datelike;
 use html_preprocess::{GeneratorArgs, create_generator};
 
-use crate::{config, util::ExpectNone};
+use crate::{config, util::{self, ExpectNone}};
 
 pub fn init(
     _config: &config::Config,
@@ -31,16 +31,16 @@ fn gen_full_listing() -> String {
     for art in &config::arts::ARTS {
         let year = art.posted_on.year();
         let month = art.posted_on.format("%b");
-        let id = html_escape::encode_safe(art.page_id);
-        let title = html_escape::encode_safe(art.title);
+        let id = util::encode_html(art.page_id);
+        let title = util::encode_html(art.title);
         let page_base = format!("$root/{}/{year}/{month}/{id}", config::arts::ARTS_BASE_DIR);
-        let short_desc = art.description_short.as_ref().map(html_escape::encode_safe);
-        let long_desc = html_escape::encode_safe(&art.description_long);
+        let short_desc = art.description_short.as_ref().map(util::encode_html);
+        let long_desc = util::encode_html(&art.description_long);
         let file_type_desc = art
             .mime()
             .as_ref()
             .map(|x| x.as_ref())
-            .map(|x| html_escape::encode_safe(x))
+            .map(|x| util::encode_html(x))
             .unwrap_or(Cow::Borrowed("&lt;unknown file type&gt;"));
         let data_url = format!("$root/{}", art.path_to_data());
 
@@ -99,7 +99,7 @@ fn gen_full_listing() -> String {
                 </tr>
             </table>
         "#,
-            html_escape::encode_safe(&art.posted_on.format("%a, %d %B %Y").to_string()),
+            util::encode_html(&art.posted_on.format("%a, %d %B %Y").to_string()),
             file_type_desc
         )
         .unwrap();

@@ -1,4 +1,4 @@
-use std::{str::FromStr, sync::LazyLock, time::Duration};
+use std::{borrow::Cow, str::FromStr, sync::LazyLock, time::Duration};
 
 use infer::Infer;
 use mime::Mime;
@@ -80,3 +80,10 @@ static INFERRER: LazyLock<Infer> = LazyLock::new(|| {
 
     inferrer
 });
+
+pub fn encode_html<S>(text: &S) -> Cow<'_, str>
+where
+    S: ?Sized + AsRef<str>
+{
+    Cow::Owned(html_escape::encode_safe(text).replace('$', "&dollar;"))
+}
