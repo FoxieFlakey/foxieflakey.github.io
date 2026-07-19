@@ -97,7 +97,6 @@ fn gen_full_listing() -> String {
                     <th>File Type</th>
                     <td>{}</td>
                 </tr>
-            </table>
         "#,
             util::encode_html(&art.posted_on.format("%a, %d %B %Y").to_string()),
             file_type_desc
@@ -107,11 +106,15 @@ fn gen_full_listing() -> String {
         if let Some(short_desc) = short_desc {
             writeln!(
                 &mut listing,
-                "<h3>Short description</h3><p>{short_desc}</p>"
+                "<tr>
+                    <th>Short description</th>
+                    <td>{short_desc}</td>
+                </tr>"
             )
             .unwrap();
         }
-        writeln!(&mut listing, "<h3>Description</h3><p>{long_desc}</p>").unwrap();
+        writeln!(&mut listing, "</table>").unwrap();
+        writeln!(&mut listing, "<p>{long_desc}</p>").unwrap();
 
         writeln!(&mut listing, "    </div>").unwrap();
         writeln!(&mut listing, "  </div>").unwrap();
