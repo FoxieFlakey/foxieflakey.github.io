@@ -89,6 +89,12 @@ is too small
   overflow-wrap: anywhere;
 }
 
+@media (width <= 768px) {
+  .navbar_item > a > span {
+    display: none;
+  }
+}
+
 #page_content {
   margin: 5px;
   flex: 1;
