@@ -137,7 +137,13 @@ pub fn build(
                 ))
             }
 
-            config::Resource::RawBytes(data) => Some((util::infer(data), Cow::Borrowed(data))),
+            config::Resource::RawBytes(data) => {
+                let mime = util::infer(Some(path), data);
+                if mime.is_none() {
+                    println!("[WARN] Cannot infer mime type for '{path}'");
+                }
+                Some((mime, Cow::Borrowed(data)))
+            },
 
             // The HTML is dependency needed by other preprocessable html
             config::Resource::HtmlBuildResource(_) => None,

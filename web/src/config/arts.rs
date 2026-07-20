@@ -52,7 +52,7 @@ macro_rules! art {
 
 impl Art {
     pub fn mime(&self) -> &Option<mime::Mime> {
-        self.mime.get_or_init(move || util::infer(self.data))
+        self.mime.get_or_init(move || util::infer(None, self.data))
     }
     
     pub fn actual_size(&self) -> Option<(u32, u32)> {

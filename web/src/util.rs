@@ -46,11 +46,25 @@ impl<T> ExpectNone for Option<T> {
     }
 }
 
-pub fn infer(data: &[u8]) -> Option<mime::Mime> {
+pub fn infer(filename: Option<&str>, data: &[u8]) -> Option<mime::Mime> {
     INFERRER
         .get(data)
-        .map(|ty| Mime::from_str(ty.mime_type()).ok())
+        .map(|ty| {
+            Mime::from_str(ty.mime_type())
+                .inspect_err(|e| {
+                    println!("[WARN] mime crate cannot parse mime from infer crate (the Mime was '{}'): {e}", ty.mime_type().escape_default());
+                })
+                .ok()
+        })
         .flatten()
+        .or_else(|| {
+            filename.map(|name| {
+                println!("[WARN] Cannot infer based on file content. Falling back to extension detection for '{}'", name.escape_default());
+                mime_guess::from_path(name)
+                    .first()
+            })
+            .flatten()
+        })
 }
 
 static INFERRER: LazyLock<Infer> = LazyLock::new(|| {
