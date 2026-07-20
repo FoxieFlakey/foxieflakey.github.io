@@ -69,9 +69,6 @@ is too small
   flex-wrap: wrap;
   overflow: hidden;
   height: 60px;
-  
-  min-width: 60px;
-  max-width: 160px;
   padding-right: 5px;
 }
 
@@ -87,6 +84,7 @@ is too small
 .navbar_item > a > span {
   min-width: 0px;
   overflow-wrap: anywhere;
+  font-size: 25px;
 }
 
 @media (width <= 768px) {
