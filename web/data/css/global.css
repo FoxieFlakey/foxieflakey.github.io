@@ -97,5 +97,6 @@ is too small
   margin: 5px;
   flex: 1;
   overflow: scroll;
+  container-type: normal;
 }
 

@@ -36,7 +36,7 @@
         function toggle_all_drawings_at_once() {
           state = !state;
           
-          let drawings = document.getElementById("all_drawings_list");
+          let drawings = document.querySelectorAll("#all_drawings_list > div > details");
           let button = document.getElementById("toggle_button");
           
           if (state) {
@@ -45,11 +45,7 @@
             button.innerHTML = "Open *ALL* drawings at once &gt;:3";
           }
           
-          for (const child of drawings.children) {
-            if (!child.tagName.toUpperCase() == "DETAILS") {
-              continue;
-            }
-            
+          for (const child of drawings) {            
             if (state) {
               child.setAttribute("open", "");
             } else {
