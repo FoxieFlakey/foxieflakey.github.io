@@ -32,6 +32,7 @@ body {
 
 #page_header {
   background-color: #00000040;
+  overflow-x: hidden;
 }
 
 /* Nav bar stuffs */
@@ -87,5 +88,7 @@ body {
 
 #page_content {
   margin: 5px;
+  flex: 1;
+  overflow: scroll;
 }
 
