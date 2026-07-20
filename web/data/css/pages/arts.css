@@ -14,14 +14,14 @@
   height: auto;
 }
 
-#all_drawings_list > details {
+#all_drawings_list details {
   border: 2px solid black;
   padding: 0.4em;
   margin-top: 0.2em;
   margin-bottom: 0.2em;
 }
 
-#all_drawings_list > details:open > summary {
+#all_drawings_list details:open > summary {
   margin-bottom: 1em;
 }
 
@@ -40,7 +40,7 @@
 
 /* Make the clickable thing be larger. for sanity of touch users */
 @media (pointer: coarse) {
-  #all_drawings_list > details {
+  #all_drawings_list details {
     padding-top: 0.8em;
     padding-bottom: 0.8em;
   }
