@@ -84,14 +84,8 @@ pub fn init(
                         r#"
                         <th class="navbar_item {}">
                             <a href="{url}">
-                                <table role="presentation">
-                                    <tr>
-                                        <th style="line-height: 0px; padding: 0px">
-                                            <img class="navbar_icon" alt="{alt_text}" src="{icon}" height="50" width="50" />
-                                        </th>
-                                        <th>{name}</th>
-                                    </tr>
-                                </table>
+                                <img alt="{alt_text}" src="{icon}" height="60" width="60" />
+                                <span>{name}</span>
                             </a>
                         </th>
                     "#,
@@ -100,24 +94,16 @@ pub fn init(
                 }
 
                 Ok(format!(
-                    r#"<table role="presentation" class="navbar" id="navbar">
-    <tr>
-        <!-- Synchronize 'height' in this with one in navbar.css! -->
-        <th id="navbar_page_icon" style="padding: 0%"><a href="$root" aria-label="Open home page of my website"><img width="60" height="60" alt="{}" src="$root/favicon.ico" /></a></th>
-    
-        <th style="padding: 0%; height: 100%">
-            <nav role="navigation" style="height: 100%">
-                <table role="presentation" style="border-collapse: collapse; height: 100%">
-                    <tbody>
-                        <tr>
-                            {content}
-                        </tr>
-                    </tbody>
-                </table>
-            </nav>
-        </th>
-    </tr>
-</table>
+                    r#"<nav role="navigation" style="height: 100%; width: 100%">
+    <table role="presentation" class="navbar" id="navbar">
+        <tr>
+            <th class="navbar_page_icon navbar_item"><a href="$root" aria-label="Open home page of my website"><img width="60" height="60" alt="{}" src="$root/favicon.ico" /></a></th>
+            {content}
+            <!-- Steal all the space -->
+            <th></th>
+        </tr>
+    </table>
+</nav>
 "#, config::FAVICON_ALT_TEXT))
             }),
         )
