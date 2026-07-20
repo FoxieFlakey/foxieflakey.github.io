@@ -32,11 +32,17 @@ fn gen_full_listing() -> String {
 
     let mut last_year = 0;
     let mut last_month = 0;
+    let mut has_opened = false;
     for art in &config::arts::ARTS {
         if last_month != art.posted_on.month() || last_year != art.posted_on.year() {
             last_year = art.posted_on.year();
             last_month = art.posted_on.month();
-            writeln!(&mut listing, "<h3>{}</h3>", art.posted_on.format("%B %Y")).unwrap();
+            if has_opened {
+                writeln!(&mut listing, "</div>").unwrap();
+            } else {
+                has_opened = true;
+            }
+            writeln!(&mut listing, "<div class=\"art_section\"><h3 class=\"art_divider\">{}</h3>", art.posted_on.format("%B %Y")).unwrap();
         }
         
         let year = art.posted_on.year();
@@ -55,6 +61,10 @@ fn gen_full_listing() -> String {
         card::generate(&mut listing, art, false);
         
         writeln!(&mut listing, "</details>").unwrap();
+    }
+
+    if has_opened {
+        writeln!(&mut listing, "</div>").unwrap();
     }
 
     listing

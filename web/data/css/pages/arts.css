@@ -25,6 +25,19 @@
   margin-bottom: 1em;
 }
 
+.art_section {
+  position: relative;
+}
+
+.art_divider {
+  position: sticky;
+  top: 0px;
+  background-color: gray;
+  border: 2px solid black;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
 /* Make the clickable thing be larger. for sanity of touch users */
 @media (pointer: coarse) {
   #all_drawings_list > details {
