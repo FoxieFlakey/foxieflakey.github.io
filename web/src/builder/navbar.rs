@@ -94,8 +94,8 @@ pub fn init(
                 }
 
                 Ok(format!(
-                    r#"<nav role="navigation" style="height: 100%; width: 100%">
-    <table role="presentation" class="navbar" id="navbar">
+                    r#"<nav role="navigation" class="navbar_container" style="height: 100%; width: 100%">
+    <table role="presentation" class="navbar" >
         <tr>
             <th class="navbar_page_icon navbar_item"><a href="$root" aria-label="Open home page of my website"><img width="60" height="60" alt="{}" src="$root/favicon.ico" /></a></th>
             {content}

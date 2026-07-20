@@ -10,6 +10,7 @@ pub static RESOURCES: LazyLock<HashMap<String, Resource>> = LazyLock::new(|| {
         html!("/404.html"),
         html_dep!("/components/page.html"),
         raw!("/img/profile.gif"),
+        raw!("/js/navbar.js"),
         css!("/css/global.css"),
         css!("/css/pages/home.css"),
         css!("/css/pages/arts.css"),
