@@ -240,6 +240,7 @@ pub fn gen_resources_list() -> Vec<(String, Resource)> {
                 <import src="/components/page.html" />
                 <import src="/components/opengraph.html" />
                 <link href="$root/css/pages/arts.css" rel="stylesheet" />
+                <x-navbar-set-Gallery />
 
                 <html lang="en">
                     <head>
