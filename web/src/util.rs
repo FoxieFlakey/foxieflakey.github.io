@@ -4,6 +4,34 @@ use html_preprocess::{Preprocessor, util::AttributeExt};
 use infer::Infer;
 use mime::Mime;
 
+pub fn sanify_path_unrooted(path: &str) -> String {
+    let mut segments = Vec::new();
+
+    for segment in path.split('/') {
+        if segment == "." {
+            continue;
+        } else if segment == ".." {
+            segments.pop();
+        } else if !segment.is_empty() {
+            segments.push(segment);
+        }
+    }
+
+    let joined = segments.join("/");
+    format!(
+        "{}{}",
+        joined,
+        if path.ends_with('/') && joined.len() > 1 {
+            "/"
+        } else {
+            ""
+        }
+    )
+}
+
+/// NOTE: This will add '/' prefix
+/// use sanify_path_unrooted, to not do that
+/// and only simplifies path
 pub fn sanify_path(path: &str) -> String {
     let mut segments = Vec::new();
 

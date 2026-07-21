@@ -20,7 +20,7 @@ where
         .map(|x| x.as_ref())
         .map(|x| util::encode_html(x))
         .unwrap_or(Cow::Borrowed("&lt;unknown file type&gt;"));
-    let data_url = format!("$root/{}", art.path_to_data());
+    let data_url = util::sanify_path_unrooted(&format!("$root/{}", art.path_to_data()));
 
     writeln!(output, "  <div class=\"art_card\">").unwrap();
     if with_title {

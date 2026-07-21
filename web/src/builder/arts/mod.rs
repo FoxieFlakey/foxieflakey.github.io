@@ -59,16 +59,13 @@ fn gen_full_listing() -> String {
             .unwrap();
         }
 
-        let year = art.posted_on.year();
-        let month = art.posted_on.format("%b");
-        let id = util::encode_html(art.page_id);
         let title = util::encode_html(art.title);
-        let page_base = format!("$root/{}/{year}/{month}/{id}", config::arts::ARTS_BASE_DIR);
+        let page_base = util::sanify_path_unrooted(&format!("$root/{}", art.path_to_art()));
 
         writeln!(
             &mut listing,
             "<details>
-              <summary><a href='{page_base}.html'>{title}</a></summary>
+              <summary><a href='{page_base}'>{title}</a></summary>
             "
         )
         .unwrap();
