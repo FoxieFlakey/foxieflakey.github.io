@@ -26,7 +26,15 @@ macro_rules! art {
 }
 
 #[rustfmt::skip]
-pub static ARTS: [Art; 266] = [
+pub static ARTS: [Art; 267] = [
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 7, 21).unwrap(),
+        data: include_bytes!("data/ArtFight 2026: Stretch Tuffle.png"),
+        title: "ArtFight 2026: Stretched Tuffle",
+        page_id: "artfight2026_stretched_tuffle",
+        description_long: "I drawn stretched Tuffle pretttty long. Hope you like the body <3",
+    },
+
     art! {
         posted_on: NaiveDate::from_ymd_opt(2026, 7, 19).unwrap(),
         data: include_bytes!("data/ArtFight_2026__Kit-Kat.png"),
