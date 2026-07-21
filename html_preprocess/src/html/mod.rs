@@ -66,6 +66,7 @@ pub struct Preprocessor<'a> {
 pub struct GeneratorArgs<'a> {
     pub childs: &'a Vec<(Span, parser::ElementContent)>,
     pub attributes: &'a Vec<parser::Attribute>,
+    pub preprocessor: &'a Preprocessor<'a>
 }
 
 pub enum Template<'a> {
@@ -206,7 +207,7 @@ impl<'a> Preprocessor<'a> {
         &self.code_map
     }
 
-    fn resolve_span_to_string(&self, span: Span) -> &str {
+    pub fn resolve_span_to_string(&self, span: Span) -> &str {
         util::resolve_span_to_string(&self.code_map, span)
     }
 
