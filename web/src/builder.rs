@@ -143,7 +143,7 @@ pub fn build(
                     println!("[WARN] Cannot infer mime type for '{path}'");
                 }
                 Some((mime, Cow::Borrowed(data)))
-            },
+            }
 
             // The HTML is dependency needed by other preprocessable html
             config::Resource::HtmlBuildResource(_) => None,

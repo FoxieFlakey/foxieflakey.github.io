@@ -357,7 +357,7 @@ fn expand_template(
             let generated_src = func(GeneratorArgs {
                 attributes: expansion_attributes,
                 childs: expansion_childs,
-                preprocessor
+                preprocessor,
             })
             .map_err(|e| {
                 return vec![Diagnostic {

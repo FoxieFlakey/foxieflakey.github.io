@@ -25,6 +25,7 @@ macro_rules! art {
     }};
 }
 
+#[rustfmt::skip]
 pub static ARTS: [Art; 266] = [
     art! {
         posted_on: NaiveDate::from_ymd_opt(2026, 7, 19).unwrap(),
@@ -2688,4 +2689,3 @@ what do you all think?",
         description_long: "A drawing of my OC (which is primary representation of me :3 )",
     },
 ];
-

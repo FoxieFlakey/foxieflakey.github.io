@@ -18,84 +18,83 @@ pub struct Art {
     render_width: Option<u32>,
     render_height: Option<u32>,
     mime: OnceLock<Option<mime::Mime>>,
-    
+
     // Lazily initialized, if render_width and height previously is None
     // then its generated from parsing data.
     //
     // If only render_width Some but  not other, or vice verrsa.
     // it is properly scaled based on aspect ratio
     actual_render_size: OnceLock<(Option<u32>, Option<u32>)>,
-    
+
     // None if can't be scanned/fetched
-    actual_size: OnceLock<Option<(u32, u32)>>
+    actual_size: OnceLock<Option<(u32, u32)>>,
 }
 
 impl Art {
     pub fn mime(&self) -> &Option<mime::Mime> {
         self.mime.get_or_init(move || util::infer(None, self.data))
     }
-    
+
     pub fn actual_size(&self) -> Option<(u32, u32)> {
-        *self.actual_size
-            .get_or_init(|| {
-                match self.mime().clone()?.type_() {
-                    mime::IMAGE => {
-                        let reader = image::ImageReader::new(Cursor::new(self.data))
-                            .with_guessed_format()
-                            .unwrap();
-                        
-                        match reader.into_dimensions() {
-                            Ok(x) => Some(x),
-                            Err(e) => {
-                                println!("[ERROR] Art module: Cannot parse art file as image: {e}");
-                                None
-                            }
+        *self
+            .actual_size
+            .get_or_init(|| match self.mime().clone()?.type_() {
+                mime::IMAGE => {
+                    let reader = image::ImageReader::new(Cursor::new(self.data))
+                        .with_guessed_format()
+                        .unwrap();
+
+                    match reader.into_dimensions() {
+                        Ok(x) => Some(x),
+                        Err(e) => {
+                            println!("[ERROR] Art module: Cannot parse art file as image: {e}");
+                            None
                         }
                     }
-                    _ => None
                 }
+                _ => None,
             })
     }
-    
+
     fn calc_render_size(&self) -> (Option<u32>, Option<u32>) {
         match (self.render_width, self.render_height) {
             (Some(width), Some(height)) => (Some(width), Some(height)),
             (None, None) => {
                 let Some((w, h)) = self.actual_size() else {
-                    return (None, None)
+                    return (None, None);
                 };
-                
+
                 (Some(w), Some(h))
-            },
+            }
             (Some(width), None) => {
                 let Some((w, h)) = self.actual_size() else {
-                    return (None, None)
+                    return (None, None);
                 };
-                
+
                 let ratio = f64::from(h) / f64::from(w);
                 let calculated_height = f64::from(width) * ratio;
-                
+
                 (Some(w), Some(calculated_height as u32))
-            },
+            }
             (None, Some(height)) => {
                 let Some((w, h)) = self.actual_size() else {
-                    return (None, None)
+                    return (None, None);
                 };
-                
+
                 let ratio = f64::from(w) / f64::from(h);
                 let calculated_width = f64::from(height) * ratio;
-                
+
                 (Some(calculated_width as u32), Some(h))
             }
         }
     }
-    
+
     pub fn render_width(&self) -> Option<u32> {
         self.actual_render_size
             .get_or_init(|| self.calc_render_size())
             .0
     }
-    
+
     pub fn render_height(&self) -> Option<u32> {
         self.actual_render_size
             .get_or_init(|| self.calc_render_size())

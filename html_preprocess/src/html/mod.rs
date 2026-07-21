@@ -66,7 +66,7 @@ pub struct Preprocessor<'a> {
 pub struct GeneratorArgs<'a> {
     pub childs: &'a Vec<(Span, parser::ElementContent)>,
     pub attributes: &'a Vec<parser::Attribute>,
-    pub preprocessor: &'a Preprocessor<'a>
+    pub preprocessor: &'a Preprocessor<'a>,
 }
 
 pub enum Template<'a> {

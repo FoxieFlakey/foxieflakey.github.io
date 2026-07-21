@@ -5,7 +5,10 @@ use std::{collections::HashMap, fmt::Write, panic::Location, rc::Rc};
 use chrono::Datelike;
 use html_preprocess::{GeneratorArgs, create_generator};
 
-use crate::{config, util::{self, ExpectNone}};
+use crate::{
+    config,
+    util::{self, ExpectNone},
+};
 
 mod card;
 
@@ -42,24 +45,30 @@ fn gen_full_listing() -> String {
             } else {
                 has_opened = true;
             }
-            writeln!(&mut listing, "<div class=\"art_section\"><h3 class=\"art_divider\">{}</h3>", art.posted_on.format("%B %Y")).unwrap();
+            writeln!(
+                &mut listing,
+                "<div class=\"art_section\"><h3 class=\"art_divider\">{}</h3>",
+                art.posted_on.format("%B %Y")
+            )
+            .unwrap();
         }
-        
+
         let year = art.posted_on.year();
         let month = art.posted_on.format("%b");
         let id = util::encode_html(art.page_id);
         let title = util::encode_html(art.title);
         let page_base = format!("$root/{}/{year}/{month}/{id}", config::arts::ARTS_BASE_DIR);
-        
-        writeln!(&mut listing,
+
+        writeln!(
+            &mut listing,
             "<details>
               <summary><a href='{page_base}.html'>{title}</a></summary>
             "
         )
         .unwrap();
-    
+
         card::generate(&mut listing, art, false);
-        
+
         writeln!(&mut listing, "</details>").unwrap();
     }
 

@@ -97,7 +97,7 @@ static INFERRER: LazyLock<Infer> = LazyLock::new(|| {
 
 pub fn encode_html<S>(text: &S) -> Cow<'_, str>
 where
-    S: ?Sized + AsRef<str>
+    S: ?Sized + AsRef<str>,
 {
     Cow::Owned(html_escape::encode_safe(text).replace('$', "&dollar;"))
 }

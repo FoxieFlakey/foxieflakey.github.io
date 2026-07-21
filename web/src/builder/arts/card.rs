@@ -3,7 +3,8 @@ use std::{borrow::Cow, fmt::Write};
 use crate::{config::arts::Art, util};
 
 pub fn generate<W>(output: &mut W, art: &Art, with_title: bool)
-    where W: Write
+where
+    W: Write,
 {
     let title = util::encode_html(art.title);
     let short_desc = art.description_short.as_ref().map(util::encode_html);
@@ -88,5 +89,3 @@ pub fn generate<W>(output: &mut W, art: &Art, with_title: bool)
     writeln!(output, "    </div>").unwrap();
     writeln!(output, "  </div>").unwrap();
 }
-
-

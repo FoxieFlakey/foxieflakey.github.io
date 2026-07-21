@@ -30,7 +30,7 @@ impl QuotedStringExt for crate::QuotedString {
     fn get_content<'a>(&'a self, preprocessor: &'a Preprocessor) -> &'a str {
         match self.content {
             Either::Left(span) => preprocessor.resolve_span_to_string(span),
-            Either::Right(ref str) => str
+            Either::Right(ref str) => str,
         }
     }
 }
@@ -56,16 +56,18 @@ impl AttributeExt for crate::Attribute {
     fn get_key<'a>(&self, preprocessor: &'a Preprocessor) -> Option<&'a str> {
         match self {
             Attribute::EmptyAttribute(key) => Some(preprocessor.resolve_span_to_string(*key)),
-            Attribute::Attribute(_, data) => Some(preprocessor.resolve_span_to_string(data.key_span)),
-            Attribute::Replacer(_, _) => None
+            Attribute::Attribute(_, data) => {
+                Some(preprocessor.resolve_span_to_string(data.key_span))
+            }
+            Attribute::Replacer(_, _) => None,
         }
     }
-    
+
     fn get_value<'a>(&'a self, preprocessor: &'a Preprocessor) -> Option<&'a str> {
         match self {
             Attribute::EmptyAttribute(_) => Some(""),
             Attribute::Attribute(_, data) => Some(data.value.get_content(preprocessor)),
-            Attribute::Replacer(_, _) => None
+            Attribute::Replacer(_, _) => None,
         }
     }
 }
