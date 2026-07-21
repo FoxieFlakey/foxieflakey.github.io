@@ -342,7 +342,8 @@ pub fn parse_only_replacers(
         match char {
             '$' => {
                 if let Some(last_offset) = last_start.take() {
-                    portions.push((span.subspan(last_offset, offset), None));
+                    // The initial_offset is offset to the 'span', so remove the offset first
+                    portions.push((span.subspan(last_offset - initial_offset, offset - initial_offset), None));
                 }
 
                 let (span, replacer) =
