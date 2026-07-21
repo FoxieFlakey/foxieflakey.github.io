@@ -1,4 +1,4 @@
-use std::{collections::HashMap, sync::LazyLock};
+use std::{borrow::Cow, collections::HashMap, sync::LazyLock};
 
 use crate::macros::{css, html, html_dep, raw};
 
@@ -85,10 +85,10 @@ pub struct Config {
 }
 
 pub enum Resource {
-    RawBytes(&'static [u8]),
-    HtmlBuildResource(&'static [u8]),
-    PreprocessAndIncludeHtml(&'static [u8]),
-    Css(&'static [u8]),
+    RawBytes(Cow<'static, [u8]>),
+    HtmlBuildResource(Cow<'static, [u8]>),
+    PreprocessAndIncludeHtml(Cow<'static, [u8]>),
+    Css(Cow<'static, [u8]>),
 }
 
 impl Resource {

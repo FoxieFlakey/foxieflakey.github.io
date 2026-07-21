@@ -1,4 +1,4 @@
-use std::{io::Cursor, sync::OnceLock};
+use std::{borrow::Cow, io::Cursor, sync::OnceLock};
 
 use chrono::{Datelike, NaiveDate};
 
@@ -147,6 +147,6 @@ pub fn init() {
 
 pub fn gen_resources_list() -> Vec<(String, Resource)> {
     ARTS.iter()
-        .map(|x| (x.path_to_data(), Resource::RawBytes(x.data)))
+        .map(|x| (x.path_to_data(), Resource::RawBytes(Cow::Borrowed(x.data))))
         .collect()
 }
