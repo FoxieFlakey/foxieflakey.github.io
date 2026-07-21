@@ -197,13 +197,11 @@ pub fn gen_resources_list() -> Vec<(String, Resource)> {
                 mime::IMAGE => {
                     writeln!(
                         &mut opengraph_data,
-                        r#"<meta property="og:image" content="$root/{path_to_data}" />"#
-                    )
-                    .unwrap();
-                    writeln!(
-                        &mut opengraph_data,
-                        r#"<meta property="og:image:type" content="{}" />"#,
-                        mime.to_string()
+                        r#"
+                        <x-metadata-image content="$root/{path_to_data}" />
+                        <meta property="twitter:card" content="summary_large_image" />
+                        <meta property="og:image:type" content="{}" />
+                        "#, mime.to_string()
                     )
                     .unwrap();
                     if let Some((width, height)) = x.actual_size() {
@@ -222,12 +220,11 @@ pub fn gen_resources_list() -> Vec<(String, Resource)> {
                 mime::VIDEO => {
                     writeln!(
                         &mut opengraph_data,
-                        r#"<meta property="og:video" content="$root/{path_to_data}" />"#
-                    )
-                    .unwrap();
-                    writeln!(
-                        &mut opengraph_data,
-                        r#"<meta property="og:video:type" content="{}" />"#,
+                        r#"
+                        <x-metadata-image content="$root/{path_to_data}" />
+                        <meta property="og:video:type" content="{}" />
+                        <meta property="twitter:card" content="summary_large_image" />
+                        "#,
                         mime.to_string()
                     )
                     .unwrap();
@@ -259,9 +256,9 @@ pub fn gen_resources_list() -> Vec<(String, Resource)> {
                         <title>{title}</title>
                         <x-base-metadata />
                         <link href="$root/css/pages/arts.css" rel="stylesheet" />
-                        <meta property="og:title" content="{title}" />
+                        <x-metadata-title content="{title}" />
                         <meta property="og:type" content="website" />
-                        <meta property="og:url" content="$root/$current_file" />
+                        <x-metadata-url content="$root/$current_file" />
                         <x-metadata-description content="{short_desc}" />
                         {opengraph_data}
                     </head>

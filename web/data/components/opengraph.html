@@ -1,5 +1,5 @@
 <x-template name="x-default-opengraph-image">
-  <meta property="og:image" content="$root/favicon_for_opengraph.png" />
+  <x-metadata-image content="$root/favicon_for_opengraph.png" />
   <meta property="og:image:width" content="256" />
   <meta property="og:image:height" content="256" />
 </x-template>
@@ -10,14 +10,34 @@ Describes my website itself. Regardless the page this is attached to
 -->
 <x-template name="x-default-opengraph">
   <x-default-opengraph-image />
-  <meta property="og:title" content="Foxie's Stuffs :3" />
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="$root" />
+  <x-metadata-title content="Foxie's Stuffs :3" />
+  <x-metadata-url content="$root" />
   <x-metadata-description content="A little website where I put my stuffs UwU" />
+  <meta property="og:type" content="website" />
+</x-template>
+
+<x-template name="x-metadata-url">
+  <meta property="og:url" $props />
+</x-template>
+
+<x-template name="x-metadata-video">
+  <meta property="og:video" $props />
+  <meta property="twitter:player" $props />
+</x-template>
+
+<x-template name="x-metadata-image">
+  <meta property="og:image" $props />
+  <meta property="twitter:image" $props />
+</x-template>
+
+<x-template name="x-metadata-title">
+  <meta property="og:title" $props />
+  <meta property="twitter:title" $props />
 </x-template>
 
 <x-template name="x-metadata-description">
   <meta property="og:description" $props />
+  <meta property="twitter:description" $props />
   <meta name="description" $props />
 </x-template>
 
