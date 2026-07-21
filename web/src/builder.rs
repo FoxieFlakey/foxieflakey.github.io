@@ -61,7 +61,9 @@ pub fn build(
                 .map_err(|e| format!("File '{name}' has invalid UTF8 format: {e}"))
                 .map(|x| x.to_string())
         },
-        true,
+        // TODO: Minify but not extreme. Social media bot crawler, struggle to find
+        // or parse the heavily minified HTML.
+        false,
     );
 
     let build_time = Utc::now().to_rfc2822();
