@@ -26,7 +26,14 @@ macro_rules! art {
 }
 
 #[rustfmt::skip]
-pub static ARTS: [Art; 267] = [
+pub static ARTS: [Art; 268] = [
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 7, 21).unwrap(),
+        data: include_bytes!("data/ArtFight 2026: Door and Cotton.png"),
+        title: "ArtFight 2026: Door Kuga and Cotton",
+        page_id: "artfight2026_door_kuga_and_cotton",
+        description_long: "So i noticed new character from kuga :3 and added her to here",
+    },
     art! {
         posted_on: NaiveDate::from_ymd_opt(2026, 7, 21).unwrap(),
         data: include_bytes!("data/ArtFight 2026: Stretch Tuffle.png"),
