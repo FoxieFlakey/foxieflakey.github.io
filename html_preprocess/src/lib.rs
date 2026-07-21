@@ -12,6 +12,7 @@ pub use html::parser::Attribute;
 pub use html::parser::AttributeData;
 pub use html::parser::Element;
 pub use html::parser::ElementContent;
+pub mod util;
 
 #[track_caller]
 pub fn create_generator<F>(
