@@ -1,8 +1,8 @@
-use std::{borrow::Cow, fmt::Write, io::Cursor, sync::OnceLock};
+use std::{borrow::Cow, collections::HashMap, fmt::Write, io::Cursor, sync::{LazyLock, OnceLock}};
 
 use chrono::{Datelike, NaiveDate};
 
-use crate::{config::Resource, util};
+use crate::{config::Resource, util::{self, ExpectNone}};
 
 mod data;
 
@@ -140,6 +140,17 @@ impl Art {
 pub const ARTS_BASE_DIR: &'static str = "/arts";
 pub use data::ARTS;
 
+pub static ID_TO_ART: LazyLock<HashMap<String, &'static Art>> = LazyLock::new(|| {
+    let mut map = HashMap::with_capacity(ARTS.len());
+    
+    for art in &ARTS {
+        map.insert(art.page_id.to_string(), art)
+            .expect_none(&format!("There duplicate arts for '{}'" ,art.page_id));
+    }
+    
+    map
+});
+
 pub fn init() {
     // Check if ARTS sorted chronologically
     // start from index 0 mean recent one, to LEN-1 is oldest one
@@ -162,6 +173,8 @@ pub fn init() {
 
         current_idx += 1;
     }
+    
+    LazyLock::force(&ID_TO_ART);
 }
 
 pub fn gen_resources_list() -> Vec<(String, Resource)> {

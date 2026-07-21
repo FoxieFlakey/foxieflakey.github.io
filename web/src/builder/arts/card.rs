@@ -104,10 +104,7 @@ pub fn generator_func(args: GeneratorArgs) -> Result<String, String> {
     let with_title =
         util::find_attribute(args.attributes, args.preprocessor, "with_title").is_some();
 
-    // TODO: maybe optimize the layout of ARTS array, or add another one but hashmap
-    // so does not perform linear search here
-
-    let Some(art) = config::arts::ARTS.iter().find(|x| x.page_id == id) else {
+    let Some(art) = config::arts::ID_TO_ART.get(&id) else {
         return Err(format!("Cannot find art with ID of '{id}'"));
     };
 
