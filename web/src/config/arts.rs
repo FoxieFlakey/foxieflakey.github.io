@@ -212,7 +212,7 @@ pub fn gen_resources_list() -> Vec<(String, Resource)> {
                         .unwrap();
                         writeln!(
                             &mut opengraph_data,
-                            r#"<meta property="og:image:width" content="{height}" />"#
+                            r#"<meta property="og:image:height" content="{height}" />"#
                         )
                         .unwrap();
                     }
@@ -221,7 +221,7 @@ pub fn gen_resources_list() -> Vec<(String, Resource)> {
                     writeln!(
                         &mut opengraph_data,
                         r#"
-                        <x-metadata-image content="$root/{path_to_data}" />
+                        <x-metadata-video content="$root/{path_to_data}" />
                         <meta property="og:video:type" content="{}" />
                         <meta property="twitter:card" content="summary_large_image" />
                         "#,
@@ -231,12 +231,12 @@ pub fn gen_resources_list() -> Vec<(String, Resource)> {
                     if let Some((width, height)) = x.actual_size() {
                         writeln!(
                             &mut opengraph_data,
-                            r#"<meta property="og:video:width" content="{width}" />"#
-                        )
-                        .unwrap();
-                        writeln!(
-                            &mut opengraph_data,
-                            r#"<meta property="og:video:width" content="{height}" />"#
+                            r#"
+                            <meta property="og:video:width" content="{width}" />
+                            <meta property="og:video:height" content="{height}" />
+                            <meta property="twitter:player:width" content="{width}" />
+                            <meta property="twitter:player:height" content="{height}" />
+                            "#
                         )
                         .unwrap();
                     }
