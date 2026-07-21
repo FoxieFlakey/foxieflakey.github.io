@@ -76,6 +76,10 @@ pub fn run(
                 return Ok(None);
             }
 
+            if content == "current_file" {
+                return Ok(Some(context.current_file_path.clone()));
+            }
+
             if let Some(val) = context.get_env(content) {
                 return Ok(Some(val.clone()));
             } else {

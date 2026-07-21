@@ -82,6 +82,7 @@ pub enum Template<'a> {
 }
 
 struct FileContext<'a, 'env> {
+    current_file_path: String,
     preprocessor: &'a mut Preprocessor<'env>,
     known_templates: HashMap<String, Template<'static>>,
 }
@@ -278,6 +279,7 @@ impl<'a> Preprocessor<'a> {
 
         let mut ctx = FileContext {
             preprocessor: self,
+            current_file_path: path.to_string(),
             known_templates: HashMap::new(),
         };
 

@@ -252,13 +252,16 @@ pub fn gen_resources_list() -> Vec<(String, Resource)> {
             r#"
                 <import src="/components/page.html" />
                 <import src="/components/opengraph.html" />
-                <link href="$root/css/pages/arts.css" rel="stylesheet" />
                 <x-navbar-set-Gallery />
 
                 <html lang="en">
                     <head>
                         <title>{title}</title>
                         <x-base-metadata />
+                        <link href="$root/css/pages/arts.css" rel="stylesheet" />
+                        <meta property="og:title" content="{title}" />
+                        <meta property="og:type" content="website" />
+                        <meta property="og:url" content="$root/$current_file" />
                         <x-metadata-description content="{short_desc}" />
                         {opengraph_data}
                     </head>
