@@ -1,6 +1,11 @@
 use std::{borrow::Cow, fmt::Write};
 
-use crate::{config::arts::Art, util};
+use html_preprocess::GeneratorArgs;
+
+use crate::{
+    config::{self, arts::Art},
+    util,
+};
 
 pub fn generate<W>(output: &mut W, art: &Art, with_title: bool)
 where
@@ -88,4 +93,25 @@ where
 
     writeln!(output, "    </div>").unwrap();
     writeln!(output, "  </div>").unwrap();
+}
+
+pub fn generator_func(args: GeneratorArgs) -> Result<String, String> {
+    // Whether wanted with the title or not
+    let Some(id) = util::find_attribute(args.attributes, args.preprocessor, "id") else {
+        return Err(format!("ID is not set when its required for x-art-card"));
+    };
+
+    let with_title =
+        util::find_attribute(args.attributes, args.preprocessor, "with_title").is_some();
+
+    // TODO: maybe optimize the layout of ARTS array, or add another one but hashmap
+    // so does not perform linear search here
+
+    let Some(art) = config::arts::ARTS.iter().find(|x| x.page_id == id) else {
+        return Err(format!("Cannot find art with ID of '{id}'"));
+    };
+
+    let mut output = String::new();
+    generate(&mut output, art, with_title);
+    Ok(output)
 }

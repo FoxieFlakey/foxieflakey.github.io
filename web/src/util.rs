@@ -1,5 +1,6 @@
 use std::{borrow::Cow, str::FromStr, sync::LazyLock, time::Duration};
 
+use html_preprocess::{Preprocessor, util::AttributeExt};
 use infer::Infer;
 use mime::Mime;
 
@@ -100,4 +101,18 @@ where
     S: ?Sized + AsRef<str>,
 {
     Cow::Owned(html_escape::encode_safe(text).replace('$', "&dollar;"))
+}
+
+pub fn find_attribute(
+    attributes: &[html_preprocess::Attribute],
+    preprocessor: &Preprocessor,
+    key: &str,
+) -> Option<String> {
+    attributes
+        .iter()
+        .filter(|x| x.get_key(preprocessor).map(|x| x == key).unwrap_or(false))
+        .map(|x| x.get_value(preprocessor))
+        .flatten()
+        .map(|x| x.to_string())
+        .next()
 }

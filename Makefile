@@ -47,9 +47,9 @@ clean:
 	cargo clean
 	rm -rf $(output_dir)
 
+# Cargo know whats changed, so ehh lets make this PHONY
+.PHONY: $(web_binary)
 $(web_binary):
 	cargo build --release --package web
 
-# Also include Rust's makefile deps
--include $(web_binary_dep)
 

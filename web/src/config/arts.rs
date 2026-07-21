@@ -1,4 +1,4 @@
-use std::{borrow::Cow, io::Cursor, sync::OnceLock};
+use std::{borrow::Cow, fmt::Write, io::Cursor, sync::OnceLock};
 
 use chrono::{Datelike, NaiveDate};
 
@@ -116,6 +116,25 @@ impl Art {
             .unwrap_or(".bin");
         format!("{page_base}.{ext}")
     }
+
+    pub fn get_short_desc(&self) -> String {
+        self.description_short
+            .map(|x| x.to_string())
+            .unwrap_or_else(|| {
+                format!(
+                    "{}...",
+                    String::from_iter(self.description_long.chars().take(60))
+                )
+            })
+    }
+
+    pub fn path_to_art(&self) -> String {
+        let year = self.posted_on.year();
+        let month = self.posted_on.format("%b");
+        let id = util::encode_html(self.page_id);
+
+        format!("{}/{year}/{month}/{id}.html", ARTS_BASE_DIR)
+    }
 }
 
 pub const ARTS_BASE_DIR: &'static str = "/arts";
@@ -146,7 +165,106 @@ pub fn init() {
 }
 
 pub fn gen_resources_list() -> Vec<(String, Resource)> {
-    ARTS.iter()
+    let mut resources: Vec<(String, Resource)> = ARTS
+        .iter()
         .map(|x| (x.path_to_data(), Resource::RawBytes(Cow::Borrowed(x.data))))
-        .collect()
+        .collect();
+
+    // Generate per art individual page
+    let individual_pages = ARTS.iter().map(|x| {
+        let title = html_escape::encode_safe(x.title);
+        let short_desc = x.get_short_desc();
+        let short_desc = html_escape::encode_safe(&short_desc);
+        let path_to_data = x.path_to_data();
+
+        let mut opengraph_data = String::new();
+
+        if let Some(mime) = x.mime() {
+            match mime.type_() {
+                mime::IMAGE => {
+                    writeln!(
+                        &mut opengraph_data,
+                        r#"<meta property="og:image" content="$root/{path_to_data}" />"#
+                    )
+                    .unwrap();
+                    writeln!(
+                        &mut opengraph_data,
+                        r#"<meta property="og:image:type" content="{}" />"#,
+                        mime.to_string()
+                    )
+                    .unwrap();
+                    if let Some((width, height)) = x.actual_size() {
+                        writeln!(
+                            &mut opengraph_data,
+                            r#"<meta property="og:image:width" content="{width}" />"#
+                        )
+                        .unwrap();
+                        writeln!(
+                            &mut opengraph_data,
+                            r#"<meta property="og:image:width" content="{height}" />"#
+                        )
+                        .unwrap();
+                    }
+                }
+                mime::VIDEO => {
+                    writeln!(
+                        &mut opengraph_data,
+                        r#"<meta property="og:video" content="$root/{path_to_data}" />"#
+                    )
+                    .unwrap();
+                    writeln!(
+                        &mut opengraph_data,
+                        r#"<meta property="og:video:type" content="{}" />"#,
+                        mime.to_string()
+                    )
+                    .unwrap();
+                    if let Some((width, height)) = x.actual_size() {
+                        writeln!(
+                            &mut opengraph_data,
+                            r#"<meta property="og:video:width" content="{width}" />"#
+                        )
+                        .unwrap();
+                        writeln!(
+                            &mut opengraph_data,
+                            r#"<meta property="og:video:width" content="{height}" />"#
+                        )
+                        .unwrap();
+                    }
+                }
+                _ => (),
+            }
+        }
+
+        let page = format!(
+            r#"
+                <import src="/components/page.html" />
+                <import src="/components/opengraph.html" />
+                <link href="$root/css/pages/arts.css" rel="stylesheet" />
+
+                <html lang="en">
+                    <head>
+                        <title>{title}</title>
+                        <x-base-metadata />
+                        <x-metadata-description content="{short_desc}" />
+                        {opengraph_data}
+                    </head>
+                    
+                    <body>
+                        <x-page>
+                            <x-art-card id="{}" with_title />
+                        </x-page>
+                    </body>
+                </html>
+            "#,
+            x.page_id
+        )
+        .into_bytes();
+        (
+            x.path_to_art(),
+            Resource::PreprocessAndIncludeHtml(Cow::Owned(page)),
+        )
+    });
+
+    resources.extend(individual_pages);
+    resources
 }

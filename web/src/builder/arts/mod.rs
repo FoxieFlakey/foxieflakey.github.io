@@ -28,6 +28,12 @@ pub fn init(
             create_generator(|_| Ok(gen_full_listing())),
         )
         .expect_none("expecting not set");
+    generators
+        .insert(
+            "art-card".to_string(),
+            create_generator(card::generator_func),
+        )
+        .expect_none("expecting not set");
 }
 
 fn gen_full_listing() -> String {
