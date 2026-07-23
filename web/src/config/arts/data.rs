@@ -26,7 +26,14 @@ macro_rules! art {
 }
 
 #[rustfmt::skip]
-pub static ARTS: [Art; 268] = [
+pub static ARTS: [Art; 269] = [
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 7, 23).unwrap(),
+        data: include_bytes!("data/ArtFight 2026: Juno Table.png"),
+        title: "ArtFight 2026: Juno Table.png",
+        page_id: "artfight2026_juno_table",
+        description_long: "Tablefi'ed UwU",
+    },
     art! {
         posted_on: NaiveDate::from_ymd_opt(2026, 7, 21).unwrap(),
         data: include_bytes!("data/ArtFight 2026: Door and Cotton.png"),
