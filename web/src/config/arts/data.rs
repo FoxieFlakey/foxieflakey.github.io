@@ -26,7 +26,23 @@ macro_rules! art {
 }
 
 #[rustfmt::skip]
-pub static ARTS: [Art; 269] = [
+pub static ARTS: [Art; 271] = [
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 7, 24).unwrap(),
+        data: include_bytes!("data/Foxie Model v2.png"),
+        title: "Remodel Minecraft ME! :3",
+        page_id: "minecraft_foxie_model",
+        description_long: "So I remodel myself replacing older version and add few
+nice feature like my limbs and body can bends/deform, and my ears and tail are more
+expressive plus I add my glasses too UwU",
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 7, 24).unwrap(),
+        data: include_bytes!("data/Flat Foxie Press.png"),
+        title: "Flat Foxie Press",
+        page_id: "flattened_foxie_press",
+        description_long: "WHAM flat",
+    },
     art! {
         posted_on: NaiveDate::from_ymd_opt(2026, 7, 23).unwrap(),
         data: include_bytes!("data/ArtFight 2026: Juno Table.png"),
