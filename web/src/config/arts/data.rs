@@ -26,7 +26,16 @@ macro_rules! art {
 }
 
 #[rustfmt::skip]
-pub static ARTS: [Art; 271] = [
+pub static ARTS: [Art; 272] = [
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 7, 28).unwrap(),
+        data: include_bytes!("data/ArtFight 2026: Lucky Book.png"),
+        title: "ArtFight 2026: Lucky Book",
+        page_id: "artfight2026_lucky_book",
+        description_long: "Book :3
+
+ArtFight for https://www.deviantart.com/luckythehotdog",
+    },
     art! {
         posted_on: NaiveDate::from_ymd_opt(2026, 7, 24).unwrap(),
         data: include_bytes!("data/Foxie Model v2.png"),
