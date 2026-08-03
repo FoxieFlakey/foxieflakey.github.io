@@ -1,10 +1,7 @@
 // List of my arts
-
 use chrono::NaiveDate;
 use std::sync::OnceLock;
-
 use super::Art;
-
 macro_rules! art {
     ($($field:ident : $val:expr),* $(,)?) => {{
         let mut s = Art {
@@ -24,17 +21,171 @@ macro_rules! art {
         s
     }};
 }
-
 #[rustfmt::skip]
 // Dont touch the line next to this, its modified by lua
-pub static ARTS: [Art; 274] = [
+pub static ARTS: [Art; 292] = [
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 8, 2).unwrap(),
+        data: include_bytes!("data/ArtFight 2026: Nimroth caught a fish.png"),
+        title: "ArtFight 2026: Nimroth caught a fish!",
+        page_id: "artfight2026_nimroth_caught_a_fish",
+        description_long: "A very late attack, like around <2 hours till end of ArtFight. and Pats for you :3 and i still cant draw neck or make like head to body connects properly :< so here free scarf for you too
+
+Attack on artfight: https://artfight.net/attack/18699415.nimroth-caught-a-fish
+",
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 8, 2).unwrap(),
+        data: include_bytes!("data/ArtFight 2026: Lucky Trumpet.png"),
+        title: "ArtFight 2026: Toot Toot, Half Trumpet x3",
+        page_id: "artfight2026_lucky_trumpet",
+        description_long: "So silly idea,  replace head with half trumpet :3 and gave u free bandana
+
+Attack on artfight: https://artfight.net/attack/18662176.toot-toot-half-trumpet-x3
+",
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 8, 2).unwrap(),
+        data: include_bytes!("data/ArtFight 2026: Tiger Elektra.png"),
+        title: "ArtFight 2026: Tiger Elektra",
+        page_id: "artfight2026_tiger_elektra",
+        description_long: "so because i dont draw humans, i instead draw elektra as a furry or well anthro or liek their tiger form i guess :3
+
+Attack on artfight: https://artfight.net/attack/18657597.tiger-elektra
+",
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 8, 2).unwrap(),
+        data: include_bytes!("data/Cube Foxie.png"),
+        title: "Cubie",
+        page_id: "cubie_rendered",
+        description_long: "The rendered version of cube me in Blender. also look at the cute eyeeee",
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 8, 2).unwrap(),
+        data: include_bytes!("data/ArtFight 2026: Door Nehuen and Doormat Kludgy.png"),
+        title: "ArtFight 2026: Door Nehuen and Doormat Kludy",
+        page_id: "artfight2026_door_nehuen_and_doormat_kludy",
+        description_long: "An revenge for kludy and attack for nehuen. Posted on https://artfight.net/attack/18653589.doormat-kludgy-and-door-nehuen
+",
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 8, 2).unwrap(),
+        data: include_bytes!("data/ArtFight 2026: Flat David.png"),
+        title: "Flat David",
+        page_id: "artfight2026_flat_david",
+        description_long: "I roll david flat next
+
+Attack on ArtFight: https://artfight.net/attack/18644692.rolled-flat-3-david
+",
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 8, 2).unwrap(),
+        data: include_bytes!("data/Default Cube Foxie.png"),
+        title: "Blender's Default Cube (Foxie) and in Blender",
+        page_id: "blender_default_cube2",
+        description_long: "So made it into actual Blender's factory default scene
+",
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 8, 2).unwrap(),
+        data: include_bytes!("data/Cube Foxie (copy 1).png"),
+        title: "Blender's Default Cube (Foxie)",
+        page_id: "blender_default_cube",
+        description_long: "So i turned myself into blender cube. Because its too cute
+",
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 8, 1).unwrap(),
+        data: include_bytes!("data/Flat Kola Rolled.png"),
+        title: "Flat Kola!!",
+        page_id: "flat_kol",
+        description_long: "Be nice if not, you'll get rolled too
+",
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 8, 1).unwrap(),
+        data: include_bytes!("data/ArtFight 2026: Flat Kuga Rolled.png"),
+        title: "ArtFight 2026: Flat Kuga Rolled UwU",
+        page_id: "artfight2026_flat_kuga_rolled",
+        description_long: "I rolled Kuga next UwU
+
+Attack on ArtFight: https://artfight.net/attack/18645053.rolled-flat-3-kuga",
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 8, 1).unwrap(),
+        data: include_bytes!("data/Flat Foxie Rolled.png"),
+        title: "Foxie Rolled Too!",
+        page_id: "flat_foxie_by_rolling",
+        description_long: "So im kinda bit jealous and get myself rolled. Wait who is on the roller machine??!
+",
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 8, 1).unwrap(),
+        data: include_bytes!("data/ArtFight 2026: Heird Slingshot.png"),
+        title: "ArtFight 2026: Heird Slingshot.png",
+        page_id: "artfight2026_heird_slingshot",
+        description_long: "So here another artfight attack for https://artfight.net/~Zhanya2008 at ArtFight posted on https://artfight.net/attack/18503946.slingshot-heird-3
+",
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 8, 1).unwrap(),
+        data: include_bytes!("data/Flat Tym.png"),
+        title: "Flat Tym",
+        page_id: "flat_tym",
+        description_long: "hehe i flattened him by rolling over him UwU
+",
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 7, 31).unwrap(),
+        data: include_bytes!("data/ArtFight 2026: Sushi Lucky.png"),
+        title: "ArtFight 2026: Mini Cakes Lucky!",
+        page_id: "artfight2026_mini_cakes_lucky",
+        description_long: "i was intending to draw Sushi but ended up drawing Mini Cakes lol!
+
+Attack on ArtFight: https://artfight.net/attack/18339070.mini-cakes",
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 7, 30).unwrap(),
+        data: include_bytes!("data/Ice Cream Foxie and Chair Kuga.png"),
+        title: "Ice Cream Foxie and Chair kuga",
+        page_id: "ice_cream_foxie_and_chair_kuga",
+        description_long: "I turned Kuga and Foxie into objects :3
+        (also this meant to be AF attack, but forgot to post)",
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 7, 30).unwrap(),
+        data: include_bytes!("data/ArtFight 2026: Stretch Snoot Rubby.png"),
+        title: "ArtFight 2026: Stretchhhh theeee snooooot (Rubby)!",
+        page_id: "artfight2026_stretch_rubby_snoot",
+        description_long: "what did i do? i ~~purposely~~ accidentally slipped! >:(
+
+Attack on ArtFight: https://artfight.net/attack/18200455.stretch-the-snoot-rubby",
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 7, 29).unwrap(),
+        data: include_bytes!("data/ArtFight 2026: Stretch Snoot Kuga.png"),
+        title: "ArtFight 2026: Stretchhhh theeee snooooot (Kuga)!",
+        page_id: "artfight2026_stretch_kuga_snoot",
+        description_long: "stretch like toony
+
+Attack on ArtFight: https://artfight.net/attack/18105417.stretch-the-snoot",
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 7, 29).unwrap(),
+        data: include_bytes!("data/ArtFight 2026: Shapes Lucky.png"),
+        title: "ArtFight 2026: Shapes Lucky!",
+        page_id: "artfight2026_shapes_lucky",
+        description_long: "no idea what to choose so RANDOM SHAPES GO
+
+Attack on ArtFight: https://artfight.net/attack/18105212.random-shapes-go",
+    },
     art! {
         posted_on: NaiveDate::from_ymd_opt(2026, 7, 28).unwrap(),
         data: include_bytes!("data/ArtFight 2026: Lucky Book.png"),
         title: "ArtFight 2026: Lucky Book",
         page_id: "artfight2026_lucky_book",
         description_long: "Book :3
-
 ArtFight for https://www.deviantart.com/luckythehotdog",
     },
     art! {
@@ -88,7 +239,6 @@ expressive plus I add my glasses too UwU",
         page_id: "artfight2026_stretched_tuffle",
         description_long: "I drawn stretched Tuffle pretttty long. Hope you like the body <3",
     },
-
     art! {
         posted_on: NaiveDate::from_ymd_opt(2026, 7, 19).unwrap(),
         data: include_bytes!("data/ArtFight_2026__Kit-Kat.png"),
@@ -209,7 +359,6 @@ expressive plus I add my glasses too UwU",
         title: "Infectious Spruce Tree :3",
         page_id: "scp867_foxie",
         description_long: "scp 867 meet foxie and make pretty strange result :3
-
 the scp 867 foxie, still can infect other in same way normal blood spruce does and has same limitation like normal instance like basically a tree stuck in one place :3 ",
     },
     art! {
@@ -225,7 +374,6 @@ the scp 867 foxie, still can infect other in same way normal blood spruce does a
         title: "Quirky Foxie",
         page_id: "quirky_foxie",
         description_long: "so Foxie looked outside ~~purposely~~ and get tf'ed into cute monster (a reference from my friend that is fitting here lol)
-
 fun fact, this one is my attempt to apply body horror to foxie but it ended up cute ",
     },
     art! {
@@ -257,7 +405,6 @@ fun fact, this one is my attempt to apply body horror to foxie but it ended up c
         render_width: Some(1366),
         render_height: Some(768),
         description_long: "Run these commands if you want to get this perspective :3 use minecraft 26.1.2 (create world with seed of -311818737 and FOV of 39 and 16:9 game window aspect ratio)
-
 /tp @s -1423.135720 86.280566 766.146850 -176.8 10.1
 /time set 5400
 /gamemode spectator ",
@@ -342,7 +489,6 @@ fun fact, this one is my attempt to apply body horror to foxie but it ended up c
         title: "Box Body",
         page_id: "box_body",
         description_long: "I like the two intemediate steps from https://www.furaffinity.net/view/47832913/
-
 where im nothing than just box with limbs and one where my body starts turning into more rectangular :3",
     },
     art! {
@@ -400,7 +546,6 @@ where im nothing than just box with limbs and one where my body starts turning i
         title: "Sofa Foxie",
         page_id: "sofa_foxie_by_dolly",
         description_long: "So this was https://www.deviantart.com/thesillydollykatana side of trade, i forgot to upload after she said its fine
-
 here this one i sofa foxie :3",
     },
     art! {
@@ -493,14 +638,9 @@ here this one i sofa foxie :3",
         title: "Live TF Page 10: transform Foxie's head tobe made out of lego",
         page_id: "livetf_page10",
         description_long: r#"legofied and kinda took awhile to decide nice lego density
-
 # im copy pasting this on every page -w- about what this is about
-
-
 so i started silly game idea where anyone can tell me a "step" to do to myself named "Live Transform" so its live because people slowly stacking changes on me continously transforming/changing me into something so a pretty long sequences lol!
-
 so there a magic pencil and eraser, one person can either choose to add/change (magic pencil) or erase (magic eraser), but cannot be both at same time
-
 each of the step is from someone saying what next is :3 "#,
     },
     art! {
@@ -523,14 +663,9 @@ each of the step is from someone saying what next is :3 "#,
         title: "Live TF Page 9: Tie the legs together to look like 🎀",
         page_id: "livetf_page9",
         description_long: r#"bwehh
-
 # im copy pasting this on every page -w- about what this is about
-
-
 so i started silly game idea where anyone can tell me a "step" to do to myself named "Live Transform" so its live because people slowly stacking changes on me continously transforming/changing me into something so a pretty long sequences lol!
-
 so there a magic pencil and eraser, one person can either choose to add/change (magic pencil) or erase (magic eraser), but cannot be both at same time
-
 each of the step is from someone saying what next is :3 "#,
     },
     art! {
@@ -539,14 +674,9 @@ each of the step is from someone saying what next is :3 "#,
         title: "Live TF Page 8: Rollls up both of hand paws",
         page_id: "livetf_page8",
         description_long: r#"another rolls? Owo
-
 # im copy pasting this on every page -w- about what this is about
-
-
 so i started silly game idea where anyone can tell me a "step" to do to myself named "Live Transform" so its live because people slowly stacking changes on me continously transforming/changing me into something so a pretty long sequences lol!
-
 so there a magic pencil and eraser, one person can either choose to add/change (magic pencil) or erase (magic eraser), but cannot be both at same time
-
 each of the step is from someone saying what next is :3 "#,
     },
     art! {
@@ -555,14 +685,9 @@ each of the step is from someone saying what next is :3 "#,
         title: "Live TF Page 7: Rollls up partially",
         page_id: "livetf_page7",
         description_long: r#"partially rolled i wonder whats next happen to bottom half Owo
-
 # im copy pasting this on every page -w- about what this is about
-
-
 so i started silly game idea where anyone can tell me a "step" to do to myself named "Live Transform" so its live because people slowly stacking changes on me continously transforming/changing me into something so a pretty long sequences lol!
-
 so there a magic pencil and eraser, one person can either choose to add/change (magic pencil) or erase (magic eraser), but cannot be both at same time
-
 each of the step is from someone saying what next is :3 "#,
     },
     art! {
@@ -571,14 +696,9 @@ each of the step is from someone saying what next is :3 "#,
         title: "Live TF Page 6: Flat as paper",
         page_id: "livetf_page6",
         description_long: r#"Flattttt....
-
 # im copy pasting this on every page -w- about what this is about
-
-
 so i started silly game idea where anyone can tell me a "step" to do to myself named "Live Transform" so its live because people slowly stacking changes on me continously transforming/changing me into something so a pretty long sequences lol!
-
 so there a magic pencil and eraser, one person can either choose to add/change (magic pencil) or erase (magic eraser), but cannot be both at same time
-
 each of the step is from someone saying what next is :3 "#,
     },
     art! {
@@ -587,14 +707,9 @@ each of the step is from someone saying what next is :3 "#,
         title: "Live TF Page 5: Make paw larger ",
         page_id: "livetf_page5",
         description_long: r#"So here again large paws :3
-
 # im copy pasting this on every page -w- about what this is about
-
-
 so i started silly game idea where anyone can tell me a "step" to do to myself named "Live Transform" so its live because people slowly stacking changes on me continously transforming/changing me into something so a pretty long sequences lol!
-
 so there a magic pencil and eraser, one person can either choose to add/change (magic pencil) or erase (magic eraser), but cannot be both at same time
-
 each of the step is from someone saying what next is :3 "#,
     },
     art! {
@@ -603,14 +718,9 @@ each of the step is from someone saying what next is :3 "#,
         title: "Live TF Page 4: S t r e t c h that body long",
         page_id: "livetf_page4",
         description_long: r#"Looooooooong body
-
 # im copy pasting this on every page -w- about what this is about
-
-
 so i started silly game idea where anyone can tell me a "step" to do to myself named "Live Transform" so its live because people slowly stacking changes on me continously transforming/changing me into something so a pretty long sequences lol!
-
 so there a magic pencil and eraser, one person can either choose to add/change (magic pencil) or erase (magic eraser), but cannot be both at same time
-
 each of the step is from someone saying what next is :3 "#,
     },
     art! {
@@ -619,14 +729,9 @@ each of the step is from someone saying what next is :3 "#,
         title: "Live TF Page 3: Insert that pooltoy smile",
         page_id: "livetf_page3",
         description_long: r#"EEK owo not again
-
 # im copy pasting this on every page -w- about what this is about
-
-
 so i started silly game idea where anyone can tell me a "step" to do to myself named "Live Transform" so its live because people slowly stacking changes on me continously transforming/changing me into something so a pretty long sequences lol!
-
 so there a magic pencil and eraser, one person can either choose to add/change (magic pencil) or erase (magic eraser), but cannot be both at same time
-
 each of the step is from someone saying what next is :3 "#,
     },
     art! {
@@ -635,14 +740,9 @@ each of the step is from someone saying what next is :3 "#,
         title: "Live TF Page 2: Detach the head",
         page_id: "livetf_page2",
         description_long: r#"Okay so her head is detached
-
 # im copy pasting this on every page -w- about what this is about
-
-
 so i started silly game idea where anyone can tell me a "step" to do to myself named "Live Transform" so its live because people slowly stacking changes on me continously transforming/changing me into something so a pretty long sequences lol!
-
 so there a magic pencil and eraser, one person can either choose to add/change (magic pencil) or erase (magic eraser), but cannot be both at same time
-
 each of the step is from someone saying what next is :3 "#,
     },
     art! {
@@ -651,9 +751,7 @@ each of the step is from someone saying what next is :3 "#,
         title: "Live TF Page 1: A good start as the base",
         page_id: "livetf_page1",
         description_long: r#" so i started silly game idea yesterday where anyone can tell me a "step" to do to myself named "Live Transform" so its live because people slowly stacking changes on me continously transforming/changing me into something so a pretty long sequences lol!
-
 so there a magic pencil and eraser, one person can either choose to add/change (magic pencil) or erase (magic eraser), but cannot be both at same time
-
 each of the step is from someone saying what next is :3"#,
     },
     art! {
@@ -669,7 +767,6 @@ each of the step is from someone saying what next is :3"#,
         title: "Foxie turning pumpkin :3",
         page_id: "pumpking_foxie",
         description_long: "random idea from https://www.furaffinity.net/view/33248741, was looking for reference/idea for this one https://www.furaffinity.net/view/64308834/ and decided to make another one basing same idea as that one Uwu
-
 i maybe bit weird idk",
     },
     art! {
@@ -701,23 +798,16 @@ Kuga asked to be transformed into AC",
         page_id: "first_commision",
         description_short: Some("So I tried first commision on art"),
         description_long: r#"I closed it now due no activity
-
 Prices: you name your price :3 between $5 to $15, any amount is appreciated (more than $5 there nothing additional added, just a lil tip if you want or you think my arts worth more :3)
 Payment methods: PayPal or Ko-Fi donations (at https://ko-fi.com/foxieflakey) at the moment[1]
 Queuing: first come first serve (FurAffinity comment and notes sorted by date and time sent, make it clear too :3, if you're one of first three but unable to pay/whatever/didn't proceed, the slot would be given to the 4th but if 4th, 5th, or 6th can't pay then the corresponding slot would be unused hopefully i won't reach there :3)
 ETA when i complete: uhhh... im trying... >w<
 Contact: send me a note and also pay only when im done with it before making it public
-
 its for one drawing of art for each slot, it must be only SFW and within reasonable limit plus few themes which i say its fine (just ask me) on any of your OC or Foxie, it can be about inanimate TF situation or other kind i do. I may or may not reject and refunds
-
 so uhhh after thinking alot i decided i should just "do it" instead overthinking but... hopefully this leads to somewhere :3
-
 there only 3 open tho, because not sure how my unstable brain will do if i let uncapped amount -w-
-
 LARGE NOTE for PayPal payments: please choose the good & service type of payment atleast because paypal has "refund" button if you mistakenly sent wrong amount for some reason or cancel and for this purpose which i hope it works but im not sure so better dont send till i say so other than that it is required too because user agreement -w- (open https://www.paypal.com/us/legalhub/.....agreement-full and search "You must not send money")
-
 another note: if someone can help me with paypal, you may tell me why it didnt let me use my paypal's balance to send out money :3
-
 [1]: If you're Indonesian, other method like QRIS could be available just not for this open commision. only PayPal/Ko-Fi for now, I do not accept direct GoPay, Dana, ShopeePay or whatever "#,
     },
     art! {
@@ -1099,7 +1189,6 @@ my style is UwU",
         render_height: Some(955),
         description_short: Some("A little website UwU"),
         description_long: "You can see this at https://foxieflakey.github.io/
-
 Its all handwritten HTML, CSS and JS by me. There is already known problem of it possibly breaking on potrait screens (typical CSS behaviour ;w;)",
     },
     art! {
@@ -1111,7 +1200,6 @@ Its all handwritten HTML, CSS and JS by me. There is already known problem of it
         render_height: Some(500),
         description_short: Some("An animation"),
         description_long: "So I try a small basic animation involving Foxie.
-
 There might be messed up pixels (just tiny or coloring shifted) because I have to go mp4 intermediary then go to gif because unable to get Krita properly export it to apng nor gif for some reason the other format are lossy (think H.264, H.265, webm, mp4, etc)",
     },
     art! {
@@ -1154,7 +1242,6 @@ There might be messed up pixels (just tiny or coloring shifted) because I have t
         render_height: Some(719),
         description_short: Some("Floor tileee"),
         description_long: "What is it like being a floor tile hmmmmm
-
 also i extend the drawing to be 16:9 ratio",
     },
     art! {
@@ -1271,7 +1358,6 @@ Also thought of another idea of mouthless version :3",
         render_height: Some(768),
         description_short: Some("Ice creammm"),
         description_long: "In this one Foxie is calmy consuming ice cream under shade of tree.
-
 And also I drawn this with my sister\'s laptop\'s large touchscreen is something changed? :3 im curious if anyone can notice changes",
     },
     art! {
@@ -1593,9 +1679,7 @@ And also I drawn this with my sister\'s laptop\'s large touchscreen is something
         render_height: Some(240),
         description_short: Some("hmmm i can store items"),
         description_long: "rescaled to 240x240x because just noticed its super small .w.
-
 An art which is completed but forgot to upload
-
 So i was modelling chest foxie in blockbench and went to front view and figured that maybe i could make a pixel art about it and here the result 24x24 pixels",
     },
     art! {
@@ -1607,7 +1691,6 @@ So i was modelling chest foxie in blockbench and went to front view and figured 
         render_height: Some(200),
         description_short: Some("hmmmm i can store items"),
         description_long: "An art which is completed but forgot to upload
-
 So i was modelling chest foxie in blockbench and went to front view and figured that maybe i could make a pixel art about it and here the result 24x24 pixels",
     },
     art! {
@@ -1619,7 +1702,6 @@ So i was modelling chest foxie in blockbench and went to front view and figured 
         render_height: Some(768),
         description_short: Some("Firework sequence"),
         description_long: "so i try made a TF sequence because i havent done any and i drawn it half a year ago and supposed to be part of something larger but didnt get the motivation and time to complete it due school is stressful that i couldnt make large stuffs
-
 and plus its been quite a while since i transform myself into objects",
     },
     art! {
@@ -1631,7 +1713,6 @@ and plus its been quite a while since i transform myself into objects",
         render_height: Some(720),
         description_short: Some("Geometries"),
         description_long: "so i mess with geometry node and generate this large terrain and also play with compositors
-
 could add detail like trees but where do i find trees and grass and flowers?! like non minecraft one to perfectly fits to this one without setting my pair of intel celerons on fire with this large terrain plus details",
     },
     art! {
@@ -1663,7 +1744,6 @@ could add detail like trees but where do i find trees and grass and flowers?! li
         render_height: Some(500),
         description_short: Some("Stomach face"),
         description_long: "A little story
-
 Foxie found a little potion which claims to provide new perspective and when she drank it well her face reappeared on her stomach. didnt expect \"new perspective\" to be literally",
     },
     art! {
@@ -1675,7 +1755,6 @@ Foxie found a little potion which claims to provide new perspective and when she
         render_height: Some(500),
         description_short: Some("comfy blanket"),
         description_long: "drawn at middle of school\'s IT class where i can use school\'s computers and installed krita on it UwU
-
 and using mouse is better than a touchpad to draw! :3,",
     },
     art! {
@@ -1737,9 +1816,7 @@ and using mouse is better than a touchpad to draw! :3,",
         render_height: Some(1080),
         description_short: Some("Sleeping"),
         description_long: "This is a rerender of previous iteration with few changes after learning ambient lighting so im still visible even being covered with shadow instead pitch black
-
 which previously i attempt to mitigate by doing something but accidentally made shadow super soft instead ;w;
-
 and can anyone guess what changed in my texture? OwO",
     },
     art! {
@@ -1751,7 +1828,6 @@ and can anyone guess what changed in my texture? OwO",
         render_height: Some(720),
         description_short: Some("Ah nice floor or ground thinking"),
         description_long: "So i try Blender again and learnt there such thing as \"ambient light\" which helped me to not have pitch black shadows and instead mix with the thing which obscured by shadow so its visible but darker.
-
 And also I modeled myself in blender as 4th attempt with sculpting tool and dyntopo UwU",
     },
     art! {
@@ -1763,7 +1839,6 @@ And also I modeled myself in blender as 4th attempt with sculpting tool and dynt
         render_height: Some(700),
         description_short: Some("Flatsie"),
         description_long: "Foxie found wringer machine in middle of nowhere and decided to try it on herself because she is always a fox who likes to try things on itself ^w^ (try look at history of what she has already tried! you\'ll be surprise at how many things she has tried!)
-
 so i drawn this mid school and then retrace it digitally :3",
     },
     art! {
@@ -1785,7 +1860,6 @@ so i drawn this mid school and then retrace it digitally :3",
         render_height: Some(700),
         description_short: Some("Tramp and Foxie flattened"),
         description_long: "So Tramp and Foxie met together talking before someone surprise TF both of us and turned us into a towel and now they\'re drying us (also i cant help to not join the TF so i joined too)
-
 A request by someone :3,",
     },
     art! {
@@ -1807,7 +1881,6 @@ A request by someone :3,",
         render_height: Some(226),
         description_short: Some("Cleaning.. cleaningg"),
         description_long: "A drawing i drawn a year ago but dont have time to retrace it digitally so here it is
-
 also a reupload because messed up something",
     },
     art! {
@@ -1829,7 +1902,6 @@ also a reupload because messed up something",
         render_height: Some(1409),
         description_short: Some("Gift for Tanuki"),
         description_long: "its a bit late but i got it done :3,
-
 Its for my friend, tanuki! &lt;3,",
     },
     art! {
@@ -2032,7 +2104,6 @@ Its for my friend, tanuki! &lt;3,",
         render_height: Some(720),
         description_short: Some("Fridge!"),
         description_long: "perhaps another practise on blender with simple objects to be modelled next step above minecraft modelling and interior design too
-
 and also the interior and shape roughly modelled based on my irl fridge",
     },
     art! {
@@ -2044,7 +2115,6 @@ and also the interior and shape roughly modelled based on my irl fridge",
         render_height: Some(768),
         description_short: Some("End of janitor shift!"),
         description_long: "a nice view :3
-
 also i ahve decided that canonical job for Foxie in her world is janitor",
     },
     art! {
@@ -2273,12 +2343,9 @@ this is 2560x1440 image there 4k one but site dont allow much larger",
         render_height: Some(768),
         description_short: Some("Cozy Foxie"),
         description_long: "so i turned into a hoodie for my friend sparky (who give me this idea) to be worn by him UwU
-
 little dialog (a bit lazy to write the text in the drawing)
-
 Foxie: do you like hoodie me? :3
 Sparky: yes i do you\'re a very comfy hoodie
-
 (random thing does clothes transformation counts as flattening OwO, i wonder :3)",
     },
     art! {
@@ -2451,7 +2518,6 @@ Sparky: yes i do you\'re a very comfy hoodie
         render_height: Some(768),
         description_short: Some("Im a mug"),
         description_long: "2 drawings a day streak :3
-
 this one is my friend suggested me to do mug foxie and here the result UwU",
     },
     art! {
@@ -2463,7 +2529,6 @@ this one is my friend suggested me to do mug foxie and here the result UwU",
         render_height: Some(768),
         description_short: Some("I still works like the object i turned into"),
         description_long: "So me in transformed state, can be used like the objects I transformed into like in this case a drawer used to stores office things :3
-
 A little note UwU: the floating gloves suppose to be a generic character\'s paws but i cant draw characters properly in this perspective -w-",
     },
     art! {
@@ -2535,7 +2600,6 @@ A little note UwU: the floating gloves suppose to be a generic character\'s paws
         render_height: Some(1440),
         description_short: Some("Thank you my friends!"),
         description_long: "a thank you drawing for my friends from all online platforms :3 if anyone was missed sorry about that... i cant fit everyone
-
 peoples in the drawing:
 1. Tanuki 
 2. Razvii
@@ -2642,10 +2706,6 @@ peoples in the drawing:
         render_height: Some(1080),
         description_short: Some("Roomba like?"),
         description_long: "I\'m learning how to use Blender and i created a simple tiny bot Foxie, while im learning to use Blender UwU
-
-
-
-
 she can chase you in this form :3",
     },
     art! {
@@ -2657,7 +2717,6 @@ she can chase you in this form :3",
         render_height: Some(1440),
         description_short: Some("Moon cakes"),
         description_long: "So my chineese subject gives me an assignment to make a poster about chineese moon cake so i give them this :3
-
 what do you all think?",
     },
     art! {
