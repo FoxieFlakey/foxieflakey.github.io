@@ -7,7 +7,7 @@ end
 
 function writeAll(path, data)
   local fp<close> = assert(io.open(data_file, "w"))
-  assert(fp:write("*a", data))
+  assert(fp:write(data))
 end
 
 function ask(question)
