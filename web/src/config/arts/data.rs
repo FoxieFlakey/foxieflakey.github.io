@@ -26,6 +26,7 @@ macro_rules! art {
 }
 
 #[rustfmt::skip]
+// Dont touch the line next to this, its modified by lua
 pub static ARTS: [Art; 274] = [
     art! {
         posted_on: NaiveDate::from_ymd_opt(2026, 7, 28).unwrap(),
