@@ -26,7 +26,7 @@ macro_rules! art {
 }
 
 #[rustfmt::skip]
-pub static ARTS: [Art; 272] = [
+pub static ARTS: [Art; 274] = [
     art! {
         posted_on: NaiveDate::from_ymd_opt(2026, 7, 28).unwrap(),
         data: include_bytes!("data/ArtFight 2026: Lucky Book.png"),
@@ -35,6 +35,20 @@ pub static ARTS: [Art; 272] = [
         description_long: "Book :3
 
 ArtFight for https://www.deviantart.com/luckythehotdog",
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 7, 27).unwrap(),
+        data: include_bytes!("data/Dog_Bed_Inkie.png"),
+        title: "Dog Bed Inkie :3",
+        page_id: "inkie_bed",
+        description_long: "So this is for my friend on Discord, Inkie",
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 7, 27).unwrap(),
+        data: include_bytes!("data/Fuzzy Foxie Furred combed v3.png"),
+        title: "Furred Foxie :3",
+        page_id: "minecraft_foxie_model_furred",
+        description_long: "So i made myself fuzzy UwU",
     },
     art! {
         posted_on: NaiveDate::from_ymd_opt(2026, 7, 24).unwrap(),
