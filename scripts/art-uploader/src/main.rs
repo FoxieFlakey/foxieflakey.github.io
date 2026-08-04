@@ -90,15 +90,6 @@ fn main() -> Result<ExitCode, ExitCode> {
         ExitCode::FAILURE
     })?;
 
-    println!("-- SUMMARY --");
-    println!("Art title: {}", args.title);
-    println!("Art ID: {}", args.id);
-    println!("Art file path: {}", file_path.display());
-    println!("Posted on: {}", args.post_date.format("%a, %d %B %Y"));
-    println!("Key words: [{}]", args.keywords.join(", "));
-    println!("Description:\n{}", args.description);
-    println!("-------------");
-
     println!("Uploading to DeviantArt");
     deviantart_uploader::upload(&mut data, &args, &file_data).map_err(|x| {
         println!("Cannot upload art: {x}");
