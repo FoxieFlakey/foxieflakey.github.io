@@ -24,7 +24,16 @@ macro_rules! art {
 }
 #[rustfmt::skip]
 // Dont touch the line next to this, its modified by lua
-pub static ARTS: [Art; 295] = [
+pub static ARTS: [Art; 296] = [
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 8, 4).unwrap(),
+        data: include_bytes!("data/Dont Annoy Catto.png"),
+        title: "Dont Annoy Catto",
+        page_id: "dont_annoy_catto",
+        description_long: "So Foxie bee very annoying. So Catto taped her to a wall when he tries to sleep
+",
+        keywords: &["foxieflakey", "got", "tied", "by", "catto", "because", "she", "annoys", "tied", "taped", "wall", "taped", "cute", "silly", "funny"]
+    },
     art! {
         posted_on: NaiveDate::from_ymd_opt(2026, 8, 4).unwrap(),
         data: include_bytes!("data/Sign Foxie.png"),
