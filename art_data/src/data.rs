@@ -1,4 +1,5 @@
 // List of my arts
+use std::sync::LazyLock;
 use chrono::NaiveDate;
 use std::sync::OnceLock;
 use super::Art;
@@ -17,6 +18,7 @@ macro_rules! art {
             mime: OnceLock::new(),
             actual_render_size: OnceLock::new(),
             actual_size: OnceLock::new(),
+            keywords: LazyLock::new(|| vec![]),
         };
         $( s.$field = $val; )*
         s

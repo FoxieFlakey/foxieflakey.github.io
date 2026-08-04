@@ -8,7 +8,7 @@ use chrono::NaiveDate;
 use common_utils::ExpectNone;
 
 // NOTE: This contains unescaped HTML characters
-#[derive(Clone, Default)]
+#[derive(Default)]
 pub struct Art {
     pub posted_on: NaiveDate,
     pub title: &'static str,
@@ -19,6 +19,7 @@ pub struct Art {
     pub render_width: Option<u32>,
     pub render_height: Option<u32>,
     pub mime: OnceLock<Option<mime::Mime>>,
+    pub keywords: LazyLock<Vec<String>>,
 
     // Lazily initialized, if render_width and height previously is None
     // then its generated from parsing data.

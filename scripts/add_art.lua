@@ -1,4 +1,4 @@
-local data_file = "./web/src/config/arts/data.rs"
+local data_file = "./art_data/src/data.rs"
 
 function readAll(path)
   local fp<close> = assert(io.open(data_file, "r"))
@@ -41,9 +41,28 @@ local filename = ask("Art filename in data dir")
 local title = ask("Title of art")
 local page_id = ask("Page id of art")
 local description = askMulti("Description. EOF/Ctrl+D to end")
+local keywords_raw = ask("Keywords (seperate by comma)")
+
+assert(os.execute(
+  ("./scripts/art-uploader.sh --title %q --description %q --id %q --keywords %q --post-date %d-%d-%d %q"):format(
+    title,
+    description,
+    page_id,
+    keywords_raw,
+    year,
+    month,
+    day,
+    filename
+  )
+))
 
 local source = readAll(data_file)
 local transformed = {}
+
+local keywords = {}
+for item in string.gmatch(keywords_raw, "[^,]+") do
+  table.insert(keywords, ("%q"):format(item))
+end
 
 for line in source:gmatch("([^\n]*)\n?") do
     local art_count = line:match("^pub static ARTS: [[]Art; ([0-9]+)[]] = [[]$")
@@ -56,7 +75,8 @@ for line in source:gmatch("([^\n]*)\n?") do
         title: "%s",
         page_id: "%s",
         description_long: "%s",
-    },]]):format(year, month, day, filename, title, page_id, description))
+        keywords: LazyLock::new(|| vec![%s])
+    },]]):format(year, month, day, filename, title, page_id, description, table.concat(keywords, ", ")))
     elseif line ~= "" or source:sub(-1) == "\n" then -- handles empty trailing checks if needed
         table.insert(transformed, line)
     end

@@ -88,6 +88,19 @@ where
         )
         .unwrap();
     }
+    
+    if art.keywords.len() > 0 {
+        writeln!(
+            output,
+            "<tr>
+                <th>Keywords</th>
+                <td>[{}]</td>
+            </tr>",
+            art.keywords.join(",")
+        )
+        .unwrap();
+    }
+    
     writeln!(output, "</table>").unwrap();
     writeln!(output, "<p>{long_desc}</p>").unwrap();
 
