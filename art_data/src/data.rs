@@ -24,7 +24,16 @@ macro_rules! art {
 }
 #[rustfmt::skip]
 // Dont touch the line next to this, its modified by lua
-pub static ARTS: [Art; 297] = [
+pub static ARTS: [Art; 298] = [
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 8, 4).unwrap(),
+        data: include_bytes!("data/Fungie.png"),
+        title: "Fungie, Dumb Character from Merge",
+        page_id: "fungie_showcase",
+        description_long: "So last drawing is me and Kuga merged, so i thought of cute drawing of merged form to be not TF'ed so here it is, non binary, red fox-red panda hybrid. Pronouns are they them
+",
+        keywords: &["foxieflakey", "merge", "with", "kuga", "fusiontf", "fusion", "transfrmation", "character", "cute", "funny"]
+    },
     art! {
         posted_on: NaiveDate::from_ymd_opt(2026, 8, 4).unwrap(),
         data: include_bytes!("data/Floor Tile Kuga and Foxie Merged.png"),
