@@ -1,4 +1,4 @@
-use std::{borrow::Cow, fmt::Write, io::Cursor, sync::LazyLock};
+use std::{borrow::Cow, fmt::Write, sync::LazyLock};
 
 pub use art_data::{Art, ARTS, ID_TO_ART};
 use chrono::{Datelike, NaiveDate};
@@ -55,12 +55,8 @@ impl ArtExt for Art {
             .actual_size
             .get_or_init(|| match self.mime().clone()?.type_() {
                 mime::IMAGE => {
-                    let reader = image::ImageReader::new(Cursor::new(self.data))
-                        .with_guessed_format()
-                        .unwrap();
-
-                    match reader.into_dimensions() {
-                        Ok(x) => Some(x),
+                    match imagesize::blob_size(self.data) {
+                        Ok(size) => Some((size.width.try_into().unwrap(), size.height.try_into().unwrap())),
                         Err(e) => {
                             println!("[ERROR] Art module: Cannot parse art file as image: {e}");
                             None

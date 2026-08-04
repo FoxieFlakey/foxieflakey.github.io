@@ -25,7 +25,6 @@ html-escape = "0.2.14"
 html_preprocess = { path = "../html_preprocess" }
 human_bytes = "0.4.3"
 humantime = "2.4.0"
-image = { version = "0.25.10", default-features = false, features = ["png", "jpeg", "gif"] }
 infer = { version = "0.19.0", default-features = false, features = ["alloc"] }
 lightningcss = { version = "1.0.0-alpha.71", optional = true }
 mime = "0.3.17"
@@ -34,3 +33,4 @@ mime_guess = "2.0.5"
 strum = { version = "0.28.0", features = ["derive"] }
 tokio = { version = "1.52.3", features = ["net", "rt"], optional = true }
 art_data = { path = "../art_data" }
+imagesize = { version = "0.15.0", default-features = false, features = ["png", "webp", "jpeg", "gif"] }
