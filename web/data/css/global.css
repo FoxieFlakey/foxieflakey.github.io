@@ -19,10 +19,11 @@ body {
 
 .no_css {
   display: none;
+  _display: initial;
 }
 
 #page_footer {
-  background-color: #00000040;
+  background-color: #7f7f7f;
   padding: 10px;
   padding-top: 20px;
   padding-bottom: 20px;
@@ -31,7 +32,7 @@ body {
 }
 
 #page_header {
-  background-color: #00000040;
+  background-color: #7f7f7f;
   overflow-x: hidden;
 }
 

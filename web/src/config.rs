@@ -14,6 +14,7 @@ pub static RESOURCES: LazyLock<HashMap<String, Resource>> = LazyLock::new(|| {
         css!("/css/pages/home.css"),
         css!("/css/pages/arts.css"),
         raw!("/favicon.ico"),
+        raw!("/favicon.png"),
         raw!("/favicon_for_opengraph.png"),
         raw!("/img/Gallery_Icon.png"),
         raw!("/img/Home_Icon.png"),
