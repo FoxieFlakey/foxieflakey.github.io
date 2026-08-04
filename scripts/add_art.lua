@@ -85,12 +85,12 @@ for line in source:gmatch("([^\n]*)\n?") do
 end
 
 print("Comitting to my website")
+transformed = table.concat(transformed, "\n")
+writeAll(data_file, transformed)
 assert(os.execute(("git add %q %q"):format(data_file, data_dir.."/"..filename)))
 assert(os.execute(("git commit -m %q"):format("Adding art titled '"..title.."'")))
 assert(os.execute("git push"))
 
-transformed = table.concat(transformed, "\n")
-writeAll(data_file, transformed)
 print("Added new art")
 
 
