@@ -24,7 +24,16 @@ macro_rules! art {
 }
 #[rustfmt::skip]
 // Dont touch the line next to this, its modified by lua
-pub static ARTS: [Art; 296] = [
+pub static ARTS: [Art; 297] = [
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 8, 4).unwrap(),
+        data: include_bytes!("data/Floor Tile Kuga and Foxie Merged.png"),
+        title: "Floor Tile Kuga and Foxie Merged",
+        page_id: "floortile_kuga_and_foxie",
+        description_long: "So me and Kuga merged into one :3 And turned my friend Jyuan into a closet
+",
+        keywords: &["inanimatetf", "inanimate", "object", "objecttf", "foxieflakey", "kuga", "red", "panda", "red", "fox", "transformation", "into", "jyuan", "floortile", "cabinet", "floor", "furniture"]
+    },
     art! {
         posted_on: NaiveDate::from_ymd_opt(2026, 8, 4).unwrap(),
         data: include_bytes!("data/Dont Annoy Catto.png"),
