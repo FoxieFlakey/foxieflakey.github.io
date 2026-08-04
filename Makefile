@@ -1,6 +1,8 @@
 MAKEFLAGS += -rR --no-print-directory
 
-root ?= http://localhost:8080/
+include base_config.mk
+-include local_config.mk
+
 current_dir := $(shell pwd)
 output_dir := $(current_dir)/output
 web_dir := $(output_dir)/web
@@ -35,7 +37,7 @@ watch: $(web_binary)
 	done
 
 $(web_dumped_cookie): $(web_binary)
-	$(web_binary) dump "$(root)" "$(web_dir)"
+	$(web_binary) dump "$(config_root)" "$(web_dir)"
 	@touch $(web_dumped_cookie)
 
 .PHONY: host
@@ -50,6 +52,6 @@ clean:
 # Cargo know whats changed, so ehh lets make this PHONY
 .PHONY: $(web_binary)
 $(web_binary):
-	cargo build --release --package web
+	cargo build --release --package web --features "$(config_features)"
 
 

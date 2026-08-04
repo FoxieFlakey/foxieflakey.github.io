@@ -18,7 +18,8 @@ jobs:
         # Run my Rust based site generator, which is orchestrated
         # by make
         run: |
-          make root="https://foxieflakey.github.io" all
+          cp configs/github_publish.mk ./local_config.mk
+          make all
       
       - name: Upload to GitHub pages
         uses: actions/upload-pages-artifact@v5
