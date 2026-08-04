@@ -4,6 +4,9 @@ version = "0.1.0"
 edition = "2024"
 rust-version = "1.97.1"
 
+[features]
+minify = [ "html_preprocess/minify", "dep:lightningcss" ]
+
 [dependencies]
 axum = { version = "0.8.9", features = ["macros"] }
 axum-extra = { version = "0.12.6", features = ["typed-header"] }
@@ -18,7 +21,7 @@ human_bytes = "0.4.3"
 humantime = "2.4.0"
 image = { version = "0.25.10", default-features = false, features = ["png", "jpeg", "gif"] }
 infer = { version = "0.19.0", default-features = false, features = ["alloc"] }
-lightningcss = "1.0.0-alpha.71"
+lightningcss = { version = "1.0.0-alpha.71", optional = true }
 mime = "0.3.17"
 mime2ext = "0.1.54"
 mime_guess = "2.0.5"

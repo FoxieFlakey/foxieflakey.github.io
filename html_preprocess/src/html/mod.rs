@@ -396,6 +396,10 @@ impl<'a> Preprocessor<'a> {
             }];
         })?;
 
+        #[cfg(not(feature = "minify"))]
+        let _ = self.minify;
+
+        #[cfg(feature = "minify")]
         if self.minify {
             let cfg = simple_minify_html::Cfg {
                 keep_html_and_head_opening_tags: true,

@@ -87,24 +87,29 @@ fn main() -> Result<ExitCode, ExitCode> {
             Emitter::stderr(ColorConfig::Auto, Some(&codemap)).emit(&diags);
             return Err(ExitCode::FAILURE);
         }
+
+        #[cfg(feature = "minify")]
         Err(BuildError::LoadCSSNonUtf8(file, err)) => {
             eprintln!("Failed to minify CSS for: '{}'", file.escape_default());
             eprintln!("Error is: {err}");
             return Err(ExitCode::FAILURE);
         }
 
+        #[cfg(feature = "minify")]
         Err(BuildError::ParseCSSFailed(file, err)) => {
             eprintln!("Failed to parse CSS for: '{}'", file.escape_default());
             eprintln!("Error is: {err}");
             return Err(ExitCode::FAILURE);
         }
 
+        #[cfg(feature = "minify")]
         Err(BuildError::EncodeCSSFailed(file, err)) => {
             eprintln!("Failed to encode CSS for: '{}'", file.escape_default());
             eprintln!("Error is: {err}");
             return Err(ExitCode::FAILURE);
         }
 
+        #[cfg(feature = "minify")]
         Err(BuildError::MinifyCSSFailed(file, err)) => {
             eprintln!("Failed to minify CSS for: '{}'", file.escape_default());
             eprintln!("Error is: {err}");

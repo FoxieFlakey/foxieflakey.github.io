@@ -38,6 +38,7 @@ struct Args {
     output: String,
 
     /// Whether to minify the output HTML or not
+    #[cfg(feature = "minify")]
     #[arg(short, long)]
     minify: bool,
 
@@ -104,6 +105,11 @@ fn main() -> Result<ExitCode, ExitCode> {
 
     let mut dependencies = HashSet::new();
 
+    #[cfg(not(feature = "minify"))]
+    let can_minify = false;
+    #[cfg(feature = "minify")]
+    let can_minify = args.minify;
+    
     let mut preprocessor = Preprocessor::new(
         |path| {
             let path = Path::new(path);
@@ -178,7 +184,7 @@ fn main() -> Result<ExitCode, ExitCode> {
             dependencies.insert(path);
             Ok(source_code.to_string())
         },
-        args.minify,
+        can_minify,
     );
 
     // Process environments

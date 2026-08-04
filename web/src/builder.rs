@@ -3,14 +3,20 @@ use std::{
     collections::HashMap,
     panic::Location,
     rc::Rc,
-    str::Utf8Error,
+};
+
+#[cfg(feature = "minify")]
+use std::{
     sync::{Arc, RwLock},
+    str::Utf8Error
 };
 
 use chrono::Utc;
 use codemap::CodeMap;
 use codemap_diagnostic::Diagnostic;
 use html_preprocess::{GeneratorArgs, Preprocessor};
+
+#[cfg(feature = "minify")]
 use lightningcss::{
     error::{MinifyErrorKind, ParserError, PrinterErrorKind},
     printer::PrinterOptions,
@@ -25,9 +31,17 @@ mod navbar;
 
 pub enum BuildError {
     PreprocessFailed(String, CodeMap, Vec<Diagnostic>),
+    
+    #[cfg(feature = "minify")]
     LoadCSSNonUtf8(String, Utf8Error),
+    
+    #[cfg(feature = "minify")]
     ParseCSSFailed(String, lightningcss::error::Error<ParserError<'static>>),
+    
+    #[cfg(feature = "minify")]
     MinifyCSSFailed(String, lightningcss::error::Error<MinifyErrorKind>),
+    
+    #[cfg(feature = "minify")]
     EncodeCSSFailed(String, lightningcss::error::Error<PrinterErrorKind>),
 }
 
@@ -105,6 +119,12 @@ pub fn build(
                 Some((Some(mime::TEXT_HTML_UTF_8), data))
             }
 
+            #[cfg(not(feature = "minify"))]
+            config::Resource::Css(data) => {
+                Some((Some(mime::TEXT_CSS_UTF_8), Cow::Borrowed(data)))
+            }
+            
+            #[cfg(feature = "minify")]
             config::Resource::Css(data) => {
                 let source = str::from_utf8(data)
                     .map_err(|e| BuildError::LoadCSSNonUtf8(path.clone(), e))?;
