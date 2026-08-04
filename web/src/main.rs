@@ -26,9 +26,7 @@ mod builder;
 mod config;
 mod macros;
 #[cfg(feature = "built_in_server")]
-mod server;
-#[cfg(feature = "built_in_server")]
-pub use server::ServerConfig;
+use server::ServerConfig;
 mod util;
 
 #[derive(Subcommand)]
@@ -152,7 +150,7 @@ fn dump(
     let mut written_bytes = 0;
     let start = Instant::now();
     for (path, (bytes, _)) in data {
-        let path_raw = util::sanify_path(&path);
+        let path_raw = common_utils::sanify_path(&path);
         let path = output.join(format!("./{path_raw}"));
 
         if let Some(parent) = path.parent() {

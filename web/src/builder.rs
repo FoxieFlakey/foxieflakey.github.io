@@ -68,7 +68,7 @@ pub fn build(
     let mut preprocessor = Preprocessor::new(
         |name| {
             config::RESOURCES
-                .get(util::sanify_path(name).as_str())
+                .get(common_utils::sanify_path(name).as_str())
                 .ok_or(())
                 .map_err(|_| format!("Cannot find file '{name}'"))
                 .map(|x| str::from_utf8(x.data()))?

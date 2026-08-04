@@ -4,6 +4,8 @@ members = [
   "html_preprocess",
   "web",
   "art_data",
+  "server",
+  "common-utils",
 ]
 
 # Turn off all optimizations. For crate that only contain bulk data
