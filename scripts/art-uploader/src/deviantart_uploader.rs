@@ -21,18 +21,22 @@ pub fn upload(data: &mut UploaderData, args: &Args, art_data: &[u8]) -> Result<(
 
 async fn upload_impl(data: &mut UploaderData, args: &Args, art_data: &[u8]) -> Result<(), String> {
     let mut http_client = reqwest::ClientBuilder::new().build().unwrap();
-    if
-    // Its expired
-    (data.deviantart_access_token_expired_on.is_some() && Utc::now() > data.deviantart_access_token_expired_on.unwrap()) ||
-        // Assume expired if expiry key missing
+    if  // Assume expired if expiry key missing
         data.deviantart_access_token_expired_on.is_none() ||
         // Assume expired if refresh token missing
-        data.deviantart_refresh_token.is_none()
+        data.deviantart_refresh_token.is_none() ||
+        // Token is gone
+        data.deviantart_access_token.is_none()
     {
-        // Token expired
+        // Assume newly from scratch
         data.deviantart_access_token = None;
         data.deviantart_access_token_expired_on = None;
         data.deviantart_refresh_token = None;
+    }
+
+    if Utc::now() > data.deviantart_access_token_expired_on.unwrap() {
+        // Token is expired so remove it
+        data.deviantart_access_token = None;
     }
 
     if data.deviantart_access_token.is_none() {
