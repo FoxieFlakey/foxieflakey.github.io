@@ -3,7 +3,6 @@ use std::sync::LazyLock;
 use chrono::NaiveDate;
 use std::sync::OnceLock;
 use super::Art;
-
 macro_rules! art {
     ($($field:ident : $val:expr),* $(,)?) => {{
         let mut s = Art {
@@ -26,14 +25,31 @@ macro_rules! art {
 }
 #[rustfmt::skip]
 // Dont touch the line next to this, its modified by lua
-pub static ARTS: [Art; 292] = [
+pub static ARTS: [Art; 294] = [
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 8, 3).unwrap(),
+        data: include_bytes!("data/Wah Kuga.png"),
+        title: "Kuga Wah >w<",
+        page_id: "kuga_wah_letters",
+        description_long: "so i also turned my friends into letters, which is WAH :3
+",
+        keywords: LazyLock::new(|| vec!["kuga", "the", "cute", "red", "panda", "transformation", "inanimate", "inanimatetf", "object", "objecttf", "letters", "lettertf", "wah", "cute", "funny"])
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 8, 3).unwrap(),
+        data: include_bytes!("data/Bweh Foxie.png"),
+        title: "Bweh Foxie Owo",
+        page_id: "bweh_foxie",
+        description_long: "so i turned into letters of my word which is "bweh" bweh Owo
+",
+        keywords: LazyLock::new(|| vec!["foxieflakey", "the", "cute", "red", "fox", "girl", "transformation", "inanimate", "inanimatetf", "object", "objecttf", "letters", "lettertf", "bweh", "cute", "funny"])
+    },
     art! {
         posted_on: NaiveDate::from_ymd_opt(2026, 8, 2).unwrap(),
         data: include_bytes!("data/ArtFight 2026: Nimroth caught a fish.png"),
         title: "ArtFight 2026: Nimroth caught a fish!",
         page_id: "artfight2026_nimroth_caught_a_fish",
         description_long: "A very late attack, like around <2 hours till end of ArtFight. and Pats for you :3 and i still cant draw neck or make like head to body connects properly :< so here free scarf for you too
-
 Attack on artfight: https://artfight.net/attack/18699415.nimroth-caught-a-fish
 ",
     },
@@ -43,7 +59,6 @@ Attack on artfight: https://artfight.net/attack/18699415.nimroth-caught-a-fish
         title: "ArtFight 2026: Toot Toot, Half Trumpet x3",
         page_id: "artfight2026_lucky_trumpet",
         description_long: "So silly idea,  replace head with half trumpet :3 and gave u free bandana
-
 Attack on artfight: https://artfight.net/attack/18662176.toot-toot-half-trumpet-x3
 ",
     },
@@ -53,7 +68,6 @@ Attack on artfight: https://artfight.net/attack/18662176.toot-toot-half-trumpet-
         title: "ArtFight 2026: Tiger Elektra",
         page_id: "artfight2026_tiger_elektra",
         description_long: "so because i dont draw humans, i instead draw elektra as a furry or well anthro or liek their tiger form i guess :3
-
 Attack on artfight: https://artfight.net/attack/18657597.tiger-elektra
 ",
     },
@@ -78,7 +92,6 @@ Attack on artfight: https://artfight.net/attack/18657597.tiger-elektra
         title: "Flat David",
         page_id: "artfight2026_flat_david",
         description_long: "I roll david flat next
-
 Attack on ArtFight: https://artfight.net/attack/18644692.rolled-flat-3-david
 ",
     },
@@ -112,7 +125,6 @@ Attack on ArtFight: https://artfight.net/attack/18644692.rolled-flat-3-david
         title: "ArtFight 2026: Flat Kuga Rolled UwU",
         page_id: "artfight2026_flat_kuga_rolled",
         description_long: "I rolled Kuga next UwU
-
 Attack on ArtFight: https://artfight.net/attack/18645053.rolled-flat-3-kuga",
     },
     art! {
@@ -145,7 +157,6 @@ Attack on ArtFight: https://artfight.net/attack/18645053.rolled-flat-3-kuga",
         title: "ArtFight 2026: Mini Cakes Lucky!",
         page_id: "artfight2026_mini_cakes_lucky",
         description_long: "i was intending to draw Sushi but ended up drawing Mini Cakes lol!
-
 Attack on ArtFight: https://artfight.net/attack/18339070.mini-cakes",
     },
     art! {
@@ -162,7 +173,6 @@ Attack on ArtFight: https://artfight.net/attack/18339070.mini-cakes",
         title: "ArtFight 2026: Stretchhhh theeee snooooot (Rubby)!",
         page_id: "artfight2026_stretch_rubby_snoot",
         description_long: "what did i do? i ~~purposely~~ accidentally slipped! >:(
-
 Attack on ArtFight: https://artfight.net/attack/18200455.stretch-the-snoot-rubby",
     },
     art! {
@@ -171,7 +181,6 @@ Attack on ArtFight: https://artfight.net/attack/18200455.stretch-the-snoot-rubby
         title: "ArtFight 2026: Stretchhhh theeee snooooot (Kuga)!",
         page_id: "artfight2026_stretch_kuga_snoot",
         description_long: "stretch like toony
-
 Attack on ArtFight: https://artfight.net/attack/18105417.stretch-the-snoot",
     },
     art! {
@@ -180,7 +189,6 @@ Attack on ArtFight: https://artfight.net/attack/18105417.stretch-the-snoot",
         title: "ArtFight 2026: Shapes Lucky!",
         page_id: "artfight2026_shapes_lucky",
         description_long: "no idea what to choose so RANDOM SHAPES GO
-
 Attack on ArtFight: https://artfight.net/attack/18105212.random-shapes-go",
     },
     art! {
