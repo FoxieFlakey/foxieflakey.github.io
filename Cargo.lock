@@ -101,6 +101,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "art_data"
+version = "0.1.0"
+dependencies = [
+ "chrono",
+ "mime",
+]
+
+[[package]]
 name = "atomic-waker"
 version = "1.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1949,6 +1957,7 @@ dependencies = [
 name = "web"
 version = "0.1.0"
 dependencies = [
+ "art_data",
  "axum",
  "axum-extra 0.12.6",
  "axum-range",

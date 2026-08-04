@@ -3,7 +3,7 @@ use std::{borrow::Cow, fmt::Write};
 use html_preprocess::GeneratorArgs;
 
 use crate::{
-    config::{self, arts::Art},
+    config::{self, arts::{Art, ArtExt}},
     util,
 };
 

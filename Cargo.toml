@@ -2,5 +2,20 @@
 resolver = "2"
 members = [
   "html_preprocess",
-  "web"
+  "web",
+  "art_data",
 ]
+
+# Turn off all optimizations. For crate that only contain bulk data
+# there not much "code" to speak of
+[profile.dev.package.art_data]
+opt-level = 0
+
+[profile.release.package.art_data]
+opt-level = 0
+
+[profile.dev]
+lto = "off"
+
+[profile.release]
+lto = "off"

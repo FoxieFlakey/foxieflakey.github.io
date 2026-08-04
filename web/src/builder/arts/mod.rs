@@ -6,7 +6,7 @@ use chrono::Datelike;
 use html_preprocess::{GeneratorArgs, create_generator};
 
 use crate::{
-    config,
+    config::{self, arts::ArtExt},
     util::{self, ExpectNone},
 };
 

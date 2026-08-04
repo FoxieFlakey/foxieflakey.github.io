@@ -1,41 +1,56 @@
-use std::{borrow::Cow, collections::HashMap, fmt::Write, io::Cursor, sync::{LazyLock, OnceLock}};
+use std::{borrow::Cow, fmt::Write, io::Cursor, sync::LazyLock};
 
+pub use art_data::{Art, ARTS, ID_TO_ART};
 use chrono::{Datelike, NaiveDate};
 
-use crate::{config::Resource, util::{self, ExpectNone}};
+use crate::{config::Resource, util};
 
-mod data;
-
-// NOTE: This contains unescaped HTML characters
-#[derive(Clone, Default)]
-pub struct Art {
-    pub posted_on: NaiveDate,
-    pub title: &'static str,
-    pub page_id: &'static str,
-    pub data: &'static [u8],
-    pub description_short: Option<&'static str>,
-    pub description_long: &'static str,
-    render_width: Option<u32>,
-    render_height: Option<u32>,
-    mime: OnceLock<Option<mime::Mime>>,
-
-    // Lazily initialized, if render_width and height previously is None
-    // then its generated from parsing data.
-    //
-    // If only render_width Some but  not other, or vice verrsa.
-    // it is properly scaled based on aspect ratio
-    actual_render_size: OnceLock<(Option<u32>, Option<u32>)>,
-
-    // None if can't be scanned/fetched
-    actual_size: OnceLock<Option<(u32, u32)>>,
+mod sealed {
+    pub trait Sealed {}
 }
 
-impl Art {
-    pub fn mime(&self) -> &Option<mime::Mime> {
+pub trait ArtExt: sealed::Sealed {
+    fn mime(&self) -> &Option<mime::Mime>;
+    fn path_to_data(&self) -> String;
+    fn path_to_art(&self) -> String;
+    fn actual_size(&self) -> Option<(u32, u32)>;
+    fn calc_render_size(&self) -> (Option<u32>, Option<u32>);
+    fn render_width(&self) -> Option<u32>;
+    fn render_height(&self) -> Option<u32>;
+    fn get_short_desc(&self) -> String;
+}
+
+impl sealed::Sealed for Art {}
+impl ArtExt for Art {
+    fn mime(&self) -> &Option<mime::Mime> {
         self.mime.get_or_init(move || util::infer(None, self.data))
     }
 
-    pub fn actual_size(&self) -> Option<(u32, u32)> {
+    fn path_to_data(&self) -> String {
+        let year = self.posted_on.year();
+        let month = self.posted_on.format("%b");
+        let id = util::encode_html(self.page_id);
+        let page_base = format!("{}/{year}/{month}/{id}", ARTS_BASE_DIR);
+
+        let ext = self
+            .mime()
+            .as_ref()
+            .map(|x| x.as_ref())
+            .map(mime2ext::mime2ext)
+            .flatten()
+            .unwrap_or(".bin");
+        format!("{page_base}.{ext}")
+    }
+
+    fn path_to_art(&self) -> String {
+        let year = self.posted_on.year();
+        let month = self.posted_on.format("%b");
+        let id = util::encode_html(self.page_id);
+
+        format!("{}/{year}/{month}/{id}.html", ARTS_BASE_DIR)
+    }
+    
+    fn actual_size(&self) -> Option<(u32, u32)> {
         *self
             .actual_size
             .get_or_init(|| match self.mime().clone()?.type_() {
@@ -89,35 +104,19 @@ impl Art {
         }
     }
 
-    pub fn render_width(&self) -> Option<u32> {
+    fn render_width(&self) -> Option<u32> {
         self.actual_render_size
             .get_or_init(|| self.calc_render_size())
             .0
     }
 
-    pub fn render_height(&self) -> Option<u32> {
+    fn render_height(&self) -> Option<u32> {
         self.actual_render_size
             .get_or_init(|| self.calc_render_size())
             .1
     }
 
-    pub fn path_to_data(&self) -> String {
-        let year = self.posted_on.year();
-        let month = self.posted_on.format("%b");
-        let id = util::encode_html(self.page_id);
-        let page_base = format!("{}/{year}/{month}/{id}", ARTS_BASE_DIR);
-
-        let ext = self
-            .mime()
-            .as_ref()
-            .map(|x| x.as_ref())
-            .map(mime2ext::mime2ext)
-            .flatten()
-            .unwrap_or(".bin");
-        format!("{page_base}.{ext}")
-    }
-
-    pub fn get_short_desc(&self) -> String {
+    fn get_short_desc(&self) -> String {
         self.description_short
             .map(|x| x.to_string())
             .unwrap_or_else(|| {
@@ -127,29 +126,9 @@ impl Art {
                 )
             })
     }
-
-    pub fn path_to_art(&self) -> String {
-        let year = self.posted_on.year();
-        let month = self.posted_on.format("%b");
-        let id = util::encode_html(self.page_id);
-
-        format!("{}/{year}/{month}/{id}.html", ARTS_BASE_DIR)
-    }
 }
 
 pub const ARTS_BASE_DIR: &'static str = "/arts";
-pub use data::ARTS;
-
-pub static ID_TO_ART: LazyLock<HashMap<String, &'static Art>> = LazyLock::new(|| {
-    let mut map = HashMap::with_capacity(ARTS.len());
-    
-    for art in &ARTS {
-        map.insert(art.page_id.to_string(), art)
-            .expect_none(&format!("There duplicate arts for '{}'" ,art.page_id));
-    }
-    
-    map
-});
 
 pub fn init() {
     // Check if ARTS sorted chronologically

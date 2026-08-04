@@ -2,6 +2,7 @@
 use chrono::NaiveDate;
 use std::sync::OnceLock;
 use super::Art;
+
 macro_rules! art {
     ($($field:ident : $val:expr),* $(,)?) => {{
         let mut s = Art {

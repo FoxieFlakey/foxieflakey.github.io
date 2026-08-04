@@ -24,3 +24,4 @@ mime2ext = "0.1.54"
 mime_guess = "2.0.5"
 strum = { version = "0.28.0", features = ["derive"] }
 tokio = { version = "1.52.3", features = ["net", "rt"] }
+art_data = { path = "../art_data" }
