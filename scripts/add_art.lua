@@ -1,3 +1,4 @@
+local data_dir = "./art_data/src/data/"
 local data_file = "./art_data/src/data.rs"
 
 function readAll(path)
@@ -43,6 +44,7 @@ local page_id = ask("Page id of art")
 local description = askMulti("Description. EOF/Ctrl+D to end")
 local keywords_raw = ask("Keywords (seperate by comma)")
 
+print("Uploading arts to websites")
 assert(os.execute(
   ("./scripts/art-uploader.sh --title %q --description %q --id %q --keywords %q --post-date %d-%d-%d %q"):format(
     title,
@@ -82,9 +84,14 @@ for line in source:gmatch("([^\n]*)\n?") do
     end
 end
 
+print("Comitting to my website")
+assert(os.execute(("git add %q %q"):format(data_file, data_dir.."/"..filename)))
+assert(os.execute(("git commit -m %q"):format("Adding art titled '"..title.."'")))
+assert(os.execute("git push"))
+
 transformed = table.concat(transformed, "\n")
-print("Added new art")
 writeAll(data_file, transformed)
+print("Added new art")
 
 
 
