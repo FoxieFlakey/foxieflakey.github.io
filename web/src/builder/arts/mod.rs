@@ -3,11 +3,12 @@
 use std::{collections::HashMap, fmt::Write, panic::Location, rc::Rc};
 
 use chrono::Datelike;
+use common_utils::ExpectNone;
 use html_preprocess::{GeneratorArgs, create_generator};
 
 use crate::{
     config::{self, arts::ArtExt},
-    util::{self, ExpectNone},
+    util,
 };
 
 mod card;

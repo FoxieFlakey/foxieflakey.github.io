@@ -26,3 +26,17 @@ pub fn sanify_path(path: &str) -> String {
         }
     )
 }
+
+pub trait ExpectNone {
+    fn expect_none(self, msg: &str);
+}
+
+impl<T> ExpectNone for Option<T> {
+    #[track_caller]
+    fn expect_none(self, msg: &str) {
+        if self.is_some() {
+            panic!("Expecting None got Some: {msg}")
+        }
+    }
+}
+

@@ -2,8 +2,9 @@ use std::{cell::Cell, collections::HashMap, panic::Location, rc::Rc};
 
 use html_preprocess::{GeneratorArgs, create_generator};
 use strum::{AsRefStr, EnumIter, EnumString, IntoEnumIterator};
+use common_utils::ExpectNone;
 
-use crate::{config, util::ExpectNone};
+use crate::config;
 
 #[derive(Copy, Clone, EnumString, EnumIter, AsRefStr, PartialEq, Eq)]
 enum NavBarState {

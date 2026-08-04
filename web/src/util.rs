@@ -33,19 +33,6 @@ pub fn round_duration_to_ms(duration: Duration) -> Duration {
     Duration::new(duration.as_secs(), duration.subsec_millis() * 1_000_000)
 }
 
-pub trait ExpectNone {
-    fn expect_none(self, msg: &str);
-}
-
-impl<T> ExpectNone for Option<T> {
-    #[track_caller]
-    fn expect_none(self, msg: &str) {
-        if self.is_some() {
-            panic!("Expecting None got Some: {msg}")
-        }
-    }
-}
-
 pub fn infer(filename: Option<&str>, data: &[u8]) -> Option<mime::Mime> {
     INFERRER
         .get(data)

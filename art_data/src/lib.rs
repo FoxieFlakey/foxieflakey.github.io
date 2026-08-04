@@ -5,19 +5,7 @@ pub mod data;
 use std::{collections::HashMap, sync::{LazyLock, OnceLock}};
 
 use chrono::NaiveDate;
-
-trait ExpectNone {
-    fn expect_none(self, msg: &str);
-}
-
-impl<T> ExpectNone for Option<T> {
-    #[track_caller]
-    fn expect_none(self, msg: &str) {
-        if self.is_some() {
-            panic!("Expecting None got Some: {msg}")
-        }
-    }
-}
+use common_utils::ExpectNone;
 
 // NOTE: This contains unescaped HTML characters
 #[derive(Clone, Default)]
