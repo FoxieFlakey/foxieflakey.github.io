@@ -1,3 +1,4 @@
 /target
 /output
 /local_config.mk
+/.uploader_data.json

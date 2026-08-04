@@ -5,7 +5,7 @@ members = [
   "web",
   "art_data",
   "server",
-  "common-utils",
+  "common-utils", "scripts/art-uploader",
 ]
 
 # Turn off all optimizations. For crate that only contain bulk data
