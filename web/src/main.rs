@@ -1,9 +1,11 @@
 #[forbid(unsafe_code)]
 use std::{
-    net::{IpAddr, Ipv4Addr},
     path::PathBuf,
     process::ExitCode,
 };
+
+#[cfg(feature = "built_in_server")]
+use std::net::{IpAddr, Ipv4Addr};
 
 use clap::{Parser, Subcommand};
 use codemap_diagnostic::{ColorConfig, Emitter};
@@ -18,12 +20,15 @@ use std::{
     time::Instant,
 };
 
-use crate::{builder::BuildError, config::Config, server::ServerConfig};
+use crate::{builder::BuildError, config::Config};
 
 mod builder;
 mod config;
 mod macros;
+#[cfg(feature = "built_in_server")]
 mod server;
+#[cfg(feature = "built_in_server")]
+pub use server::ServerConfig;
 mod util;
 
 #[derive(Subcommand)]
@@ -42,7 +47,9 @@ enum Cmd {
         /// to be hosted
         output_directory: PathBuf,
     },
+
     /// Run a server, to serve the website
+    #[cfg(feature = "built_in_server")]
     Serve {
         /// The IP address where the website will be accesible
         /// has to be one IP, binding to multiple IPs are explicitly
@@ -69,6 +76,7 @@ fn main() -> Result<ExitCode, ExitCode> {
     match &cmd {
         Cmd::Dump { root, .. } => config = Config { root: root.clone() },
 
+        #[cfg(feature = "built_in_server")]
         Cmd::Serve { ip, port } => {
             config = Config {
                 root: format!("http://{ip}:{port}"),
@@ -127,6 +135,7 @@ fn main() -> Result<ExitCode, ExitCode> {
             output_directory, ..
         } => dump(data, &output_directory),
 
+        #[cfg(feature = "built_in_server")]
         Cmd::Serve { ip, port } => {
             let server_config = ServerConfig { ip, port };
             server::serve(&server_config, data)?;
