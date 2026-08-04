@@ -10,9 +10,11 @@ members = [
 # there not much "code" to speak of
 [profile.dev.package.art_data]
 opt-level = 0
+debug = false
 
 [profile.release.package.art_data]
 opt-level = 0
+debug = false
 
 [profile.dev]
 lto = "off"
