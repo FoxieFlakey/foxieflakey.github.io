@@ -77,7 +77,7 @@ for line in source:gmatch("([^\n]*)\n?") do
         title: "%s",
         page_id: "%s",
         description_long: "%s",
-        keywords: LazyLock::new(|| vec![%s])
+        keywords: &[%s]
     },]]):format(year, month, day, filename, title, page_id, description, table.concat(keywords, ", ")))
     elseif line ~= "" or source:sub(-1) == "\n" then -- handles empty trailing checks if needed
         table.insert(transformed, line)

@@ -19,7 +19,7 @@ pub struct Art {
     pub render_width: Option<u32>,
     pub render_height: Option<u32>,
     pub mime: OnceLock<Option<mime::Mime>>,
-    pub keywords: LazyLock<Vec<String>>,
+    pub keywords: &'static [&'static str],
 
     // Lazily initialized, if render_width and height previously is None
     // then its generated from parsing data.

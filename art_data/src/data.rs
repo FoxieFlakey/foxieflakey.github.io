@@ -1,5 +1,4 @@
 // List of my arts
-use std::sync::LazyLock;
 use chrono::NaiveDate;
 use std::sync::OnceLock;
 use super::Art;
@@ -17,7 +16,7 @@ macro_rules! art {
             mime: OnceLock::new(),
             actual_render_size: OnceLock::new(),
             actual_size: OnceLock::new(),
-            keywords: LazyLock::new(|| vec![]),
+            keywords: &[],
         };
         $( s.$field = $val; )*
         s
@@ -33,16 +32,16 @@ pub static ARTS: [Art; 294] = [
         page_id: "kuga_wah_letters",
         description_long: "so i also turned my friends into letters, which is WAH :3
 ",
-        keywords: LazyLock::new(|| vec!["kuga", "the", "cute", "red", "panda", "transformation", "inanimate", "inanimatetf", "object", "objecttf", "letters", "lettertf", "wah", "cute", "funny"])
+        keywords: &["kuga", "the", "cute", "red", "panda", "transformation", "inanimate", "inanimatetf", "object", "objecttf", "letters", "lettertf", "wah", "cute", "funny"],
     },
     art! {
         posted_on: NaiveDate::from_ymd_opt(2026, 8, 3).unwrap(),
         data: include_bytes!("data/Bweh Foxie.png"),
         title: "Bweh Foxie Owo",
         page_id: "bweh_foxie",
-        description_long: "so i turned into letters of my word which is "bweh" bweh Owo
-",
-        keywords: LazyLock::new(|| vec!["foxieflakey", "the", "cute", "red", "fox", "girl", "transformation", "inanimate", "inanimatetf", "object", "objecttf", "letters", "lettertf", "bweh", "cute", "funny"])
+        description_long: r#"so i turned into letters of my word which is "bweh" bweh Owo
+"#,
+        keywords: &["foxieflakey", "the", "cute", "red", "fox", "girl", "transformation", "inanimate", "inanimatetf", "object", "objecttf", "letters", "lettertf", "bweh", "cute", "funny"],
     },
     art! {
         posted_on: NaiveDate::from_ymd_opt(2026, 8, 2).unwrap(),
