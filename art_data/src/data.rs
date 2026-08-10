@@ -24,7 +24,16 @@ macro_rules! art {
 }
 #[rustfmt::skip]
 // Dont touch the line next to this, its modified by lua
-pub static ARTS: [Art; 306] = [
+pub static ARTS: [Art; 307] = [
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 8, 9).unwrap(),
+        data: include_bytes!("data/Sanfie_Coin.png"),
+        title: "Sanfie Coin!",
+        page_id: "sanfie_coin",
+        description_long: "Next up is my friend sanfie, turned into coin too
+",
+        keywords: &["inanimatetf", "inanimate", "object", "objecttf", "transformation", "into", "coin", "cointf", "sanfie", "the", "sheep", "meow"]
+    },
     art! {
         posted_on: NaiveDate::from_ymd_opt(2026, 8, 9).unwrap(),
         data: include_bytes!("data/Cojn_Mochi.png"),
