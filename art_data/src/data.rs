@@ -24,7 +24,16 @@ macro_rules! art {
 }
 #[rustfmt::skip]
 // Dont touch the line next to this, its modified by lua
-pub static ARTS: [Art; 299] = [
+pub static ARTS: [Art; 300] = [
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 8, 9).unwrap(),
+        data: include_bytes!("data/DDR5_Foxie_1.png"),
+        title: "RAM Foxie",
+        page_id: "ram_foxie",
+        description_long: "at this crisis of ram, why not tf into one ram and you instantly become reach /dumb
+",
+        keywords: &["foxieflakey", "inanimate", "transformation", "inanimatetf", "object", "objecttf", "dram", "computer", "ram", "ddr5", "dimm"]
+    },
     art! {
         posted_on: NaiveDate::from_ymd_opt(2026, 8, 5).unwrap(),
         data: include_bytes!("data/Trash_Bag_Foxie.png"),
