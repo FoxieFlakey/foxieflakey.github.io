@@ -24,7 +24,16 @@ macro_rules! art {
 }
 #[rustfmt::skip]
 // Dont touch the line next to this, its modified by lua
-pub static ARTS: [Art; 308] = [
+pub static ARTS: [Art; 309] = [
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 8, 12).unwrap(),
+        data: include_bytes!("data/UDTF_Foxie.png"),
+        title: "Role Swapped",
+        page_id: "role_swapped",
+        description_long: "so i swapped role between tail and my body. so i be tail and my tail become body
+",
+        keywords: &["foxieflakey", "udtf", "upsidedown", "tail", "cute", "fox", "red", "fox", "girl"]
+    },
     art! {
         posted_on: NaiveDate::from_ymd_opt(2026, 8, 9).unwrap(),
         data: include_bytes!("data/Dorilin_Coin.png"),
