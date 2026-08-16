@@ -24,7 +24,16 @@ macro_rules! art {
 }
 #[rustfmt::skip]
 // Dont touch the line next to this, its modified by lua
-pub static ARTS: [Art; 309] = [
+pub static ARTS: [Art; 310] = [
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 8, 17).unwrap(),
+        data: include_bytes!("data/SCP 531 Foxie.png"),
+        title: "SCP 531 tf'ed Foxie",
+        page_id: "scp_531_foxie",
+        description_long: "So Catto gifted Foxie a statue, and Foxie looked at it and can't stop looking at it, by time she realize she is petrifying she tried ask help but Catto don't cuz he know Foxie like unwilling tf'ed like this and inanimate too, so he just mess with Foxie playfully. A small silly prank because Catto can revert Foxie x3
+",
+        keywords: &["inanimatetf", "inanimate", "transformation", "scp531", "petrification", "gold", "foxieflakey", "the", "cute", "red", "fox", "girl", "tfed", "into", "a", "statue", "gold", "statue", "cat", "scp531", "foundation", "scp", "531"]
+    },
     art! {
         posted_on: NaiveDate::from_ymd_opt(2026, 8, 12).unwrap(),
         data: include_bytes!("data/UDTF_Foxie.png"),
