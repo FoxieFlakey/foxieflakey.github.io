@@ -24,14 +24,22 @@ macro_rules! art {
 }
 #[rustfmt::skip]
 // Dont touch the line next to this, its modified by lua
-pub static ARTS: [Art; 317] = [
+pub static ARTS: [Art; 318] = [
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 8, 22).unwrap(),
+        data: include_bytes!("data/Foxie in cage and Zk.png"),
+        title: "Zk taking Foxie to vet",
+        page_id: "caged_foxie_vet_zk",
+        description_long: "So Zk put me in cage and bring me to vet. But i am not a pettt...
+",
+        keywords: &["foxieflakey", "zk", "pet", "cage", "vet", "cute", "funny", "bandana", "caged", "pet", "carrier", "fox", "red", "fox", "girl"]
+    },
     art! {
         posted_on: NaiveDate::from_ymd_opt(2026, 8, 22).unwrap(),
         data: include_bytes!("data/Thief.png"),
         title: "Foxie stole... potions",
         page_id: "foxie_stole_potions",
         description_long: "Looked like seller figured out that they should NOT inanimate tf Foxie as punishment
-
 So they locked her instead .w.
 ",
         keywords: &["foxieflakey", "locked", "thief", "stolen", "potion", "funny"]
