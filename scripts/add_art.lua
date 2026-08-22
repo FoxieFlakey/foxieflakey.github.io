@@ -1,3 +1,4 @@
+#!/bin/lua5.4
 local data_dir = "./art_data/src/data/"
 local data_file = "./art_data/src/data.rs"
 
