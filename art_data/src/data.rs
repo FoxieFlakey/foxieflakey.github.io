@@ -24,7 +24,16 @@ macro_rules! art {
 }
 #[rustfmt::skip]
 // Dont touch the line next to this, its modified by lua
-pub static ARTS: [Art; 315] = [
+pub static ARTS: [Art; 316] = [
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 8, 22).unwrap(),
+        data: include_bytes!("data/Splat_Foxie.png"),
+        title: "Splatted",
+        page_id: "splat_foxie",
+        description_long: "So i splatted myself
+",
+        keywords: &["foxieflakey", "cute", "splat", "floor", "liquid", "flatte", "flattened", "flatten", "flattening"]
+    },
     art! {
         posted_on: NaiveDate::from_ymd_opt(2026, 8, 19).unwrap(),
         data: include_bytes!("data/Walled thru Foxie.png"),
