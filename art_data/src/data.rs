@@ -24,7 +24,16 @@ macro_rules! art {
 }
 #[rustfmt::skip]
 // Dont touch the line next to this, its modified by lua
-pub static ARTS: [Art; 318] = [
+pub static ARTS: [Art; 319] = [
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 8, 22).unwrap(),
+        data: include_bytes!("data/Eye Pods Kuga.png"),
+        title: "SCP 131 Kuga, Eyepods",
+        page_id: "eyepods_kuga",
+        description_long: "so i make kuga into eye pods, really cuz thats cute
+",
+        keywords: &["kuga", "cute", "red", "panda", "eyepods", "scp131", "cute", "transformation", "dumb"]
+    },
     art! {
         posted_on: NaiveDate::from_ymd_opt(2026, 8, 22).unwrap(),
         data: include_bytes!("data/Foxie in cage and Zk.png"),
