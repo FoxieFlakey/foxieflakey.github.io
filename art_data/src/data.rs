@@ -24,7 +24,16 @@ macro_rules! art {
 }
 #[rustfmt::skip]
 // Dont touch the line next to this, its modified by lua
-pub static ARTS: [Art; 320] = [
+pub static ARTS: [Art; 321] = [
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 8, 25).unwrap(),
+        data: include_bytes!("data/Pooltoy Moodsau and Foxie combined.png"),
+        title: "Pooltoy Moodsau and Foxie!",
+        page_id: "pooltoy_moodsau_foxie",
+        description_long: "So have mood of pooltoy and decided to TF us into pooltoy!
+",
+        keywords: &["pooltoytf", "pooltoy", "pool", "toy", "vinyl", "inanimatetf", "inanimate", "cute", "transformation", "object", "objecttf", "toy"]
+    },
     art! {
         posted_on: NaiveDate::from_ymd_opt(2026, 8, 24).unwrap(),
         data: include_bytes!("data/Window Controls.png"),
