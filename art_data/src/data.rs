@@ -24,7 +24,16 @@ macro_rules! art {
 }
 #[rustfmt::skip]
 // Dont touch the line next to this, its modified by lua
-pub static ARTS: [Art; 322] = [
+pub static ARTS: [Art; 323] = [
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 8, 27).unwrap(),
+        data: include_bytes!("data/Tongue Foxie.png"),
+        title: "Tongue Foxie",
+        page_id: "tongue_foxie",
+        description_long: "So I turned into Jyuan's tongue
+",
+        keywords: &["foxieflakey", "the", "red", "fox", "girl", "tranformation", "into", "tongue", "transformation", "inanimatetf", "bodytf", "parttf", "tongue", "tonguetf", "cute", "merge", "fusion", "tongue"]
+    },
     art! {
         posted_on: NaiveDate::from_ymd_opt(2026, 8, 25).unwrap(),
         data: include_bytes!("data/Mannequin Foxie.png"),
