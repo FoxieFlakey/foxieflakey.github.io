@@ -24,7 +24,16 @@ macro_rules! art {
 }
 #[rustfmt::skip]
 // Dont touch the line next to this, its modified by lua
-pub static ARTS: [Art; 325] = [
+pub static ARTS: [Art; 326] = [
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 8, 29).unwrap(),
+        data: include_bytes!("data/Starmathcat_calculator.png"),
+        title: "Starmathcat Calculator",
+        page_id: "starmathcat_calculator",
+        description_long: "So a small fanart for starmathcat :3 I turned him into calculator hehe.
+",
+        keywords: &["startmathcat", "the", "cute", "cat", "math", "tan", "calculate", "inanimate", "inanimatetf", "object", "objecttf", "transformation", "cute", "silly"]
+    },
     art! {
         posted_on: NaiveDate::from_ymd_opt(2026, 8, 29).unwrap(),
         data: include_bytes!("data/Limbs_Sewn_1.png"),
