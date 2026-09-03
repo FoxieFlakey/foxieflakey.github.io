@@ -24,7 +24,16 @@ macro_rules! art {
 }
 #[rustfmt::skip]
 // Dont touch the line next to this, its modified by lua
-pub static ARTS: [Art; 329] = [
+pub static ARTS: [Art; 330] = [
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 9, 3).unwrap(),
+        data: include_bytes!("data/mouthless scream.png"),
+        title: "Mouthless Scream :3",
+        page_id: "mouthless_scream",
+        description_long: "so I make Foxie try to scream while having no mouth at all :3
+",
+        keywords: &["foxieflakey", "the", "cute", "red", "fox", "girl", "lineless", "mouthless", "no", "mouth", "scream", "forced", "fwoofy", "tail", "cute", "screaming", "dummy", "silly"]
+    },
     art! {
         posted_on: NaiveDate::from_ymd_opt(2026, 9, 3).unwrap(),
         data: include_bytes!("data/Stretched Foxie.png"),
