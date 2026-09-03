@@ -24,7 +24,16 @@ macro_rules! art {
 }
 #[rustfmt::skip]
 // Dont touch the line next to this, its modified by lua
-pub static ARTS: [Art; 328] = [
+pub static ARTS: [Art; 329] = [
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 9, 3).unwrap(),
+        data: include_bytes!("data/Stretched Foxie.png"),
+        title: "So Foxie is being stretched",
+        page_id: "stretched_foxie_by_kuga",
+        description_long: "so kuga stretched me, >~<
+",
+        keywords: &["foxieflakey", "the", "cute", "red", "fox", "girl", "and", "dumb", "red", "panda", "both", "are", "cute", "and", "dumb", "stretchy", "elastic", "toony", "inanimatetf", "stretch"]
+    },
     art! {
         posted_on: NaiveDate::from_ymd_opt(2026, 9, 3).unwrap(),
         data: include_bytes!("data/Bweh and Nonsense.png"),
