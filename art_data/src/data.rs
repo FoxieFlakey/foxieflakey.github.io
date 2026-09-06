@@ -24,7 +24,16 @@ macro_rules! art {
 }
 #[rustfmt::skip]
 // Dont touch the line next to this, its modified by lua
-pub static ARTS: [Art; 332] = [
+pub static ARTS: [Art; 333] = [
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 9, 5).unwrap(),
+        data: include_bytes!("data/Teti Trash Can and Filinf Cabinet.png"),
+        title: "Tuber turned into things :3",
+        page_id: "tuber_turned_into_things",
+        description_long: "So I turned tuber which is my friend into trash can and filing cabinet!
+",
+        keywords: &["tuber", "wolf", "inanimatetf", "inanimate", "object", "objecttf", "object", "cute", "filing_cabinet", "filing", "cabinet", "trash", "can", "trash_can"]
+    },
     art! {
         posted_on: NaiveDate::from_ymd_opt(2026, 9, 5).unwrap(),
         data: include_bytes!("data/Half Drawer Hald Foxie Linelesss.png"),
