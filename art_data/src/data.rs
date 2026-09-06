@@ -24,7 +24,16 @@ macro_rules! art {
 }
 #[rustfmt::skip]
 // Dont touch the line next to this, its modified by lua
-pub static ARTS: [Art; 331] = [
+pub static ARTS: [Art; 332] = [
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 9, 5).unwrap(),
+        data: include_bytes!("data/Half Drawer Hald Foxie Linelesss.png"),
+        title: "Half Drawer Half Foxie",
+        page_id: "half_drawer_half_foxie",
+        description_long: "So silly idea, what if im half inanimate
+",
+        keywords: &["inanimatetf", "foxie", "transformation", "object", "inanimate", "cute", "foxieflakey", "the", "cute", "red", "fox", "girl"]
+    },
     art! {
         posted_on: NaiveDate::from_ymd_opt(2026, 9, 5).unwrap(),
         data: include_bytes!("data/Glasses Foxie.png"),
