@@ -24,7 +24,16 @@ macro_rules! art {
 }
 #[rustfmt::skip]
 // Dont touch the line next to this, its modified by lua
-pub static ARTS: [Art; 335] = [
+pub static ARTS: [Art; 336] = [
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 9, 11).unwrap(),
+        data: include_bytes!("data/Sandwiched_Kuga_Jyuan_and_Me.png"),
+        title: "Sandwiched Kuga, Jyuan and Foxie",
+        page_id: "sandwiched",
+        description_long: "Dumb idea of sandwiched together
+",
+        keywords: &["flattening", "sandwiched", "dumb", "panda", "fox", "splat", "flat", "flattened", "flatten", "cute", "silly", "dumb", "cute", "funny", "digitalart"]
+    },
     art! {
         posted_on: NaiveDate::from_ymd_opt(2026, 9, 8).unwrap(),
         data: include_bytes!("data/Red Panda Foxie.png"),
