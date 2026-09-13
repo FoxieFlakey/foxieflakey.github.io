@@ -24,7 +24,16 @@ macro_rules! art {
 }
 #[rustfmt::skip]
 // Dont touch the line next to this, its modified by lua
-pub static ARTS: [Art; 336] = [
+pub static ARTS: [Art; 337] = [
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 9, 13).unwrap(),
+        data: include_bytes!("data/Emote_Sheet.png"),
+        title: "10 Emotes",
+        page_id: "emotes_sheet",
+        description_long: "so i make 10 emotes for no reason
+",
+        keywords: &["foxieflakey", "the", "cute", "red", "fox", "girl", "stuffed", "cake", "blush", "owo", "uwu", "@w@", "diff", "emotes", "cute", "fox", "girl", "foxgirl"]
+    },
     art! {
         posted_on: NaiveDate::from_ymd_opt(2026, 9, 11).unwrap(),
         data: include_bytes!("data/Sandwiched_Kuga_Jyuan_and_Me.png"),
