@@ -24,7 +24,16 @@ macro_rules! art {
 }
 #[rustfmt::skip]
 // Dont touch the line next to this, its modified by lua
-pub static ARTS: [Art; 337] = [
+pub static ARTS: [Art; 338] = [
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 9, 18).unwrap(),
+        data: include_bytes!("data/iPod Nano Foxie.png"),
+        title: "iPod Nano Foxie 3D",
+        page_id: "ipod_nano_foxie",
+        description_long: "So Kuga made me turned into iPod Nano and i like it so later i made 3D version lol Lots of schematic reading
+",
+        keywords: &["foxieflakey", "the", "cute", "red", "fox", "girl", "inanimate", "transformation", "object", "cute", "red", "fox", "objecttf", "inanimatetf", "ipod", "nano", "apple", "device", "electronic"]
+    },
     art! {
         posted_on: NaiveDate::from_ymd_opt(2026, 9, 13).unwrap(),
         data: include_bytes!("data/Emote_Sheet.png"),
