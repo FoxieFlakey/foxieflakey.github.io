@@ -24,7 +24,16 @@ macro_rules! art {
 }
 #[rustfmt::skip]
 // Dont touch the line next to this, its modified by lua
-pub static ARTS: [Art; 338] = [
+pub static ARTS: [Art; 339] = [
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 9, 23).unwrap(),
+        data: include_bytes!("data/Waffle Waffle.png"),
+        title: "Waffle Waffle",
+        page_id: "waffle_waffle",
+        description_long: "So I turn Waffle into Waffle! Waffle character by https://www.deviantart.com/wafflethelittlefox
+",
+        keywords: &["waffle", "inanimate", "transformation", "into", "waffle", "inanimatetf", "objecttf", "object", "cute", "fox", "boy"]
+    },
     art! {
         posted_on: NaiveDate::from_ymd_opt(2026, 9, 18).unwrap(),
         data: include_bytes!("data/iPod Nano Foxie.png"),
