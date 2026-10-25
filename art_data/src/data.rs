@@ -24,7 +24,19 @@ macro_rules! art {
 }
 #[rustfmt::skip]
 // Dont touch the line next to this, its modified by lua
-pub static ARTS: [Art; 342] = [
+pub static ARTS: [Art; 343] = [
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 10, 25).unwrap(),
+        data: include_bytes!("data/Kuga, Geo and Floaf tf me in sequence.png"),
+        title: "A pretty collab with kuga, geo and floaf, turning me in sequence :3",
+        page_id: "sequence_tf_foxie",
+        description_long: "So we uhh did collab and turning each of us in sequence and here what I tf'ed by Kuga, Geo and Floaf.
+See their version or part :3 (They will be linked on each platform's comment section appropriately, comment on DA or manually added section on my website, comment will exist one day)
+(Cuz was uploaded by a script, and copied equally to other havent coded like .w. a way to refer them seperate on each platform ;w; yet)
+(and let it autotranslate properly to like deviantart page or something or in hypothetically on BlueSky will be linked to bsky profile and so on, for now, ehh ima manually put in comments)
+",
+        keywords: &["collab", "tf", "cute", "stupid", "silly", "foxieflakey", "the", "cute", "red", "fox", "girl", "transformation", "inanimate", "tf", "inanimatetf", "object", "objecttf", "stacking"]
+    },
     art! {
         posted_on: NaiveDate::from_ymd_opt(2026, 10, 14).unwrap(),
         data: include_bytes!("data/Balloon Animal Foxie.png"),
