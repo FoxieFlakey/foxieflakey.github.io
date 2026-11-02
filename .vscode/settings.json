@@ -1,5 +1,0 @@
-{
-  "rust-analyzer.cargo.features": [
-    "web/built_in_server"
-  ]
-}

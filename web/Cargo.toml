@@ -9,6 +9,7 @@ minify = [ "html_preprocess/minify", "dep:lightningcss" ]
 built_in_server = [
   "dep:server",
 ]
+default = [ "built_in_server" ]
 
 [dependencies]
 chrono = "0.4.45"
@@ -30,3 +31,6 @@ strum = { version = "0.28.0", features = ["derive"] }
 art_data = { path = "../art_data" }
 imagesize = { version = "0.15.0", default-features = false, features = ["png", "webp", "jpeg", "gif"] }
 parking_lot = "0.13.0"
+tokio = { version = "1.54.1", features = ["rt", "rt-multi-thread"] }
+notify = "8.2.1"
+notify-debouncer-full = "0.7.0"

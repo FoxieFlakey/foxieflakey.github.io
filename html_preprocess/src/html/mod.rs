@@ -184,6 +184,11 @@ impl<'a> Preprocessor<'a> {
         }
     }
 
+    pub fn clear_cache(&mut self) {
+        self.cached_files.clear();
+        self.code_map = CodeMap::new();
+    }
+
     // Same return value as HashMap::get
     pub fn get_env<K: AsRef<str> + ?Sized>(&self, key: &K) -> Option<&String> {
         self.environment.get(key.as_ref())

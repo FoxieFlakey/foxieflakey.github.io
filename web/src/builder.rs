@@ -137,8 +137,7 @@ impl<'fetcher> Builder<'fetcher> {
             .replace(Box::new(fetcher))
     }
 
-    #[expect(unused)]
-    pub fn take_fetcher<F>(
+    pub fn take_fetcher(
         &self,
     ) -> Option<
         Box<dyn Fn(&str) -> Result<Option<Cow<'static, [u8]>>, String> + Send + Sync + 'fetcher>,
@@ -151,6 +150,12 @@ impl<'fetcher> Builder<'fetcher> {
             self.get(path)?;
         }
         Ok(())
+    }
+
+    pub fn clear_cache(&self) {
+        let mut state = self.state.write();
+        state.cached.clear();
+        state.preprocessor.clear_cache();
     }
 
     pub fn iter_data(

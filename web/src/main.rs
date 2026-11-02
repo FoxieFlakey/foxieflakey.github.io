@@ -21,6 +21,8 @@ use crate::{
 
 mod builder;
 mod config;
+#[cfg(feature = "built_in_server")]
+mod hot_reloader;
 mod macros;
 #[cfg(feature = "built_in_server")]
 use server::ServerConfig;
@@ -46,6 +48,13 @@ enum Cmd {
     /// Run a server, to serve the website
     #[cfg(feature = "built_in_server")]
     Serve {
+        /// Hot reloading like capability. If changes detected
+        /// builder's internal cache of built resources are
+        /// automatically dropped so next access will rebuild
+        ///
+        /// Currently only explicit (clear all) is built.
+        #[arg(long)]
+        web_src_dir: Option<PathBuf>,
         /// The IP address where the website will be accesible
         /// has to be one IP, binding to multiple IPs are explicitly
         /// not allowed.
@@ -72,7 +81,7 @@ fn main() -> Result<ExitCode, ExitCode> {
         Cmd::Dump { root, .. } => config = Config { root: root.clone() },
 
         #[cfg(feature = "built_in_server")]
-        Cmd::Serve { ip, port } => {
+        Cmd::Serve { ip, port, .. } => {
             config = Config {
                 root: format!("http://{ip}:{port}"),
             }
@@ -89,56 +98,8 @@ fn main() -> Result<ExitCode, ExitCode> {
             .get(&common_utils::sanify_path(path))
             .map(|x| x.data().clone()))
     });
+    do_full_rebuild(&builder)?;
 
-    match builder.build_all() {
-        Ok(()) => (),
-        Err(BuildError::PreprocessFailed(file, codemap, diags)) => {
-            eprintln!("Failed to preprocess file: '{}'", file.escape_default());
-            Emitter::stderr(ColorConfig::Auto, Some(&codemap)).emit(&diags);
-            return Err(ExitCode::FAILURE);
-        }
-
-        Err(BuildError::CannotFindResource(file)) => {
-            eprintln!("Cannot find '{}' for building", file.escape_default());
-            return Err(ExitCode::FAILURE);
-        }
-
-        Err(BuildError::CannotFetchResource(file, err)) => {
-            eprintln!(
-                "Cannot fetch '{}' for building: {err}",
-                file.escape_default()
-            );
-            return Err(ExitCode::FAILURE);
-        }
-
-        #[cfg(feature = "minify")]
-        Err(BuildError::LoadCSSNonUtf8(file, err)) => {
-            eprintln!("Failed to minify CSS for: '{}'", file.escape_default());
-            eprintln!("Error is: {err}");
-            return Err(ExitCode::FAILURE);
-        }
-
-        #[cfg(feature = "minify")]
-        Err(BuildError::ParseCSSFailed(file, err)) => {
-            eprintln!("Failed to parse CSS for: '{}'", file.escape_default());
-            eprintln!("Error is: {err}");
-            return Err(ExitCode::FAILURE);
-        }
-
-        #[cfg(feature = "minify")]
-        Err(BuildError::EncodeCSSFailed(file, err)) => {
-            eprintln!("Failed to encode CSS for: '{}'", file.escape_default());
-            eprintln!("Error is: {err}");
-            return Err(ExitCode::FAILURE);
-        }
-
-        #[cfg(feature = "minify")]
-        Err(BuildError::MinifyCSSFailed(file, err)) => {
-            eprintln!("Failed to minify CSS for: '{}'", file.escape_default());
-            eprintln!("Error is: {err}");
-            return Err(ExitCode::FAILURE);
-        }
-    }
     let time = util::round_duration_to_ms(Instant::now() - start);
     println!(
         "Built the website. Took {:.2}",
@@ -151,7 +112,58 @@ fn main() -> Result<ExitCode, ExitCode> {
         } => dump(&mut builder, &output_directory),
 
         #[cfg(feature = "built_in_server")]
-        Cmd::Serve { ip, port } => {
+        Cmd::Serve {
+            ip,
+            port,
+            web_src_dir: web_dir,
+        } => {
+            use std::io::ErrorKind;
+            use std::sync::Arc;
+            use std::{borrow::Cow, io::Read};
+
+            if let Some(dir) = web_dir.clone() {
+                let old_fetcher = builder.take_fetcher();
+
+                // If hot reload active, load file directly from there
+                // and fall back to current fetcher
+                builder.set_fetcher(move |path| {
+                    let path = &common_utils::sanify_path(path);
+                    let joined = dir.join(format!("./{path}"));
+                    match File::open(&joined) {
+                        Ok(mut x) => {
+                            let mut buf = Vec::new();
+                            x.read_to_end(&mut buf).map_err(|e| {
+                                format!("Cannot read '{}' because {e}", joined.display())
+                            })?;
+                            Ok(Some(Cow::Owned(buf)))
+                        }
+                        Err(e) => {
+                            if e.kind() == ErrorKind::NotFound {
+                                if let Some(x) = &old_fetcher {
+                                    x(path)
+                                } else {
+                                    Ok(None)
+                                }
+                            } else {
+                                Err(format!("Cannot open '{}'", joined.display()))
+                            }
+                        }
+                    }
+                });
+            }
+
+            let builder = Arc::new(builder);
+            if let Some(dir) = web_dir {
+                use crate::hot_reloader::AutoMiss;
+                use std::thread;
+
+                let mut reloader = AutoMiss::new(dir, builder.clone());
+                println!("Auto miss enabled!");
+                thread::spawn(move || {
+                    reloader.run();
+                });
+            }
+
             let server_config = ServerConfig { ip, port };
             server::serve(&server_config, move |path| {
                 match builder.get(path).map(Some) {
@@ -231,6 +243,59 @@ fn main() -> Result<ExitCode, ExitCode> {
             Ok(ExitCode::SUCCESS)
         }
     }
+}
+
+fn do_full_rebuild(builder: &Builder<'_>) -> Result<(), ExitCode> {
+    match builder.build_all() {
+        Ok(()) => (),
+        Err(BuildError::PreprocessFailed(file, codemap, diags)) => {
+            eprintln!("Failed to preprocess file: '{}'", file.escape_default());
+            Emitter::stderr(ColorConfig::Auto, Some(&codemap)).emit(&diags);
+            return Err(ExitCode::FAILURE);
+        }
+
+        Err(BuildError::CannotFindResource(file)) => {
+            eprintln!("Cannot find '{}' for building", file.escape_default());
+            return Err(ExitCode::FAILURE);
+        }
+
+        Err(BuildError::CannotFetchResource(file, err)) => {
+            eprintln!(
+                "Cannot fetch '{}' for building: {err}",
+                file.escape_default()
+            );
+            return Err(ExitCode::FAILURE);
+        }
+
+        #[cfg(feature = "minify")]
+        Err(BuildError::LoadCSSNonUtf8(file, err)) => {
+            eprintln!("Failed to minify CSS for: '{}'", file.escape_default());
+            eprintln!("Error is: {err}");
+            return Err(ExitCode::FAILURE);
+        }
+
+        #[cfg(feature = "minify")]
+        Err(BuildError::ParseCSSFailed(file, err)) => {
+            eprintln!("Failed to parse CSS for: '{}'", file.escape_default());
+            eprintln!("Error is: {err}");
+            return Err(ExitCode::FAILURE);
+        }
+
+        #[cfg(feature = "minify")]
+        Err(BuildError::EncodeCSSFailed(file, err)) => {
+            eprintln!("Failed to encode CSS for: '{}'", file.escape_default());
+            eprintln!("Error is: {err}");
+            return Err(ExitCode::FAILURE);
+        }
+
+        #[cfg(feature = "minify")]
+        Err(BuildError::MinifyCSSFailed(file, err)) => {
+            eprintln!("Failed to minify CSS for: '{}'", file.escape_default());
+            eprintln!("Error is: {err}");
+            return Err(ExitCode::FAILURE);
+        }
+    }
+    Ok(())
 }
 
 fn dump(builder: &mut Builder<'_>, output: &Path) -> Result<ExitCode, ExitCode> {
