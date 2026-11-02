@@ -61,7 +61,7 @@ pub enum BuildError<'resources> {
     LoadCSSNonUtf8(String, Utf8Error),
 
     #[cfg(feature = "minify")]
-    ParseCSSFailed(String, lightningcss::error::Error<ParserError<'static>>),
+    ParseCSSFailed(String, String),
 
     #[cfg(feature = "minify")]
     MinifyCSSFailed(String, lightningcss::error::Error<MinifyErrorKind>),
@@ -314,7 +314,7 @@ impl<'fetcher> Builder<'fetcher> {
                         ..Default::default()
                     },
                 )
-                .map_err(|e| BuildError::ParseCSSFailed(path.to_string(), e))?;
+                .map_err(|e| BuildError::ParseCSSFailed(path.to_string(), e.to_string()))?;
 
                 // Minify CSS
                 css.minify(MinifyOptions::default())
