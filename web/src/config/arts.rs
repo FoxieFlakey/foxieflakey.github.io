@@ -1,6 +1,6 @@
 use std::{borrow::Cow, fmt::Write, sync::LazyLock};
 
-pub use art_data::{Art, ARTS, ID_TO_ART};
+pub use art_data::{ARTS, Art, ID_TO_ART};
 use chrono::{Datelike, NaiveDate};
 
 use crate::{config::Resource, util};
@@ -49,20 +49,21 @@ impl ArtExt for Art {
 
         format!("{}/{year}/{month}/{id}.html", ARTS_BASE_DIR)
     }
-    
+
     fn actual_size(&self) -> Option<(u32, u32)> {
         *self
             .actual_size
             .get_or_init(|| match self.mime().clone()?.type_() {
-                mime::IMAGE => {
-                    match imagesize::blob_size(self.data) {
-                        Ok(size) => Some((size.width.try_into().unwrap(), size.height.try_into().unwrap())),
-                        Err(e) => {
-                            println!("[ERROR] Art module: Cannot parse art file as image: {e}");
-                            None
-                        }
+                mime::IMAGE => match imagesize::blob_size(self.data) {
+                    Ok(size) => Some((
+                        size.width.try_into().unwrap(),
+                        size.height.try_into().unwrap(),
+                    )),
+                    Err(e) => {
+                        println!("[ERROR] Art module: Cannot parse art file as image: {e}");
+                        None
                     }
-                }
+                },
                 _ => None,
             })
     }
@@ -148,11 +149,11 @@ pub fn init() {
 
         current_idx += 1;
     }
-    
+
     LazyLock::force(&ID_TO_ART);
 }
 
-pub fn gen_resources_list() -> Vec<(String, Resource)> {
+pub fn gen_resources_list() -> Vec<(String, Resource<'static>)> {
     let mut resources: Vec<(String, Resource)> = ARTS
         .iter()
         .map(|x| (x.path_to_data(), Resource::RawBytes(Cow::Borrowed(x.data))))
@@ -176,7 +177,8 @@ pub fn gen_resources_list() -> Vec<(String, Resource)> {
                         <x-metadata-image content="$root/{path_to_data}" />
                         <meta property="twitter:card" content="summary_large_image" />
                         <meta property="og:image:type" content="{}" />
-                        "#, mime.to_string()
+                        "#,
+                        mime.to_string()
                     )
                     .unwrap();
                     if let Some((width, height)) = x.actual_size() {

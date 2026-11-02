@@ -85,14 +85,14 @@ pub struct Config {
     pub root: String,
 }
 
-pub enum Resource {
-    RawBytes(Cow<'static, [u8]>),
-    HtmlBuildResource(Cow<'static, [u8]>),
-    PreprocessAndIncludeHtml(Cow<'static, [u8]>),
-    Css(Cow<'static, [u8]>),
+pub enum Resource<'bytes> {
+    RawBytes(Cow<'bytes, [u8]>),
+    HtmlBuildResource(Cow<'bytes, [u8]>),
+    PreprocessAndIncludeHtml(Cow<'bytes, [u8]>),
+    Css(Cow<'bytes, [u8]>),
 }
 
-impl Resource {
+impl Resource<'_> {
     pub fn data(&self) -> &[u8] {
         match self {
             Resource::RawBytes(items)
