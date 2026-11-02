@@ -48,11 +48,8 @@ enum Cmd {
     /// Run a server, to serve the website
     #[cfg(feature = "built_in_server")]
     Serve {
-        /// Hot reloading like capability. If changes detected
-        /// builder's internal cache of built resources are
-        /// automatically dropped so next access will rebuild
-        ///
-        /// Currently only explicit (clear all) is built.
+        /// Hot rebuilding, triggered when files are modified
+        /// only for non Rust files are triggered
         #[arg(long)]
         web_src_dir: Option<PathBuf>,
         /// The IP address where the website will be accesible
