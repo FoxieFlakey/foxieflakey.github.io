@@ -92,8 +92,25 @@ pub enum Resource<'bytes> {
     Css(Cow<'bytes, [u8]>),
 }
 
-impl Resource<'_> {
-    pub fn data(&self) -> &[u8] {
+#[derive(PartialEq, Eq, Clone, Copy)]
+pub enum ResourceType {
+    RawBytes,
+    HtmlBuildResource,
+    PreprocessAndIncludeHtml,
+    Css,
+}
+
+impl<'data> Resource<'data> {
+    pub fn type_(&self) -> ResourceType {
+        match self {
+            Resource::RawBytes(_) => ResourceType::RawBytes,
+            Resource::HtmlBuildResource(_) => ResourceType::HtmlBuildResource,
+            Resource::PreprocessAndIncludeHtml(_) => ResourceType::PreprocessAndIncludeHtml,
+            Resource::Css(_) => ResourceType::Css,
+        }
+    }
+
+    pub fn data<'a>(&'a self) -> &'a Cow<'data, [u8]> {
         match self {
             Resource::RawBytes(items)
             | Resource::HtmlBuildResource(items)

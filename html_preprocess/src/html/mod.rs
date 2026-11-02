@@ -57,7 +57,7 @@ mod util;
 pub struct Preprocessor<'a> {
     cached_files: HashMap<String, Arc<(Arc<File>, Vec<(Span, ElementContent)>)>>,
     code_map: CodeMap,
-    fetcher: Box<dyn FnMut(&str) -> Result<String, String> + 'a>,
+    fetcher: Box<dyn FnMut(&str) -> Result<String, String> + Send + Sync + 'a>,
     environment: HashMap<String, String>,
     minify: bool,
 }
@@ -173,7 +173,7 @@ impl PreprocessorCodes {
 impl<'a> Preprocessor<'a> {
     pub fn new<F>(file_fetcher: F, can_minify: bool) -> Self
     where
-        F: FnMut(&str) -> Result<String, String> + 'a,
+        F: FnMut(&str) -> Result<String, String> + Send + Sync + 'a,
     {
         Self {
             code_map: CodeMap::new(),

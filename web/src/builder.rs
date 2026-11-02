@@ -1,12 +1,19 @@
 use std::{borrow::Cow, collections::HashMap, panic::Location, sync::Arc};
 
-#[cfg(feature = "minify")]
-use std::{str::Utf8Error, sync::RwLock};
-
 use chrono::Utc;
 use codemap::CodeMap;
 use codemap_diagnostic::Diagnostic;
 use html_preprocess::{GeneratorArgs, Preprocessor};
+use mime::Mime;
+use parking_lot::{MappedRwLockReadGuard, RwLock, RwLockReadGuard, RwLockWriteGuard};
+
+use crate::{
+    config::{self, ResourceType},
+    util,
+};
+
+#[cfg(feature = "minify")]
+use std::str::Utf8Error;
 
 #[cfg(feature = "minify")]
 use lightningcss::{
@@ -14,15 +21,41 @@ use lightningcss::{
     printer::PrinterOptions,
     stylesheet::{MinifyOptions, ParserOptions, StyleSheet},
 };
-use mime::Mime;
-
-use crate::{config, util};
 
 mod arts;
 mod navbar;
 
-pub enum BuildError {
-    PreprocessFailed(String, CodeMap, Vec<Diagnostic>),
+pub struct Builder<'fetcher> {
+    config: config::Config,
+    state: RwLock<State<'fetcher>>,
+    build_time: String,
+}
+
+struct State<'fetcher> {
+    cached: HashMap<String, Arc<(Cow<'static, [u8]>, Option<Mime>)>>,
+    fetcher: Arc<
+        RwLock<
+            Option<
+                Box<
+                    dyn Fn(&str) -> Result<Option<Cow<'static, [u8]>>, String>
+                        + Send
+                        + Sync
+                        + 'fetcher,
+                >,
+            >,
+        >,
+    >,
+    preprocessor: Preprocessor<'fetcher>,
+}
+
+pub enum BuildError<'resources> {
+    PreprocessFailed(
+        String,
+        MappedRwLockReadGuard<'resources, CodeMap>,
+        Vec<Diagnostic>,
+    ),
+    CannotFindResource(String),
+    CannotFetchResource(String, String),
 
     #[cfg(feature = "minify")]
     LoadCSSNonUtf8(String, Utf8Error),
@@ -37,85 +70,231 @@ pub enum BuildError {
     EncodeCSSFailed(String, lightningcss::error::Error<PrinterErrorKind>),
 }
 
-fn init_generators(
-    config: &config::Config,
-    generators: &mut HashMap<
-        String,
-        (
-            &Location<'_>,
-            Arc<dyn Fn(GeneratorArgs<'_>) -> Result<String, String>>,
-        ),
-    >,
-) {
-    // Relating to navbars
-    navbar::init(config, generators);
-    arts::init(config, generators);
+impl State<'_> {
+    fn call_fetcher(&self, path: &str) -> Result<Option<Cow<'static, [u8]>>, String> {
+        match self.fetcher.read().as_ref() {
+            Some(fetcher) => fetcher(path),
+            None => Err(format!("There no fetcher installed")),
+        }
+    }
 }
 
-pub fn build(
-    config: &config::Config,
-) -> Result<HashMap<String, (Cow<'static, [u8]>, Option<Mime>)>, BuildError> {
-    let mut map = HashMap::new();
+impl<'fetcher> Builder<'fetcher> {
+    pub fn new(config: config::Config) -> Self {
+        let fetcher: Arc<
+            parking_lot::lock_api::RwLock<
+                parking_lot::RawRwLock,
+                Option<
+                    Box<dyn Fn(&str) -> Result<Option<Cow<'static, [u8]>>, String> + Send + Sync>,
+                >,
+            >,
+        > = Arc::new(RwLock::new(None));
+        let fetcher_cloned = fetcher.clone();
 
-    let mut preprocessor = Preprocessor::new(
-        |name| {
-            config::RESOURCES
-                .get(common_utils::sanify_path(name).as_str())
-                .ok_or(())
-                .map_err(|_| format!("Cannot find file '{name}'"))
-                .map(|x| str::from_utf8(x.data()))?
-                .map_err(|e| format!("File '{name}' has invalid UTF8 format: {e}"))
-                .map(|x| x.to_string())
-        },
-        // TODO: Minify but not extreme. Social media bot crawler, struggle to find
-        // or parse the heavily minified HTML.
-        false,
-    );
+        let mut preprocessor = Preprocessor::new(
+            move |path| {
+                fetcher_cloned
+                    .read()
+                    .as_ref()
+                    .map(|x| x(path))
+                    .ok_or(format!("There no fetcher installed"))
+                    .flatten()
+                    .map_err(|e| format!("Cannot fetch file '{path}': {e}"))
+                    .map(|x| x.ok_or_else(|| format!("Cannot find '{path}'")))?
+                    .map(|x| String::from_utf8(x.to_vec()))?
+                    .map_err(|e| format!("File '{path}' has invalid UTF8 format: {e}"))
+            },
+            // TODO: Minify but not extreme. Social media bot crawler, struggle to find
+            // or parse the heavily minified HTML.
+            false,
+        );
+        preprocessor.set_env("root", &config.root);
 
-    let build_time = Utc::now().to_rfc2822();
-    preprocessor.set_env("root", &config.root);
-    let mut generators = HashMap::new();
-    let build_time2 = build_time.clone();
-    generators.insert(
-        "build-time".to_string(),
-        html_preprocess::create_generator(move |_| Ok(format!("<p>Built on {build_time2}</p>"))),
-    );
-    init_generators(config, &mut generators);
+        Self {
+            config,
+            build_time: Utc::now().to_rfc2822(),
+            state: RwLock::new(State {
+                cached: HashMap::new(),
+                fetcher: fetcher.clone(),
+                preprocessor,
+            }),
+        }
+    }
 
-    for (path, resource) in config::RESOURCES.iter() {
-        let resource_result: Option<(Option<Mime>, Cow<'static, [u8]>)> = match resource {
-            config::Resource::PreprocessAndIncludeHtml(_) => {
-                // Each instance of generator, store state
-                // relating to each file
-                generators.clear();
-                let build_time = build_time.clone();
-                generators.insert(
-                    "build-time".to_string(),
-                    html_preprocess::create_generator(move |_| {
-                        Ok(format!("<p>Built on {build_time}</p>"))
-                    }),
-                );
-                init_generators(config, &mut generators);
+    pub fn set_fetcher<F>(
+        &self,
+        fetcher: F,
+    ) -> Option<
+        Box<dyn Fn(&str) -> Result<Option<Cow<'static, [u8]>>, String> + Send + Sync + 'fetcher>,
+    >
+    where
+        F: Fn(&str) -> Result<Option<Cow<'static, [u8]>>, String> + Send + Sync + 'fetcher,
+    {
+        self.state
+            .write()
+            .fetcher
+            .write()
+            .replace(Box::new(fetcher))
+    }
 
-                let result = preprocessor.process_file(&path, &generators);
+    #[expect(unused)]
+    pub fn take_fetcher<F>(
+        &self,
+    ) -> Option<
+        Box<dyn Fn(&str) -> Result<Option<Cow<'static, [u8]>>, String> + Send + Sync + 'fetcher>,
+    > {
+        self.state.write().fetcher.write().take()
+    }
+
+    pub fn build_all<'this>(&'this self) -> Result<(), BuildError<'this>> {
+        for path in config::RESOURCES.keys() {
+            self.get(path)?;
+        }
+        Ok(())
+    }
+
+    pub fn iter_data(
+        &mut self,
+    ) -> impl Iterator<Item = (&String, &Cow<'static, [u8]>, &Option<Mime>)> {
+        self.state
+            .get_mut()
+            .cached
+            .iter()
+            .map(|x| (x.0, &x.1.0, &x.1.1))
+    }
+
+    pub fn get<'this>(
+        &'this self,
+        path: &str,
+    ) -> Result<Arc<(Cow<'static, [u8]>, Option<Mime>)>, BuildError<'this>> {
+        let path = common_utils::sanify_path(path);
+
+        // Check if its in cache
+        if let Some(cached) = self.state.read().cached.get(&path) {
+            // Cache hit
+            return Ok(cached.clone());
+        }
+
+        // Try find hint in global list
+        let hint = config::RESOURCES.get(&path).map(|x| x.type_());
+        let state = self.state.write();
+        let Some(data) = (match state.call_fetcher(&path) {
+            Ok(x) => x,
+            Err(e) => return Err(BuildError::CannotFetchResource(path, e)),
+        }) else {
+            return Err(BuildError::CannotFindResource(path));
+        };
+
+        // Check if its in cache again under exclusive lock, just incase someone
+        // cached it while we're waiting for write lock
+        if let Some(cached) = state.cached.get(&path) {
+            // Cache hit
+            return Ok(cached.clone());
+        }
+
+        let (mime, result, mut state) = self.get_one(&path, state, data, hint)?;
+
+        let ret = Arc::new((result, mime));
+        state.cached.insert(path, ret.clone());
+        Ok(ret)
+    }
+
+    fn get_one<'this, 'data>(
+        &'this self,
+        path: &str,
+        mut state: RwLockWriteGuard<'this, State<'fetcher>>,
+        data: Cow<'data, [u8]>,
+        hint: Option<ResourceType>,
+    ) -> Result<
+        (
+            Option<Mime>,
+            Cow<'data, [u8]>,
+            RwLockWriteGuard<'this, State<'fetcher>>,
+        ),
+        BuildError<'this>,
+    > {
+        let inferred;
+        let ty;
+        match hint {
+            Some(res_type) => match res_type {
+                ResourceType::RawBytes => {
+                    inferred = util::infer(Some(path), &data);
+                    match &inferred {
+                        Some(mime) => {
+                            if mime == &mime::TEXT_HTML {
+                                ty = ResourceType::PreprocessAndIncludeHtml
+                            } else if mime == &mime::TEXT_CSS {
+                                ty = ResourceType::Css
+                            } else {
+                                ty = ResourceType::RawBytes
+                            }
+                        }
+                        None => {
+                            println!("[WARN] Cannot infer mime type for '{path}'");
+                            ty = ResourceType::RawBytes;
+                        }
+                    }
+                }
+                ResourceType::HtmlBuildResource => {
+                    inferred = Some(mime::TEXT_HTML);
+                    ty = res_type;
+                }
+                ResourceType::PreprocessAndIncludeHtml => {
+                    inferred = Some(mime::TEXT_HTML);
+                    ty = res_type;
+                }
+                ResourceType::Css => {
+                    inferred = Some(mime::TEXT_CSS);
+                    ty = res_type;
+                }
+            },
+            None => {
+                inferred = util::infer(Some(path), &data);
+                match &inferred {
+                    Some(mime) => {
+                        if mime == &mime::TEXT_HTML {
+                            ty = ResourceType::PreprocessAndIncludeHtml
+                        } else if mime == &mime::TEXT_CSS {
+                            ty = ResourceType::Css
+                        } else {
+                            ty = ResourceType::RawBytes
+                        }
+                    }
+                    None => {
+                        println!("[WARN] Cannot infer mime type for '{path}'");
+                        ty = ResourceType::RawBytes;
+                    }
+                }
+            }
+        };
+
+        match ty {
+            ResourceType::HtmlBuildResource | ResourceType::RawBytes => Ok((inferred, data, state)),
+            ResourceType::PreprocessAndIncludeHtml => {
+                let mut generators = HashMap::new();
+                self.init_generators(&mut generators);
+
+                let result = state.preprocessor.process_file(&path, &generators);
                 let data = match result {
                     Ok(data) => Cow::<'_, [u8]>::Owned(data.into_bytes()),
                     Err(diags) => {
                         return Err(BuildError::PreprocessFailed(
-                            path.clone(),
-                            preprocessor.to_codemap(),
+                            path.to_string(),
+                            RwLockReadGuard::map(RwLockWriteGuard::downgrade(state), |x| {
+                                x.preprocessor.get_codemap()
+                            }),
                             diags,
                         ));
                     }
                 };
-                Some((Some(mime::TEXT_HTML_UTF_8), data))
+                Ok((inferred, data, state))
             }
 
             #[cfg(not(feature = "minify"))]
-            config::Resource::Css(data) => Some((Some(mime::TEXT_CSS_UTF_8), Cow::Borrowed(data))),
+            ResourceType::Css => Ok((inferred, data, state)),
 
             #[cfg(feature = "minify")]
-            config::Resource::Css(data) => {
+            ResourceType::Css => {
                 let source = str::from_utf8(data)
                     .map_err(|e| BuildError::LoadCSSNonUtf8(path.clone(), e))?;
 
@@ -143,28 +322,32 @@ pub fn build(
                         ..Default::default()
                     })
                     .map_err(|e| BuildError::EncodeCSSFailed(path.clone(), e))?;
-                Some((
+                Ok((
                     Some(mime::TEXT_CSS_UTF_8),
                     Cow::Owned(minified.code.into_bytes()),
+                    state,
                 ))
             }
-
-            config::Resource::RawBytes(data) => {
-                let mime = util::infer(Some(path), data);
-                if mime.is_none() {
-                    println!("[WARN] Cannot infer mime type for '{path}'");
-                }
-                Some((mime, Cow::Borrowed(data)))
-            }
-
-            // The HTML is dependency needed by other preprocessable html
-            config::Resource::HtmlBuildResource(_) => None,
-        };
-
-        if let Some((mime, data)) = resource_result {
-            map.insert(path.clone(), (data, mime));
         }
     }
 
-    Ok(map)
+    fn init_generators(
+        &self,
+        generators: &mut HashMap<
+            String,
+            (
+                &Location<'_>,
+                Arc<dyn Fn(GeneratorArgs<'_>) -> Result<String, String>>,
+            ),
+        >,
+    ) {
+        let build_time = self.build_time.clone();
+        generators.insert(
+            "build-time".to_string(),
+            html_preprocess::create_generator(move |_| Ok(format!("<p>Built on {build_time}</p>"))),
+        );
+        // Relating to navbars
+        navbar::init(&self.config, generators);
+        arts::init(&self.config, generators);
+    }
 }

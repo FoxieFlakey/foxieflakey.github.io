@@ -1,8 +1,5 @@
 #[forbid(unsafe_code)]
-use std::{
-    path::PathBuf,
-    process::ExitCode,
-};
+use std::{path::PathBuf, process::ExitCode};
 
 #[cfg(feature = "built_in_server")]
 use std::net::{IpAddr, Ipv4Addr};
@@ -10,17 +7,17 @@ use std::net::{IpAddr, Ipv4Addr};
 use clap::{Parser, Subcommand};
 use codemap_diagnostic::{ColorConfig, Emitter};
 use human_bytes::human_bytes;
-use mime::Mime;
 use std::{
-    borrow::Cow,
-    collections::HashMap,
     fs::{self, File},
     io::Write,
     path::Path,
     time::Instant,
 };
 
-use crate::{builder::BuildError, config::Config};
+use crate::{
+    builder::{BuildError, Builder},
+    config::Config,
+};
 
 mod builder;
 mod config;
@@ -84,13 +81,33 @@ fn main() -> Result<ExitCode, ExitCode> {
 
     println!("Building the website");
     let start = Instant::now();
-    let data;
     config::arts::init();
-    match builder::build(&config) {
-        Ok(ok) => data = ok,
+    let mut builder = Builder::new(config);
+    builder.set_fetcher(|path| {
+        // Fetch from statically saved data
+        Ok(config::RESOURCES
+            .get(&common_utils::sanify_path(path))
+            .map(|x| x.data().clone()))
+    });
+
+    match builder.build_all() {
+        Ok(()) => (),
         Err(BuildError::PreprocessFailed(file, codemap, diags)) => {
             eprintln!("Failed to preprocess file: '{}'", file.escape_default());
             Emitter::stderr(ColorConfig::Auto, Some(&codemap)).emit(&diags);
+            return Err(ExitCode::FAILURE);
+        }
+
+        Err(BuildError::CannotFindResource(file)) => {
+            eprintln!("Cannot find '{}' for building", file.escape_default());
+            return Err(ExitCode::FAILURE);
+        }
+
+        Err(BuildError::CannotFetchResource(file, err)) => {
+            eprintln!(
+                "Cannot fetch '{}' for building: {err}",
+                file.escape_default()
+            );
             return Err(ExitCode::FAILURE);
         }
 
@@ -131,25 +148,96 @@ fn main() -> Result<ExitCode, ExitCode> {
     match cmd {
         Cmd::Dump {
             output_directory, ..
-        } => dump(data, &output_directory),
+        } => dump(&mut builder, &output_directory),
 
         #[cfg(feature = "built_in_server")]
         Cmd::Serve { ip, port } => {
             let server_config = ServerConfig { ip, port };
-            server::serve(&server_config, data)?;
+            server::serve(&server_config, move |path| {
+                match builder.get(path).map(Some) {
+                    Ok(ret) => Ok(ret),
+                    Err(e) => {
+                        let mut msg = Vec::new();
+                        match e {
+                            BuildError::PreprocessFailed(file, codemap, diags) => {
+                                writeln!(
+                                    &mut msg,
+                                    "Failed to preprocess file: '{}'",
+                                    file.escape_default()
+                                )
+                                .unwrap();
+                                Emitter::vec(&mut msg, Some(&codemap)).emit(&diags);
+                            }
+
+                            // File not found is not fatal in server
+                            BuildError::CannotFindResource(_) => return Ok(None),
+                            BuildError::CannotFetchResource(file, err) => {
+                                writeln!(
+                                    &mut msg,
+                                    "Cannot fetch '{}' for building: {err}",
+                                    file.escape_default()
+                                )
+                                .unwrap();
+                            }
+
+                            #[cfg(feature = "minify")]
+                            BuildError::LoadCSSNonUtf8(file, err) => {
+                                writeln!(
+                                    &mut msg,
+                                    "Failed to minify CSS for: '{}'",
+                                    file.escape_default()
+                                )
+                                .unwrap();
+                                writeln!(&mut msg, "Error is: {err}").unwrap();
+                            }
+
+                            #[cfg(feature = "minify")]
+                            BuildError::ParseCSSFailed(file, err) => {
+                                writeln!(
+                                    &mut msg,
+                                    "Failed to parse CSS for: '{}'",
+                                    file.escape_default()
+                                )
+                                .unwrap();
+                                writeln!(&mut msg, "Error is: {err}").unwrap();
+                            }
+
+                            #[cfg(feature = "minify")]
+                            BuildError::EncodeCSSFailed(file, err) => {
+                                writeln!(
+                                    &mut msg,
+                                    "Failed to encode CSS for: '{}'",
+                                    file.escape_default()
+                                )
+                                .unwrap();
+                                writeln!(&mut msg, "Error is: {err}").unwrap();
+                            }
+
+                            #[cfg(feature = "minify")]
+                            BuildError::MinifyCSSFailed(file, err) => {
+                                writeln!(
+                                    &mut msg,
+                                    "Failed to minify CSS for: '{}'",
+                                    file.escape_default()
+                                )
+                                .unwrap();
+                                writeln!(&mut msg, "Error is: {err}").unwrap();
+                            }
+                        }
+                        Err(String::from_utf8_lossy_owned(msg))
+                    }
+                }
+            })?;
             Ok(ExitCode::SUCCESS)
         }
     }
 }
 
-fn dump(
-    data: HashMap<String, (Cow<'_, [u8]>, Option<Mime>)>,
-    output: &Path,
-) -> Result<ExitCode, ExitCode> {
+fn dump(builder: &mut Builder<'_>, output: &Path) -> Result<ExitCode, ExitCode> {
     println!("Dumping files to '{}'", output.display());
     let mut written_bytes = 0;
     let start = Instant::now();
-    for (path, (bytes, _)) in data {
+    for (path, bytes, _) in builder.iter_data() {
         let path_raw = common_utils::sanify_path(&path);
         let path = output.join(format!("./{path_raw}"));
 

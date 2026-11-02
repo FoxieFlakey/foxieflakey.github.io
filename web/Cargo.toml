@@ -29,3 +29,4 @@ server = { path = "../server/", optional = true }
 strum = { version = "0.28.0", features = ["derive"] }
 art_data = { path = "../art_data" }
 imagesize = { version = "0.15.0", default-features = false, features = ["png", "webp", "jpeg", "gif"] }
+parking_lot = "0.13.0"
