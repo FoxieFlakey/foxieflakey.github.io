@@ -1,15 +1,7 @@
-use std::{
-    borrow::Cow,
-    collections::HashMap,
-    panic::Location,
-    rc::Rc,
-};
+use std::{borrow::Cow, collections::HashMap, panic::Location, sync::Arc};
 
 #[cfg(feature = "minify")]
-use std::{
-    sync::{Arc, RwLock},
-    str::Utf8Error
-};
+use std::{str::Utf8Error, sync::RwLock};
 
 use chrono::Utc;
 use codemap::CodeMap;
@@ -31,16 +23,16 @@ mod navbar;
 
 pub enum BuildError {
     PreprocessFailed(String, CodeMap, Vec<Diagnostic>),
-    
+
     #[cfg(feature = "minify")]
     LoadCSSNonUtf8(String, Utf8Error),
-    
+
     #[cfg(feature = "minify")]
     ParseCSSFailed(String, lightningcss::error::Error<ParserError<'static>>),
-    
+
     #[cfg(feature = "minify")]
     MinifyCSSFailed(String, lightningcss::error::Error<MinifyErrorKind>),
-    
+
     #[cfg(feature = "minify")]
     EncodeCSSFailed(String, lightningcss::error::Error<PrinterErrorKind>),
 }
@@ -51,7 +43,7 @@ fn init_generators(
         String,
         (
             &Location<'_>,
-            Rc<dyn Fn(GeneratorArgs<'_>) -> Result<String, String>>,
+            Arc<dyn Fn(GeneratorArgs<'_>) -> Result<String, String>>,
         ),
     >,
 ) {
@@ -120,10 +112,8 @@ pub fn build(
             }
 
             #[cfg(not(feature = "minify"))]
-            config::Resource::Css(data) => {
-                Some((Some(mime::TEXT_CSS_UTF_8), Cow::Borrowed(data)))
-            }
-            
+            config::Resource::Css(data) => Some((Some(mime::TEXT_CSS_UTF_8), Cow::Borrowed(data))),
+
             #[cfg(feature = "minify")]
             config::Resource::Css(data) => {
                 let source = str::from_utf8(data)

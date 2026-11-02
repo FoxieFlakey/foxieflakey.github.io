@@ -1,8 +1,8 @@
-use std::{cell::Cell, collections::HashMap, panic::Location, rc::Rc};
+use std::{cell::Cell, collections::HashMap, panic::Location, rc::Rc, sync::Arc};
 
+use common_utils::ExpectNone;
 use html_preprocess::{GeneratorArgs, create_generator};
 use strum::{AsRefStr, EnumIter, EnumString, IntoEnumIterator};
-use common_utils::ExpectNone;
 
 use crate::config;
 
@@ -47,7 +47,7 @@ pub fn init(
         String,
         (
             &Location<'_>,
-            Rc<dyn Fn(GeneratorArgs<'_>) -> Result<String, String>>,
+            Arc<dyn Fn(GeneratorArgs<'_>) -> Result<String, String>>,
         ),
     >,
 ) {

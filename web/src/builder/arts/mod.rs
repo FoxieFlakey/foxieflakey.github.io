@@ -1,6 +1,6 @@
 // Display entire list at once
 
-use std::{collections::HashMap, fmt::Write, panic::Location, rc::Rc};
+use std::{collections::HashMap, fmt::Write, panic::Location, sync::Arc};
 
 use chrono::Datelike;
 use common_utils::ExpectNone;
@@ -19,7 +19,7 @@ pub fn init(
         String,
         (
             &Location<'_>,
-            Rc<dyn Fn(GeneratorArgs<'_>) -> Result<String, String>>,
+            Arc<dyn Fn(GeneratorArgs<'_>) -> Result<String, String>>,
         ),
     >,
 ) {

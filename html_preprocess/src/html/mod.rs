@@ -37,7 +37,6 @@ use std::{
     io::Write,
     panic::Location,
     path::Path,
-    rc::Rc,
     sync::Arc,
 };
 
@@ -77,7 +76,7 @@ pub enum Template<'a> {
         // Return a string of encoded HTML. Yes this is somewhat inefficient
         // but saner than reconstructing the AST tree manually in code. and
         // verifying data from there is not bogus/invalid
-        Rc<dyn Fn(GeneratorArgs) -> Result<String, String> + 'static>,
+        Arc<dyn Fn(GeneratorArgs) -> Result<String, String> + 'static>,
     ),
 }
 
@@ -259,7 +258,7 @@ impl<'a> Preprocessor<'a> {
             String,
             (
                 &'static Location<'static>,
-                Rc<dyn Fn(GeneratorArgs) -> Result<String, String> + 'static>,
+                Arc<dyn Fn(GeneratorArgs) -> Result<String, String> + 'static>,
             ),
         >,
     ) -> Result<String, Vec<Diagnostic>> {

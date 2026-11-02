@@ -1,7 +1,7 @@
 mod html;
 
 use std::panic::Location;
-use std::rc::Rc;
+use std::sync::Arc;
 
 pub use html::GeneratorArgs;
 pub use html::Preprocessor;
@@ -19,10 +19,10 @@ pub fn create_generator<F>(
     func: F,
 ) -> (
     &'static Location<'static>,
-    Rc<dyn Fn(GeneratorArgs) -> Result<String, String> + 'static>,
+    Arc<dyn Fn(GeneratorArgs) -> Result<String, String> + 'static>,
 )
 where
     F: Fn(GeneratorArgs) -> Result<String, String> + 'static,
 {
-    (Location::caller(), Rc::new(func))
+    (Location::caller(), Arc::new(func))
 }
