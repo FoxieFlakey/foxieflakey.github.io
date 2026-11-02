@@ -300,10 +300,10 @@ impl<'fetcher> Builder<'fetcher> {
 
             #[cfg(feature = "minify")]
             ResourceType::Css => {
-                let source = str::from_utf8(data)
-                    .map_err(|e| BuildError::LoadCSSNonUtf8(path.clone(), e))?;
+                let source = str::from_utf8(&data)
+                    .map_err(|e| BuildError::LoadCSSNonUtf8(path.to_string(), e))?;
 
-                let warnings = Arc::new(RwLock::new(Vec::new()));
+                let warnings = Arc::new(std::sync::RwLock::new(Vec::new()));
 
                 // Parse CSS first
                 let mut css = StyleSheet::parse(
@@ -314,11 +314,11 @@ impl<'fetcher> Builder<'fetcher> {
                         ..Default::default()
                     },
                 )
-                .map_err(|e| BuildError::ParseCSSFailed(path.clone(), e))?;
+                .map_err(|e| BuildError::ParseCSSFailed(path.to_string(), e))?;
 
                 // Minify CSS
                 css.minify(MinifyOptions::default())
-                    .map_err(|e| BuildError::MinifyCSSFailed(path.clone(), e))?;
+                    .map_err(|e| BuildError::MinifyCSSFailed(path.to_string(), e))?;
 
                 // Encode back to CSS code
                 let minified = css
@@ -326,7 +326,7 @@ impl<'fetcher> Builder<'fetcher> {
                         minify: true,
                         ..Default::default()
                     })
-                    .map_err(|e| BuildError::EncodeCSSFailed(path.clone(), e))?;
+                    .map_err(|e| BuildError::EncodeCSSFailed(path.to_string(), e))?;
                 Ok((
                     Some(mime::TEXT_CSS_UTF_8),
                     Cow::Owned(minified.code.into_bytes()),
