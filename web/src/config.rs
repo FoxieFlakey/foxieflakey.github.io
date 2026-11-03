@@ -80,7 +80,7 @@ pub static RESOURCES: LazyLock<HashMap<String, Resource>> = LazyLock::new(|| {
         html_dep!("/components/opengraph.html"),
         raw!("/googlece00914e0cd14977.html"),
         raw!("/robots.txt"),
-        wasm!("/creations/wasm/hello_world.wasm"),
+        wasm!("/creations/wasm/hello_world"),
         html!("/creations/wasm/index.html"),
         // Do not remove this comment too, its for scanning stuffs
     ];
@@ -94,7 +94,17 @@ pub static RESOURCES: LazyLock<HashMap<String, Resource>> = LazyLock::new(|| {
         .chain(arts::gen_resources_list().into_iter());
 
     for (path, resource) in iter {
-        map.insert(path, resource);
+        match resource {
+            Resource::RawBytes(_)
+            | Resource::HtmlBuildResource(_)
+            | Resource::PreprocessAndIncludeHtml(_)
+            | Resource::Css(_) => {
+                map.insert(path, resource);
+            }
+            Resource::WasmRust => {
+                map.insert(format!("{}.wasm", path), resource);
+            }
+        }
     }
 
     map

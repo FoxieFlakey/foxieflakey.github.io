@@ -71,7 +71,7 @@ fn main() {
         println!("Building {kind:?} at {path}");
         match kind {
             BuildKind::WasmRust => {
-                let filename = path.split('/').last().expect("Cannot get last component of crate path (needed ot be same as 'crate-name' + '.wasm' so hello_world crate is hello_word.wasm)");
+                let crate_name = path.split('/').last().expect("Cannot get last component of crate path (needed ot be same as 'crate-name' so hello_world crate is just hello_word)");
 
                 let mut cmd = Command::new("cargo");
                 let src_dir = format!("{web_data_dir}/{path}");
@@ -105,7 +105,7 @@ fn main() {
 
                 assert!(
                     wasm_to_build_map
-                        .insert(path, (kind, format!("{artifacts_dir}/{filename}")))
+                        .insert(path, (kind, format!("{artifacts_dir}/{crate_name}.wasm")))
                         .is_none(),
                     "There is duplicate '{path}'!"
                 );
@@ -121,7 +121,7 @@ fn main() {
 
         writeln!(
             &mut opts,
-            "(\"{path}\", {}, &include_bytes!(\"{artifact_path}\")[..]),",
+            "(\"{path}.wasm\", {}, &include_bytes!(\"{artifact_path}\")[..]),",
             kind
         )
         .unwrap();
