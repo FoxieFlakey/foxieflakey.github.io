@@ -9,6 +9,10 @@ members = [
   "scripts/art-uploader",
 ]
 
+exclude = [
+  "web_data/wasm"
+]
+
 # Turn off all optimizations. For crate that only contain bulk data
 # there not much "code" to speak of
 [profile.dev.package.art_data]

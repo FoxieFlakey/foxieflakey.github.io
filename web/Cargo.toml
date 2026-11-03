@@ -34,3 +34,6 @@ parking_lot = "0.13.0"
 tokio = { version = "1.54.1", features = ["rt", "rt-multi-thread"] }
 notify = "8.2.1"
 notify-debouncer-full = "0.7.0"
+
+[dev-dependencies]
+serde = "1.0.229"

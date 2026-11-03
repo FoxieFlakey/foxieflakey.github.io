@@ -42,7 +42,14 @@ macro_rules! html_dep {
     };
 }
 
+macro_rules! wasm {
+    ($path:expr) => {
+        ($path, Resource::WasmRust(Cow::Borrowed($path)))
+    };
+}
+
 pub(crate) use css;
 pub(crate) use html;
 pub(crate) use html_dep;
 pub(crate) use raw;
+pub(crate) use wasm;

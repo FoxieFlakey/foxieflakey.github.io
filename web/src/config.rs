@@ -1,11 +1,29 @@
 use std::{borrow::Cow, collections::HashMap, sync::LazyLock};
 
-use crate::macros::{css, html, html_dep, raw};
+use crate::macros::{css, html, html_dep, raw, wasm};
 
 pub mod arts;
 
+// NOTE: There is no "raw" type here
+// opaque wasm blob can be use raw! macro
+#[allow(unused)]
+#[derive(Clone, Copy)]
+pub enum WasmType {
+    Rust,
+}
+
+mod wasm_blobs {
+    use super::WasmType;
+    use std::{collections::HashMap, sync::LazyLock};
+
+    include!(concat!(env!("OUT_DIR"), "/wasm_blobs.rs"));
+}
+
+pub use wasm_blobs::INITIAL_WASM_BLOBS;
+
 pub static RESOURCES: LazyLock<HashMap<String, Resource>> = LazyLock::new(|| {
     let entries = [
+        // Do not remove this comment, its for scanning stuffs
         html!("/index.html"),
         html!("/404.html"),
         html_dep!("/components/page.html"),
@@ -62,6 +80,8 @@ pub static RESOURCES: LazyLock<HashMap<String, Resource>> = LazyLock::new(|| {
         html_dep!("/components/opengraph.html"),
         raw!("/googlece00914e0cd14977.html"),
         raw!("/robots.txt"),
+        wasm!("/wasm/hello_world.wasm"),
+        // Do not remove this comment too, its for scanning stuffs
     ];
 
     let mut map = HashMap::new();
@@ -90,6 +110,11 @@ pub enum Resource<'bytes> {
     HtmlBuildResource(Cow<'bytes, [u8]>),
     PreprocessAndIncludeHtml(Cow<'bytes, [u8]>),
     Css(Cow<'bytes, [u8]>),
+
+    // A wasm component
+    WasmRust(
+        /* path in web_data directory to crate */ #[expect(unused)] Cow<'bytes, str>,
+    ),
 }
 
 #[derive(PartialEq, Eq, Clone, Copy)]
@@ -98,6 +123,7 @@ pub enum ResourceType {
     HtmlBuildResource,
     PreprocessAndIncludeHtml,
     Css,
+    WasmRust,
 }
 
 impl<'data> Resource<'data> {
@@ -107,6 +133,7 @@ impl<'data> Resource<'data> {
             Resource::HtmlBuildResource(_) => ResourceType::HtmlBuildResource,
             Resource::PreprocessAndIncludeHtml(_) => ResourceType::PreprocessAndIncludeHtml,
             Resource::Css(_) => ResourceType::Css,
+            Resource::WasmRust(_) => ResourceType::WasmRust,
         }
     }
 
@@ -116,6 +143,7 @@ impl<'data> Resource<'data> {
             | Resource::HtmlBuildResource(items)
             | Resource::Css(items)
             | Resource::PreprocessAndIncludeHtml(items) => items,
+            Resource::WasmRust(_) => panic!("WasmRust resource DOES NOT have data in it"),
         }
     }
 }

@@ -8,6 +8,7 @@ use mime::Mime;
 use parking_lot::{MappedRwLockReadGuard, RwLock, RwLockReadGuard, RwLockWriteGuard};
 
 use crate::{
+    builder::wasm::Wasm,
     config::{self, ResourceType},
     util,
 };
@@ -24,6 +25,7 @@ use lightningcss::{
 
 mod arts;
 mod navbar;
+mod wasm;
 
 pub struct Builder<'fetcher> {
     config: config::Config,
@@ -46,6 +48,7 @@ struct State<'fetcher> {
         >,
     >,
     preprocessor: Preprocessor<'fetcher>,
+    wasm_builder: Wasm,
 }
 
 pub enum BuildError<'resources> {
@@ -116,6 +119,7 @@ impl<'fetcher> Builder<'fetcher> {
             state: RwLock::new(State {
                 cached: HashMap::new(),
                 fetcher: fetcher.clone(),
+                wasm_builder: Wasm::new(),
                 preprocessor,
             }),
         }
@@ -146,7 +150,11 @@ impl<'fetcher> Builder<'fetcher> {
     }
 
     pub fn build_all<'this>(&'this self) -> Result<(), BuildError<'this>> {
-        for path in config::RESOURCES.keys() {
+        for (path, val) in config::RESOURCES.iter() {
+            if val.type_() == ResourceType::WasmRust {
+                // Skips WASM for now
+                continue;
+            }
             self.get(path)?;
         }
         Ok(())
@@ -183,9 +191,30 @@ impl<'fetcher> Builder<'fetcher> {
         // Try find hint in global list
         let hint = config::RESOURCES.get(&path).map(|x| x.type_());
         let state = self.state.write();
-        let Some(data) = (match state.call_fetcher(&path) {
-            Ok(x) => x,
-            Err(e) => return Err(BuildError::CannotFetchResource(path, e)),
+
+        let Some(data) = (match hint {
+            Some(ResourceType::WasmRust) => {
+                // WasmRust has no "data" attached to it, so fetcher will fails
+                // because it cant fetch data. So ask wasm_builder to do it
+                // NOTE: This bypasses 'fetcher' mechanism. Caller will handle
+                // wasm_builder seperately
+
+                state.wasm_builder.get(&path)
+            }
+
+            None
+            | Some(
+                ResourceType::Css
+                | ResourceType::HtmlBuildResource
+                | ResourceType::PreprocessAndIncludeHtml
+                | ResourceType::RawBytes,
+            ) => {
+                // These resources has the data embededded directly onto 'Resource'
+                match state.call_fetcher(&path) {
+                    Ok(x) => x,
+                    Err(e) => return Err(BuildError::CannotFetchResource(path, e)),
+                }
+            }
         }) else {
             return Err(BuildError::CannotFindResource(path));
         };
@@ -252,6 +281,10 @@ impl<'fetcher> Builder<'fetcher> {
                     inferred = Some(mime::TEXT_CSS);
                     ty = res_type;
                 }
+                ResourceType::WasmRust => {
+                    inferred = Some("application/wasm".parse().unwrap());
+                    ty = res_type;
+                }
             },
             None => {
                 inferred = util::infer(Some(path), &data);
@@ -274,7 +307,9 @@ impl<'fetcher> Builder<'fetcher> {
         };
 
         match ty {
-            ResourceType::HtmlBuildResource | ResourceType::RawBytes => Ok((inferred, data, state)),
+            ResourceType::WasmRust | ResourceType::HtmlBuildResource | ResourceType::RawBytes => {
+                Ok((inferred, data, state))
+            }
             ResourceType::PreprocessAndIncludeHtml => {
                 let mut generators = HashMap::new();
                 self.init_generators(&mut generators);

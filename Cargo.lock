@@ -95,12 +95,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "arbitrary-int"
-version = "2.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0ab387a0c4143b4fd3804e193946e78c8ab16cf26c5fde2048e4ac3d618c3b64"
-
-[[package]]
 name = "art-uploader"
 version = "0.1.0"
 dependencies = [
@@ -500,13 +494,6 @@ checksum = "cc20770be05b566a963bf91505e60412c4a2d016d1ef95c5512823bb085a8122"
 dependencies = [
  "codemap",
  "termcolor",
-]
-
-[[package]]
-name = "college_saps"
-version = "0.1.0"
-dependencies = [
- "libcollege_saps",
 ]
 
 [[package]]
@@ -1469,16 +1456,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "65cd87c9a6d60536580b316ad985726104730a5151c99845f2490428ef91240a"
 
 [[package]]
-name = "libcollege_saps"
-version = "0.1.0"
-dependencies = [
- "arbitrary-int",
- "num-derive",
- "num-traits",
- "thiserror",
-]
-
-[[package]]
 name = "lightningcss"
 version = "1.0.0-alpha.71"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1645,17 +1622,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0a437a9308232ce794b1e7fdf540d38ea37efc3c73492640c13b4c8568b8f108"
 dependencies = [
  "bitflags",
-]
-
-[[package]]
-name = "num-derive"
-version = "0.5.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e4e98dc3b890f6c23a0f9d3d491a2823d0dea0fa656302a13dd225fa924112a8"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn 3.0.3",
 ]
 
 [[package]]
@@ -3028,6 +2994,7 @@ dependencies = [
  "notify",
  "notify-debouncer-full",
  "parking_lot",
+ "serde",
  "server",
  "strum",
  "tokio",
