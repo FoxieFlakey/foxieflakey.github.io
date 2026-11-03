@@ -31,8 +31,15 @@ impl Wasm {
                         ext, "wasm",
                         "Resource::WasmRust's must have .wasm extension"
                     );
-                    wasm_dirs.insert(crate_path.to_string(), WasmType::Rust);
+                    wasm_dirs.insert(
+                        crate_path
+                            .strip_suffix("_bg")
+                            .expect("Resource::WasmRust must ends with _bg.wasm not just .wasm")
+                            .to_string(),
+                        WasmType::Rust,
+                    );
                 }
+                config::Resource::WasmRustLoader => continue,
             }
         }
 
@@ -54,18 +61,31 @@ impl Wasm {
     }
 
     pub fn get(&self, full_path: &str) -> Result<Option<Cow<'static, [u8]>>, String> {
-        let Some((crate_path, ext)) = full_path.rsplit_once('.') else {
+        let Some((path_component, ext)) = full_path.rsplit_once('.') else {
             // We do not own this 'path' obviously, WASM builder never have standalone extension less fle
             return Ok(None);
         };
+
+        let crate_path;
+        if let Some(actual_crate_path) = path_component.strip_suffix("_bg") {
+            crate_path = actual_crate_path;
+        } else {
+            crate_path = path_component;
+        }
 
         if !self.wasm_dirs.contains_key(crate_path) {
             // Looked the table, we dont know it
             return Ok(None);
         }
 
-        if ext != "wasm" {
+        if ext != "wasm" && ext != "js" {
             // Don't know whats its asking
+            return Ok(None);
+        }
+
+        if ext == "wasm" && !path_component.ends_with("_bg") {
+            // Don't know this one if it ends with .wasm
+            // it has to be <crate path>_bg.wasm
             return Ok(None);
         }
 
@@ -78,9 +98,10 @@ impl Wasm {
             // Run cargo build first
             let mut cmd = Command::new("cargo");
             let src_dir = format!("{web_data_dir}/{crate_path}");
+            let crate_name = crate_path.split('/').last().ok_or_else(|| "Cannot get last component of crate path (needed ot be same as 'crate-name' + '.wasm' so hello_world crate is hello_word.wasm)".to_string())?;
             let target_dir = format!("{wasm_build_dir}/{crate_path}");
             let artifacts_dir = format!("{target_dir}/meow_artifacts");
-            cmd.current_dir(src_dir);
+            cmd.current_dir(&src_dir);
             cmd.arg("build");
             cmd.arg("--target-dir");
             cmd.arg(&target_dir);
@@ -108,13 +129,36 @@ impl Wasm {
                 ));
             }
 
+            // Run the wasm bindgen
+            Command::new("wasm-bindgen")
+                .current_dir(src_dir)
+                .arg("--target")
+                .arg("web")
+                .arg("--no-typescript")
+                .arg("--out-dir")
+                .arg(&artifacts_dir)
+                .arg(format!("{artifacts_dir}/{crate_name}.wasm"))
+                .status()
+                .expect(&format!(
+                    "Cannot wait for wasm-bindgen to complete for {crate_path}"
+                ))
+                .code()
+                .expect(&format!(
+                    "Cannot run wasm-bindgen at {crate_path} because was signalled"
+                ));
+
+            if status != 0 {
+                return Err(format!(
+                    "wasm-bindgen for {crate_path} WASM exited with {status}"
+                ));
+            }
+
             // Then read new one
             match self.wasm_dirs.get(crate_path).unwrap() {
                 WasmType::Rust => {
-                    let crate_name = crate_path.split('/').last().ok_or_else(|| "Cannot get last component of crate path (needed ot be same as 'crate-name' + '.wasm' so hello_world crate is hello_word.wasm)".to_string())?;
-
                     let read_path = match ext {
-                        "wasm" => format!("{artifacts_dir}/{crate_name}.wasm"),
+                        "wasm" => format!("{artifacts_dir}/{crate_name}_bg.wasm"),
+                        "js" => format!("{artifacts_dir}/{crate_name}.js"),
                         _ => unreachable!(),
                     };
 

@@ -26,16 +26,21 @@
     <div id="output" />
     
     <script>
-      WebAssembly.instantiateStreaming(fetch("$root/creations/wasm/hello_world.wasm"))
-        .then(obj => {
-            console.log("WASM loaded!")
-            obj.instance.exports.call_to_rust();
-            console.log("WASM done calling to rust!")
-        })
-        .catch(error => {
-            document.getElementById("error").textContent = "Error loading Wasm: " + error;
-            document.getElementById("error").hidden = false
-        });
+      async function load_wasm() {
+        try {
+          const wasmBindgen = await import("$root/creations/wasm/hello_world.js");
+          const wasmModule = await wasmBindgen.default(); 
+          console.log("Wasm module details:", wasmModule);
+          
+          wasmModule.call_to_rust();
+        } catch (error) {
+          console.error("Detailed Error Context:", error);
+          document.getElementById("error").textContent = "Error loading Wasm: " + error;
+          document.getElementById("error").hidden = false
+        }
+      }
+      
+      load_wasm()
     </script>
     <x-popup-to-primary />
   </body>

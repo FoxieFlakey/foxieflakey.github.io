@@ -195,7 +195,7 @@ impl<'fetcher> Builder<'fetcher> {
         let state = self.state.write();
 
         let Some(data) = (match hint {
-            Some(ResourceType::WasmRust) => {
+            Some(ResourceType::WasmRust) | Some(ResourceType::WasmRustLoader) => {
                 // WasmRust has no "data" attached to it, so fetcher will fails
                 // because it cant fetch data. So ask wasm_builder to do it
                 // NOTE: This bypasses 'fetcher' mechanism. Caller will handle
@@ -294,6 +294,10 @@ impl<'fetcher> Builder<'fetcher> {
                     inferred = Some("application/wasm".parse().unwrap());
                     ty = res_type;
                 }
+                ResourceType::WasmRustLoader => {
+                    inferred = Some(mime::TEXT_JAVASCRIPT);
+                    ty = res_type;
+                }
             },
             None => {
                 inferred = util::infer(Some(path), &data);
@@ -316,9 +320,10 @@ impl<'fetcher> Builder<'fetcher> {
         };
 
         match ty {
-            ResourceType::WasmRust | ResourceType::HtmlBuildResource | ResourceType::RawBytes => {
-                Ok((inferred, data, state))
-            }
+            ResourceType::WasmRust
+            | ResourceType::WasmRustLoader
+            | ResourceType::HtmlBuildResource
+            | ResourceType::RawBytes => Ok((inferred, data, state)),
             ResourceType::PreprocessAndIncludeHtml => {
                 let mut generators = HashMap::new();
                 self.init_generators(&mut generators);

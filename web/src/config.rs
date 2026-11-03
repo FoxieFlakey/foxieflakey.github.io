@@ -102,8 +102,12 @@ pub static RESOURCES: LazyLock<HashMap<String, Resource>> = LazyLock::new(|| {
                 map.insert(path, resource);
             }
             Resource::WasmRust => {
-                map.insert(format!("{}.wasm", path), resource);
+                // the WasmRustLoader is second resource needed to so wasm can properly
+                // loaded this uses wasm-bindgen
+                map.insert(format!("{}_bg.wasm", path), resource);
+                map.insert(format!("{}.js", path), Resource::WasmRustLoader);
             }
+            Resource::WasmRustLoader => panic!("DO NOT manually put wasm rust loader manually"),
         }
     }
 
@@ -124,6 +128,10 @@ pub enum Resource<'bytes> {
 
     // A wasm component
     WasmRust,
+
+    // It is special .js loader for wasm. The companion
+    // .js wasm-bindgen generates
+    WasmRustLoader,
 }
 
 #[derive(PartialEq, Eq, Clone, Copy)]
@@ -133,6 +141,7 @@ pub enum ResourceType {
     PreprocessAndIncludeHtml,
     Css,
     WasmRust,
+    WasmRustLoader,
 }
 
 impl<'data> Resource<'data> {
@@ -143,6 +152,7 @@ impl<'data> Resource<'data> {
             Resource::PreprocessAndIncludeHtml(_) => ResourceType::PreprocessAndIncludeHtml,
             Resource::Css(_) => ResourceType::Css,
             Resource::WasmRust => ResourceType::WasmRust,
+            Resource::WasmRustLoader => ResourceType::WasmRustLoader,
         }
     }
 
@@ -152,7 +162,9 @@ impl<'data> Resource<'data> {
             | Resource::HtmlBuildResource(items)
             | Resource::Css(items)
             | Resource::PreprocessAndIncludeHtml(items) => items,
-            Resource::WasmRust => panic!("WasmRust resource DOES NOT have data in it"),
+            Resource::WasmRust | Resource::WasmRustLoader => {
+                panic!("WasmRust resource DOES NOT have data in it")
+            }
         }
     }
 }

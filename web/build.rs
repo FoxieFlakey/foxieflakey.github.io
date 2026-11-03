@@ -7,7 +7,7 @@ use std::{
     process::Command,
 };
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub enum BuildKind {
     WasmRust,
 }
@@ -77,7 +77,7 @@ fn main() {
                 let src_dir = format!("{web_data_dir}/{path}");
                 let target_dir = format!("{inside_projects_build_dir}/{path}");
                 let artifacts_dir = format!("{target_dir}/meow_artifacts");
-                cmd.current_dir(src_dir);
+                cmd.current_dir(&src_dir);
                 cmd.arg("build");
                 cmd.arg("--target-dir");
                 cmd.arg(&target_dir);
@@ -103,9 +103,45 @@ fn main() {
                     "Cargo build for {path} WASM exited with {status}"
                 );
 
+                // Run the wasm bindgen
+                Command::new("wasm-bindgen")
+                    .current_dir(src_dir)
+                    .arg("--target")
+                    .arg("web")
+                    .arg("--no-typescript")
+                    .arg("--out-dir")
+                    .arg(&artifacts_dir)
+                    .arg(format!("{artifacts_dir}/{crate_name}.wasm"))
+                    .status()
+                    .expect(&format!(
+                        "Cannot wait for wasm-bindgen to complete for {path}"
+                    ))
+                    .code()
+                    .expect(&format!(
+                        "Cannot run wasm-bindgen at {path} because was signalled"
+                    ));
+
+                assert!(
+                    status == 0,
+                    "wasm-bindgen for {path} WASM exited with {status}"
+                );
+
                 assert!(
                     wasm_to_build_map
-                        .insert(path, (kind, format!("{artifacts_dir}/{crate_name}.wasm")))
+                        .insert(
+                            format!("{}_bg.wasm", path),
+                            (kind, format!("{artifacts_dir}/{crate_name}_bg.wasm"))
+                        )
+                        .is_none(),
+                    "There is duplicate '{path}'!"
+                );
+
+                assert!(
+                    wasm_to_build_map
+                        .insert(
+                            format!("{}.js", path),
+                            (kind, format!("{artifacts_dir}/{crate_name}.js"))
+                        )
                         .is_none(),
                     "There is duplicate '{path}'!"
                 );
@@ -121,7 +157,7 @@ fn main() {
 
         writeln!(
             &mut opts,
-            "(\"{path}.wasm\", {}, &include_bytes!(\"{artifact_path}\")[..]),",
+            "(\"{path}\", {}, &include_bytes!(\"{artifact_path}\")[..]),",
             kind
         )
         .unwrap();
