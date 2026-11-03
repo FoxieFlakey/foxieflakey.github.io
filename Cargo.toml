@@ -7,7 +7,8 @@ members = [
   "server",
   "common-utils",
   "scripts/art-uploader",
-  "stuffs/college_saps"
+  "stuffs/college_saps",
+  "stuffs/libcollege_saps"
 ]
 
 # Turn off all optimizations. For crate that only contain bulk data
