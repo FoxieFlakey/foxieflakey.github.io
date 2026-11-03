@@ -150,11 +150,7 @@ impl<'fetcher> Builder<'fetcher> {
     }
 
     pub fn build_all<'this>(&'this self) -> Result<(), BuildError<'this>> {
-        for (path, val) in config::RESOURCES.iter() {
-            if val.type_() == ResourceType::WasmRust {
-                // Skips WASM for now
-                continue;
-            }
+        for path in config::RESOURCES.keys() {
             self.get(path)?;
         }
         Ok(())
