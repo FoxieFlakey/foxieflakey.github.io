@@ -3,7 +3,7 @@ macro_rules! html {
         (
             $path,
             Resource::PreprocessAndIncludeHtml(Cow::Borrowed(
-                &include_bytes!(concat!("../data/", $path))[..],
+                &include_bytes!(concat!("../../web_data/", $path))[..],
             )),
         )
     };
@@ -14,7 +14,7 @@ macro_rules! css {
         (
             $path,
             Resource::Css(Cow::Borrowed(
-                &include_bytes!(concat!("../data/", $path))[..],
+                &include_bytes!(concat!("../../web_data/", $path))[..],
             )),
         )
     };
@@ -25,7 +25,7 @@ macro_rules! raw {
         (
             $path,
             Resource::RawBytes(Cow::Borrowed(
-                &include_bytes!(concat!("../data/", $path))[..],
+                &include_bytes!(concat!("../../web_data/", $path))[..],
             )),
         )
     };
@@ -36,7 +36,7 @@ macro_rules! html_dep {
         (
             $path,
             Resource::HtmlBuildResource(Cow::Borrowed(
-                &include_bytes!(concat!("../data/", $path))[..],
+                &include_bytes!(concat!("../../web_data/", $path))[..],
             )),
         )
     };

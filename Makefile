@@ -18,7 +18,7 @@ all: $(web_dumped_cookie)
 
 .PHONY: watch_host
 watch: $(web_binary)
-	$(web_binary) serve --web-src-dir "$(current_dir)/web/data" 127.0.0.1 8080
+	$(web_binary) serve --web-src-dir "$(current_dir)/web_data" 127.0.0.1 8080
 
 $(web_dumped_cookie): $(web_binary)
 	$(web_binary) dump "$(config_root)" "$(web_dir)"
