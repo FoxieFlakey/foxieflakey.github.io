@@ -32,6 +32,9 @@ impl AutoMiss {
         let can_watch_cloned = can_watch.clone();
 
         let builder = self.builder.clone();
+
+        let mut last_build = Instant::now();
+        let max_period = Duration::from_millis(200);
         let mut watcher = notify_debouncer_full::new_debouncer(
             Duration::from_millis(250), // wait for the leaf flurry to quiet down!,
             None,
@@ -46,35 +49,30 @@ impl AutoMiss {
                     if e.need_rescan() {
                         // Like the need_rescan doc, it assume something is modified
                         // lets rebuild
-
-                        println!("Rebuilding! Due rescan needed");
-                        let start = Instant::now();
-                        builder.clear_cache();
-
-                        if let Err(e) = do_full_rebuild(&builder) {
-                            eprintln!("Cannot rebuild, rebuild attempting to exit {e:?}");
-                        }
-                        println!("Done in {:.2} secs", start.elapsed().as_secs_f32());
-                        return;
-                    }
-
-                    match e.kind {
-                        EventKind::Any => {
-                            eprintln!("[WARN] Unknown watch event, Doing full rebuld",);
-                        }
-                        // Doesnt change file
-                        EventKind::Access(_) => (),
-                        EventKind::Create(_) | EventKind::Modify(_) | EventKind::Remove(_) => {
-                            do_rebuild = true;
-                        }
-                        EventKind::Other => {
-                            eprintln!(
-                                "[WARN] Unknown 'other' watch event on file/dir, Not doing rebuild",
-                            );
+                        do_rebuild = true;
+                    } else {
+                        match e.kind {
+                            EventKind::Any => {
+                                eprintln!("[WARN] Unknown watch event, Doing full rebuld",);
+                            }
+                            // Doesnt change file
+                            EventKind::Access(_) => (),
+                            EventKind::Create(_) | EventKind::Modify(_) | EventKind::Remove(_) => {
+                                do_rebuild = true;
+                            }
+                            EventKind::Other => {
+                                eprintln!(
+                                    "[WARN] Unknown 'other' watch event on file/dir, Not doing rebuild",
+                                );
+                            }
                         }
                     }
 
                     if do_rebuild {
+                        if last_build.elapsed() < max_period {
+                            continue;
+                        }
+                        
                         println!("Rebuilding!");
                         let start = Instant::now();
                         builder.clear_cache();
@@ -83,6 +81,8 @@ impl AutoMiss {
                             eprintln!("Cannot rebuild, rebuild attempting to exit {e:?}");
                         }
                         println!("Done in {:.2} secs", start.elapsed().as_secs_f32());
+                        
+                        last_build = Instant::now();
                     }
                 }
             },
