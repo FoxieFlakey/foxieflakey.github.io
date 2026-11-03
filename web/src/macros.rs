@@ -44,7 +44,7 @@ macro_rules! html_dep {
 
 macro_rules! wasm {
     ($path:expr) => {
-        ($path, Resource::WasmRust(Cow::Borrowed($path)))
+        ($path, Resource::WasmRust)
     };
 }
 

@@ -112,9 +112,7 @@ pub enum Resource<'bytes> {
     Css(Cow<'bytes, [u8]>),
 
     // A wasm component
-    WasmRust(
-        /* path in web_data directory to crate */ #[expect(unused)] Cow<'bytes, str>,
-    ),
+    WasmRust,
 }
 
 #[derive(PartialEq, Eq, Clone, Copy)]
@@ -133,7 +131,7 @@ impl<'data> Resource<'data> {
             Resource::HtmlBuildResource(_) => ResourceType::HtmlBuildResource,
             Resource::PreprocessAndIncludeHtml(_) => ResourceType::PreprocessAndIncludeHtml,
             Resource::Css(_) => ResourceType::Css,
-            Resource::WasmRust(_) => ResourceType::WasmRust,
+            Resource::WasmRust => ResourceType::WasmRust,
         }
     }
 
@@ -143,7 +141,7 @@ impl<'data> Resource<'data> {
             | Resource::HtmlBuildResource(items)
             | Resource::Css(items)
             | Resource::PreprocessAndIncludeHtml(items) => items,
-            Resource::WasmRust(_) => panic!("WasmRust resource DOES NOT have data in it"),
+            Resource::WasmRust => panic!("WasmRust resource DOES NOT have data in it"),
         }
     }
 }

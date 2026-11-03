@@ -164,6 +164,12 @@ impl<'fetcher> Builder<'fetcher> {
         let mut state = self.state.write();
         state.cached.clear();
         state.preprocessor.clear_cache();
+        state.wasm_builder.always_fetch_fresh();
+    }
+
+    // .0 is web data dir and .1 is build dir (for miscellanous resources)
+    pub fn set_dirs(&self, dir: Option<(&str, &str)>) {
+        self.state.write().wasm_builder.set_dirs(dir);
     }
 
     pub fn iter_data(
@@ -199,7 +205,10 @@ impl<'fetcher> Builder<'fetcher> {
                 // NOTE: This bypasses 'fetcher' mechanism. Caller will handle
                 // wasm_builder seperately
 
-                state.wasm_builder.get(&path)
+                match state.wasm_builder.get(&path) {
+                    Ok(x) => x,
+                    Err(e) => return Err(BuildError::CannotFetchResource(path, e)),
+                }
             }
 
             None

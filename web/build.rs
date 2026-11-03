@@ -17,6 +17,7 @@ fn main() {
 
     let out_dir = env::var("OUT_DIR").expect("Cant get out dir");
     let manifest_dir = env::var("CARGO_MANIFEST_DIR").expect("Cant get 'web' crate source dir'");
+    let inside_projects_build_dir = format!("{manifest_dir}/../target/inside_build_dir_uwu");
     let web_data_dir = format!("{manifest_dir}/../web_data");
     let is_release = env::var("PROFILE").expect("Cannot get cargo's profile") == "release";
 
@@ -73,9 +74,12 @@ fn main() {
 
                 let mut cmd = Command::new("cargo");
                 let src_dir = format!("{web_data_dir}/{path}");
-                let artifacts_dir = format!("{src_dir}/target/meow_artifacts");
+                let target_dir = format!("{inside_projects_build_dir}/{path}");
+                let artifacts_dir = format!("{target_dir}/meow_artifacts");
                 cmd.current_dir(src_dir);
                 cmd.arg("build");
+                cmd.arg("--target-dir");
+                cmd.arg(&target_dir);
                 cmd.arg("-Z");
                 cmd.arg("unstable-options");
                 cmd.arg("--artifact-dir");

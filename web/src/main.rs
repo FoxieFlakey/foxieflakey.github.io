@@ -50,8 +50,11 @@ enum Cmd {
     Serve {
         /// Hot rebuilding, triggered when files are modified
         /// only for non Rust files are triggered
-        #[arg(long)]
+        #[arg(long, requires = "hot_rebuild_temp_dir")]
         web_src_dir: Option<PathBuf>,
+        /// This would contain temporary data from hot rebuilding
+        #[arg(long, requires = "web_src_dir")]
+        hot_rebuild_temp_dir: Option<PathBuf>,
         /// The IP address where the website will be accesible
         /// has to be one IP, binding to multiple IPs are explicitly
         /// not allowed.
@@ -113,12 +116,21 @@ fn main() -> Result<ExitCode, ExitCode> {
             ip,
             port,
             web_src_dir: web_dir,
+            hot_rebuild_temp_dir,
         } => {
             use std::io::ErrorKind;
             use std::sync::Arc;
             use std::{borrow::Cow, io::Read};
 
             if let Some(dir) = web_dir.clone() {
+                builder.set_dirs(Some((
+                    dir.to_str().expect("Web data dir path is not valid UTF-8"),
+                    hot_rebuild_temp_dir
+                        .unwrap()
+                        .to_str()
+                        .expect("Web data dir path is not valid UTF-8"),
+                )));
+
                 let old_fetcher = builder.take_fetcher();
 
                 // If hot reload active, load file directly from there
