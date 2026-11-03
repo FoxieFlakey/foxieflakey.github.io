@@ -21,6 +21,7 @@ fn main() {
     let web_data_dir = format!("{manifest_dir}/../web_data");
     let is_release = env::var("PROFILE").expect("Cannot get cargo's profile") == "release";
 
+    println!("cargo:rerun-if-changed={manifest_dir}/src/config.rs");
     let config_file = fs::read_to_string(format!("{manifest_dir}/src/config.rs"))
         .expect("Cannot open web/src/config.rs");
 

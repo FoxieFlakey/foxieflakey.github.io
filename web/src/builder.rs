@@ -221,6 +221,10 @@ impl<'fetcher> Builder<'fetcher> {
                 }
             }
         }) else {
+            assert!(
+                hint.is_none(),
+                "Global resource table has the path, it cannot be gone for {path}"
+            );
             return Err(BuildError::CannotFindResource(path));
         };
 

@@ -1,0 +1,42 @@
+<import src="/components/page.html" />
+<import src="/components/opengraph.html" />
+<import src="/components/popup.html" />
+<import src="../popup.html" />
+
+<html lang="en">
+  <head>
+    <title>So a little Java AWT thingy</title>
+    <x-base-metadata />
+    <x-popup-headers />
+    <x-default-opengraph-image />
+    <x-metadata-title content="A lil RPG game for College" />
+    <meta property="og:type" content="website" />
+    <x-metadata-description content="A game I wrote in Java for Java class, that I ported to work in web. So its fully interactable here <3" />
+  </head>
+  
+  <body>
+    <noscript>
+      Javascript is REQUIRED! How else Foxie can call to WASM :3<br />
+    </noscript>
+    
+    <div id="error" hidden style="background-color: #dd0000ff;" />
+    <p>
+      Below here, should be output from WASM unless there error occured
+    </p>
+    <div id="output" />
+    
+    <script>
+      WebAssembly.instantiateStreaming(fetch("$root/creations/wasm/hello_world.wasm"))
+        .then(obj => {
+            console.log("WASM loaded!")
+            obj.instance.exports.call_to_rust();
+            console.log("WASM done calling to rust!")
+        })
+        .catch(error => {
+            document.getElementById("error").textContent = "Error loading Wasm: " + error;
+            document.getElementById("error").hidden = false
+        });
+    </script>
+    <x-popup-to-primary />
+  </body>
+</html>

@@ -88,13 +88,11 @@ impl Wasm {
                     let filename = path.split('/').last().ok_or_else(|| "Cannot get last component of crate path (needed ot be same as 'crate-name' + '.wasm' so hello_world crate is hello_word.wasm)".to_string())?;
 
                     // Explicitly fetch from disk
-                    let mut file = match File::open(format!(
-                        "{web_data_dir}/{path}/target/meow_artifacts/{filename}"
-                    )) {
+                    let mut file = match File::open(format!("{artifacts_dir}/{filename}")) {
                         Ok(x) => x,
                         Err(e) => {
                             if e.kind() == ErrorKind::NotFound {
-                                return Ok(None);
+                                panic!("Artifact is anymore where it isnt");
                             }
 
                             return Err(format!(

@@ -141,9 +141,15 @@ fn main() -> Result<ExitCode, ExitCode> {
                     match File::open(&joined) {
                         Ok(mut x) => {
                             let mut buf = Vec::new();
-                            x.read_to_end(&mut buf).map_err(|e| {
-                                format!("Cannot read '{}' because {e}", joined.display())
-                            })?;
+                            if let Err(e) = x.read_to_end(&mut buf) {
+                                if e.kind() == ErrorKind::IsADirectory {
+                                    return Ok(None);
+                                }
+                                return Err(format!(
+                                    "Cannot read '{}' because {e}",
+                                    joined.display()
+                                ));
+                            }
                             Ok(Some(Cow::Owned(buf)))
                         }
                         Err(e) => {
@@ -153,6 +159,8 @@ fn main() -> Result<ExitCode, ExitCode> {
                                 } else {
                                     Ok(None)
                                 }
+                            } else if e.kind() == ErrorKind::IsADirectory {
+                                Ok(None)
                             } else {
                                 Err(format!("Cannot open '{}'", joined.display()))
                             }
