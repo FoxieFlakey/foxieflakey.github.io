@@ -12,6 +12,7 @@ jobs:
         uses: dtolnay/rust-toolchain@master
         with:
           toolchain: nightly-2026-10-23
+          targets: wasm32-unknown-unknown
       
       - name: "Enable caching on Rust stuffs"
         uses: Swatinem/rust-cache@v2
