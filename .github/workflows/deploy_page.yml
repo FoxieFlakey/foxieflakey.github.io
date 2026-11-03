@@ -17,6 +17,9 @@ jobs:
       - name: "Enable caching on Rust stuffs"
         uses: Swatinem/rust-cache@v2
       
+      - name: Install wasm-bingden
+        run: cargo install wasm-bindgen-cli
+        
       - name: Build the website!
         # Run my Rust based site generator, which is orchestrated
         # by make
