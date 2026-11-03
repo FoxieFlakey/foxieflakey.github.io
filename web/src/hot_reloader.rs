@@ -41,6 +41,8 @@ impl AutoMiss {
                 }
 
                 for e in events.expect("Cannot get notify event") {
+                    let mut do_rebuild = false;
+
                     if e.need_rescan() {
                         // Like the need_rescan doc, it assume something is modified
                         // lets rebuild
@@ -59,33 +61,28 @@ impl AutoMiss {
                     match e.kind {
                         EventKind::Any => {
                             eprintln!("[WARN] Unknown watch event, Doing full rebuld",);
-
-                            println!("Rebuilding!");
-                            let start = Instant::now();
-                            builder.clear_cache();
-
-                            if let Err(e) = do_full_rebuild(&builder) {
-                                eprintln!("Cannot rebuild, rebuild attempting to exit {e:?}");
-                            }
-                            println!("Done in {:.2} secs", start.elapsed().as_secs_f32());
                         }
                         // Doesnt change file
                         EventKind::Access(_) => (),
                         EventKind::Create(_) | EventKind::Modify(_) | EventKind::Remove(_) => {
-                            println!("Rebuilding!");
-                            let start = Instant::now();
-                            builder.clear_cache();
-
-                            if let Err(e) = do_full_rebuild(&builder) {
-                                eprintln!("Cannot rebuild, rebuild attempting to exit {e:?}");
-                            }
-                            println!("Done in {:.2} secs", start.elapsed().as_secs_f32());
+                            do_rebuild = true;
                         }
                         EventKind::Other => {
                             eprintln!(
                                 "[WARN] Unknown 'other' watch event on file/dir, Not doing rebuild",
                             );
                         }
+                    }
+
+                    if do_rebuild {
+                        println!("Rebuilding!");
+                        let start = Instant::now();
+                        builder.clear_cache();
+
+                        if let Err(e) = do_full_rebuild(&builder) {
+                            eprintln!("Cannot rebuild, rebuild attempting to exit {e:?}");
+                        }
+                        println!("Done in {:.2} secs", start.elapsed().as_secs_f32());
                     }
                 }
             },
@@ -103,6 +100,10 @@ impl AutoMiss {
             let cmd = cmd.trim();
             match &*cmd {
                 "r" => {
+                    watcher
+                        .unwatch(&self.dir)
+                        .expect("Cannot un watch web data directory");
+
                     println!("Rebuilding!");
                     let start = Instant::now();
                     self.builder.clear_cache();
@@ -111,6 +112,10 @@ impl AutoMiss {
                         eprintln!("Cannot rebuild, rebuild attempting to exit {e:?}");
                     }
                     println!("Done in {:.2} secs", start.elapsed().as_secs_f32());
+
+                    watcher
+                        .watch(&self.dir, notify::RecursiveMode::Recursive)
+                        .expect("Cannot watch web data directory");
                 }
                 "u" => {
                     println!("Not watching directory");
