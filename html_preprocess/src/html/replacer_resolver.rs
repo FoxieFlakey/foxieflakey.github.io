@@ -18,6 +18,9 @@ use crate::html::{
 pub enum ReplacerResolver {
     UnknownReplacer = 0000,
     SpecialReplacerCannotBeUsed = 0001,
+    AllPropsForbiddenInChildren = 0002,
+    ChildrenReplacerAreForbiddenInAttributes = 0003,
+    InvalidSpecificProps = 0004,
 }
 
 impl ReplacerResolver {
@@ -26,6 +29,15 @@ impl ReplacerResolver {
             ReplacerResolver::UnknownReplacer => "Unknown replacer variable",
             ReplacerResolver::SpecialReplacerCannotBeUsed => {
                 "Special replacer variable like children and props cannot be used"
+            }
+            ReplacerResolver::AllPropsForbiddenInChildren => {
+                "Using $props are forbidden in children"
+            }
+            ReplacerResolver::ChildrenReplacerAreForbiddenInAttributes => {
+                "Using $children in attribute are not allowed"
+            }
+            ReplacerResolver::InvalidSpecificProps => {
+                "props specific syntax is invalid. has to be props.xyz"
             }
         }
     }
@@ -70,9 +82,45 @@ pub fn run(
             is_in_attribute: bool,
         ) -> Result<Option<String>, Diagnostic> {
             let content = context.resolve_span_to_string(replacer.content);
-            if is_in_attribute && content.starts_with("props") {
+            if content.starts_with("props") {
+                if !is_in_attribute && content == "props" {
+                    // The 'props' is forbidden in children
+                    return Err(
+                        ReplacerResolver::AllPropsForbiddenInChildren.to_diagnostic(&[SpanLabel {
+                            label: None,
+                            span,
+                            style: SpanStyle::Primary,
+                        }]),
+                    );
+                }
+
+                if !content.starts_with("props.") {
+                    // Anything other 'props.' are invalid
+                    return Err(ReplacerResolver::InvalidSpecificProps.to_diagnostic(&[
+                        SpanLabel {
+                            label: None,
+                            span,
+                            style: SpanStyle::Primary,
+                        },
+                    ]));
+                }
+
+                // ignore 'props.' when inside children. This is expanded by template resolver
+                // not replacer
                 return Ok(None);
-            } else if !is_in_attribute && content.starts_with("children") {
+            } else if content.starts_with("children") {
+                if is_in_attribute {
+                    // The 'children' is forbidden in children
+                    return Err(ReplacerResolver::ChildrenReplacerAreForbiddenInAttributes
+                        .to_diagnostic(&[SpanLabel {
+                            label: None,
+                            span,
+                            style: SpanStyle::Primary,
+                        }]));
+                }
+
+                // ignore 'children' when inside children. This is expanded by template resolver
+                // not replacer
                 return Ok(None);
             }
 
@@ -83,7 +131,6 @@ pub fn run(
             if let Some(val) = context.get_env(content) {
                 return Ok(Some(val.clone()));
             } else {
-                println!("{content}");
                 return Err(
                     ReplacerResolver::UnknownReplacer.to_diagnostic(&[SpanLabel {
                         label: None,

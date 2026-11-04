@@ -4,9 +4,10 @@ use codemap::Span;
 use codemap_diagnostic::{Diagnostic, Level, SpanLabel};
 use either::Either;
 
-use crate::Preprocessor;
 use crate::html::util::TryInsertExt;
 use crate::html::{FileContext, GeneratorArgs, Template, parser};
+use crate::util::QuotedStringExt;
+use crate::{ElementContent, Preprocessor};
 
 #[repr(u16)]
 #[derive(Clone, Copy)]
@@ -16,6 +17,9 @@ pub enum TemplateResolver {
     CantFindNameAttribute = 0002,
     UnknownTemplate = 0003,
     FailedExpandingGenerator = 0004,
+    UnknownExpanderAttribute = 0005,
+    InvalidSpecificPropsExpanding = 0006,
+    PassthroughExpanderIsNotAllowedHere = 0007,
 }
 
 impl TemplateResolver {
@@ -28,6 +32,13 @@ impl TemplateResolver {
             }
             TemplateResolver::UnknownTemplate => "Dont know what this template",
             TemplateResolver::FailedExpandingGenerator => "Failed expanding generaator",
+            TemplateResolver::UnknownExpanderAttribute => "Unknown attribute for this expansion",
+            TemplateResolver::InvalidSpecificPropsExpanding => {
+                "Invalid syntax for expanding specific property"
+            }
+            TemplateResolver::PassthroughExpanderIsNotAllowedHere => {
+                "Passthrouugh $props are not allowed here"
+            }
         }
     }
 
@@ -403,7 +414,100 @@ fn expand_template(
                 if replacer.starts_with("children") {
                     output.extend_from_slice(&expansion_childs);
                 } else {
-                    output.push((*element_span, element.clone()))
+                    // Check if its 'props.xyz', bare 'props' are forbidden
+                    if let Some(attr_raw) = replacer.strip_prefix("props") {
+                        if attr_raw == "" {
+                            return Err(vec![
+                                TemplateResolver::PassthroughExpanderIsNotAllowedHere
+                                    .to_diagnostic(&[
+                                        SpanLabel {
+                                            label: None,
+                                            span: *element_span,
+                                            style: codemap_diagnostic::SpanStyle::Primary,
+                                        },
+                                        SpanLabel {
+                                            label: Some("expanded from here".to_string()),
+                                            span: expansion_span,
+                                            style: codemap_diagnostic::SpanStyle::Secondary,
+                                        },
+                                    ]),
+                            ]);
+                        } else {
+                            // While this paste only specific one
+                            if let Some(name) = attr_raw.strip_prefix(".") {
+                                if let Some(attr) = expansion_attributes.iter().find(|x| match x {
+                                    crate::Attribute::Attribute(_, attribute_data) => {
+                                        preprocessor.resolve_span_to_string(attribute_data.key_span)
+                                            == name
+                                    }
+                                    crate::Attribute::Replacer(_, _)
+                                    | crate::Attribute::EmptyAttribute(_) => false,
+                                }) {
+                                    match attr {
+                                        crate::Attribute::Attribute(span, attribute_data) => {
+                                            output.push((
+                                                *span,
+                                                ElementContent::TextReplaced(
+                                                    attribute_data
+                                                        .value
+                                                        .get_content(preprocessor)
+                                                        .to_string(),
+                                                ),
+                                            ));
+                                        }
+                                        crate::Attribute::EmptyAttribute(span) => {
+                                            output.push((
+                                                *span,
+                                                ElementContent::TextReplaced("".to_string()),
+                                            ));
+                                        }
+                                        crate::Attribute::Replacer(span, replacer) => {
+                                            output.push((
+                                                *span,
+                                                ElementContent::Replacer(replacer.clone()),
+                                            ));
+                                        }
+                                    }
+                                } else {
+                                    return Err(vec![
+                                        TemplateResolver::UnknownExpanderAttribute.to_diagnostic(
+                                            &[
+                                                SpanLabel {
+                                                    label: None,
+                                                    span: *element_span,
+                                                    style: codemap_diagnostic::SpanStyle::Primary,
+                                                },
+                                                SpanLabel {
+                                                    label: Some("expanded from here".to_string()),
+                                                    span: expansion_span,
+                                                    style: codemap_diagnostic::SpanStyle::Secondary,
+                                                },
+                                            ],
+                                        ),
+                                    ]);
+                                }
+                            } else {
+                                return Err(vec![
+                                    TemplateResolver::InvalidSpecificPropsExpanding.to_diagnostic(
+                                        &[
+                                            SpanLabel {
+                                                label: None,
+                                                span: *element_span,
+                                                style: codemap_diagnostic::SpanStyle::Primary,
+                                            },
+                                            SpanLabel {
+                                                label: Some("expaned at here".to_string()),
+                                                span: expansion_span,
+                                                style: codemap_diagnostic::SpanStyle::Secondary,
+                                            },
+                                        ],
+                                    ),
+                                ]);
+                            }
+                        }
+                    } else {
+                        output.push((*element_span, element.clone()))
+                    }
                 }
             }
             parser::ElementContent::Element(template_element) => {
@@ -414,10 +518,66 @@ fn expand_template(
                 // Handle the attributes
                 for attribute in &template_element.attributes {
                     match attribute {
-                        parser::Attribute::Replacer(_, replacer) => {
-                            let replacer = preprocessor.resolve_span_to_string(replacer.content);
-                            if replacer.starts_with("props") {
-                                instance.attributes.extend_from_slice(expansion_attributes);
+                        parser::Attribute::Replacer(replacer_span, replacer) => {
+                            let attr_raw = preprocessor.resolve_span_to_string(replacer.content);
+                            if let Some(attr) = attr_raw.strip_suffix("props") {
+                                if attr == "" {
+                                    // This pastes entire props
+                                    instance.attributes.extend_from_slice(expansion_attributes);
+                                } else {
+                                    // While this paste only specific one
+                                    if let Some(name) = attr_raw.strip_prefix(".") {
+                                        if let Some(attr) =
+                                            expansion_attributes.iter().find(|x| match x {
+                                                crate::Attribute::Attribute(_, attribute_data) => {
+                                                    preprocessor.resolve_span_to_string(
+                                                        attribute_data.key_span,
+                                                    ) == name
+                                                }
+                                                crate::Attribute::Replacer(_, _)
+                                                | crate::Attribute::EmptyAttribute(_) => false,
+                                            })
+                                        {
+                                            instance.attributes.push(attr.clone());
+                                        } else {
+                                            return Err(vec![
+                                                TemplateResolver::UnknownExpanderAttribute
+                                                    .to_diagnostic(&[
+                                                    SpanLabel {
+                                                        label: None,
+                                                        span: *replacer_span,
+                                                        style:
+                                                            codemap_diagnostic::SpanStyle::Primary,
+                                                    },
+                                                    SpanLabel {
+                                                        label: Some("expanded from here".to_string()),
+                                                        span: expansion_span,
+                                                        style:
+                                                            codemap_diagnostic::SpanStyle::Secondary,
+                                                    },
+                                                ]),
+                                            ]);
+                                        }
+                                    } else {
+                                        return Err(vec![
+                                                TemplateResolver::InvalidSpecificPropsExpanding
+                                                    .to_diagnostic(&[
+                                                    SpanLabel {
+                                                        label: None,
+                                                        span: *replacer_span,
+                                                        style:
+                                                            codemap_diagnostic::SpanStyle::Primary,
+                                                    },
+                                                    SpanLabel {
+                                                        label: Some("expaned at here".to_string()),
+                                                        span: expansion_span,
+                                                        style:
+                                                            codemap_diagnostic::SpanStyle::Secondary,
+                                                    },
+                                                ]),
+                                            ]);
+                                    }
+                                }
                             } else {
                                 instance.attributes.push(attribute.clone());
                             }
