@@ -1,0 +1,243 @@
+<import src="/components/page.html" />
+<import src="/components/opengraph.html" />
+<import src="/components/popup.html" />
+<import src="../popup.html" />
+
+<x-navbar-set-Creations />
+
+<html lang="en">
+  <head>
+    <title>So a little WASM stuff</title>
+    <x-base-metadata />
+    <x-popup-headers />
+    <x-default-opengraph-image />
+    <x-metadata-title content="A WASM test" />
+    <meta property="og:type" content="website" />
+    <x-metadata-description content="A wasm test on my thingy :3" />
+  </head>
+  
+  <body>
+    <x-page>
+      <noscript>
+        Javascript is REQUIRED! How else Foxie can call to WASM :3<br />
+      </noscript>
+      
+      <h1>A little thingy I made a random computer :3</h1>
+      <p>
+        Its a SAP computer. There would be multiple more here. Fun fact its written in Rust.
+        Which I'm compiling to WASM and runs here.
+      </p>
+      
+      <div id="error" hidden style="background-color: #dd0000ff;" />
+      
+      <table style="width: 100%; border: 2px solid black;">
+        <td style="text-align: left; vertical-align: top;">
+          <h2>Computer states:</h2>
+          Status: <span id="status">Loading...</span><br />
+          Instruction Register: <span id="instruction_reg">Loading...</span><br />
+          Memory Address Register: <span id="memory_addr_reg">Loading...</span><br />
+          Register A: <span id="register_a">Loading...</span><br />
+          Register B: <span id="register_b">Loading...</span><br />
+          PC Register: <span id="pc_register">Loading...</span><br />
+          Is Halted: <span id="is_halted">Loading...</span><br />
+          Stage: <span id="stage">Loading...</span><br />
+          Decoded Opcode: <span id="decoded_opcode">Loading...</span><br />
+          Decoded Operand: <span id="decoded_operand">Loading...</span><br />
+          Bus: <span id="bus">Loading...</span><br />
+          ALU Output: <span id="alu_output">Loading...</span><br />
+          ALU Opcode: <span id="alu_opcode">Loading...</span><br />
+          
+          <button id="step">Step</button>
+          <button id="reset">Reset</button>
+          <button id="reset_memory">Reset Memory</button>
+          <button id="run">Run</button>
+          
+          <h2>Output of computer:</h2>
+          Out Register: <span id="out_register">Loading...</span>
+        </td>
+        <td style="text-align: left; vertical-align: top;">
+          <h2>Memory of computer:</h2>
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Address</th>
+                <th scope="col">Content</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>0x0</td><td><input id="memory_cell_0" type="text" value="..." /></td></tr>
+              <tr><td>0x1</td><td><input id="memory_cell_1" type="text" value="..." /></td></tr>
+              <tr><td>0x2</td><td><input id="memory_cell_2" type="text" value="..." /></td></tr>
+              <tr><td>0x3</td><td><input id="memory_cell_3" type="text" value="..." /></td></tr>
+              <tr><td>0x4</td><td><input id="memory_cell_4" type="text" value="..." /></td></tr>
+              <tr><td>0x5</td><td><input id="memory_cell_5" type="text" value="..." /></td></tr>
+              <tr><td>0x6</td><td><input id="memory_cell_6" type="text" value="..." /></td></tr>
+              <tr><td>0x7</td><td><input id="memory_cell_7" type="text" value="..." /></td></tr>
+              <tr><td>0x8</td><td><input id="memory_cell_8" type="text" value="..." /></td></tr>
+              <tr><td>0x9</td><td><input id="memory_cell_9" type="text" value="..." /></td></tr>
+              <tr><td>0xA</td><td><input id="memory_cell_A" type="text" value="..." /></td></tr>
+              <tr><td>0xB</td><td><input id="memory_cell_B" type="text" value="..." /></td></tr>
+              <tr><td>0xC</td><td><input id="memory_cell_C" type="text" value="..." /></td></tr>
+              <tr><td>0xD</td><td><input id="memory_cell_D" type="text" value="..." /></td></tr>
+              <tr><td>0xE</td><td><input id="memory_cell_E" type="text" value="..." /></td></tr>
+              <tr><td>0xF</td><td><input id="memory_cell_F" type="text" value="..." /></td></tr>
+            </tbody>
+          </table>
+        </td>
+      </table>
+      
+      <p>
+        Currently this computer is preloaded with these instructions for 4 - 2 + 5 + 3 - 6 - 1<br />
+        You can modify the memory. (You may want to reset the computer to rerun from scratch)
+        <p>
+          LDA 0x0C
+          SUB 0x0B
+          ADD 0xAH
+          SUB 0xEH
+          SUB 0x9H
+          OUT
+          HLT
+        </p>
+        Extra data at memory<br />
+        0x09 => 0x01<br />
+        0x0A => 0x03<br />
+        0x0B => 0x02<br />
+        0x0C => 0x04<br />
+        0x0D => 0x05<br />
+        0x0E => 0x06<br />
+      </p>
+      
+      <script>
+        async function load_wasm() {
+          const error_div = document.getElementById("error");
+          try {
+            const { default: init, SAP1Emulator } = await import("$root/creations/college_sap/saps_emulators.js");
+            await init();
+            
+            const emulator = new SAP1Emulator({
+              memory_cell_id: [
+                "memory_cell_0",
+                "memory_cell_1",
+                "memory_cell_2",
+                "memory_cell_3",
+                "memory_cell_4",
+                "memory_cell_5",
+                "memory_cell_6",
+                "memory_cell_7",
+                "memory_cell_8",
+                "memory_cell_9",
+                "memory_cell_A",
+                "memory_cell_B",
+                "memory_cell_C",
+                "memory_cell_D",
+                "memory_cell_E",
+                "memory_cell_F"
+              ],
+              instruction_reg_id: "instruction_reg",
+              memory_addr_reg_id: "memory_addr_reg",
+              register_a_id: "register_a",
+              register_b_id: "register_b",
+              out_register_id: "out_register",
+              pc_register_id: "pc_register",
+              is_halted_id: "is_halted",
+              stage_id: "stage",
+              decoded_opcode_id: "decoded_opcode",
+              decoded_operand_id: "decoded_operand",
+              bus_id: "bus",
+              alu_output_id: "alu_output",
+              alu_opcode_id: "alu_opcode",
+              status_id: "status",
+              initial_memory: [
+                0x0C,
+                0x2B,
+                0x1D,
+                0x1A,
+                0x2E,
+                0x29,
+                0xE0,
+                0xF0,
+                0x00,
+                0x01,
+                0x03,
+                0x02,
+                0x04,
+                0x05,
+                0x06,
+                0x00
+              ]
+            });
+            
+            function doStepping() {
+              try {
+                emulator.advance()
+                error_div.hidden = true
+                return true
+              } catch (error) {
+                error_div.textContent = "From emulator: " + error;
+                error_div.hidden = false
+                return false
+              }
+            }
+            
+            const step_button = document.getElementById("step")
+            step_button.onclick = () => {
+              doStepping()
+            }
+            
+            const reset_button = document.getElementById("reset")
+            reset_button.onclick = () => {
+              try {
+                emulator.reset()
+                error_div.hidden = true
+              } catch (error) {
+                error_div.textContent = "From emulator: " + error;
+                error_div.hidden = false
+              }
+            }
+            
+            const reset_memory_button = document.getElementById("reset_memory")
+            reset_memory_button.onclick = () => {
+              emulator.reset_memory()
+            }
+            
+            let is_auto_run = false
+            let autorun_intervalid;
+            
+            const run_button = document.getElementById("run")
+            
+            function stopAutoRun() {
+              step_button.disabled = false
+              reset_button.disabled = false
+              reset_memory_button.disabled = false
+              run_button.textContent = "Run"
+            }
+            
+            run_button.onclick = () => {
+              if (is_auto_run) {
+                stopAutoRun()
+              } else {
+                step_button.disabled = true
+                reset_button.disabled = true
+                reset_memory_button.disabled = true
+                run_button.textContent = "Stop"
+                
+                autorun_intervalid = setInterval(() => {
+                  if (!doStepping() || emulator.is_halted()) {
+                    // Stop stepping because errored or machine halted
+                    clearInterval(autorun_intervalid)
+                    stopAutoRun()
+                  }
+                }, 500)
+              }
+            }
+          } catch (error) {
+            error_div.textContent = "Error initializing emulator: " + error;
+            error_div.hidden = false
+          }
+        }
+        
+        load_wasm()
+      </script>
+    </x-page>
+  </body>
+</html>

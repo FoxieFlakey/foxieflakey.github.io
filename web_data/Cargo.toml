@@ -1,5 +1,6 @@
 [workspace]
 resolver = "2"
 members = [
+  "creations/college_sap/saps_emulators",
   "creations/wasm/hello_world",
 ]
