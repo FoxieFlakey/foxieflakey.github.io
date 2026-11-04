@@ -57,6 +57,7 @@
         </td>
         <td style="text-align: left; vertical-align: top;">
           <h2>Memory of computer:</h2>
+          The memory cells supports octal, binary, hex and decimal numbers.
           <table>
             <thead>
               <tr>
@@ -105,6 +106,53 @@
         0x0C => 0x04<br />
         0x0D => 0x05<br />
         0x0E => 0x06<br />
+      </p>
+      
+      <h2>Format of the Instruction :3</h2>
+      <p>
+        So this has pretty simple format where each byte is one instruction splits into two portions. Like
+        0x83 splits into two portions. The opcode part is high nibble of the hex number so its 0x8 while
+        the other nibble is the operand like argument/parameter for the opcode which is 0x3.
+      </p>
+      <p>
+        There are 5 specified instructions which are
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">Opcode</th>
+              <th scope="col">Mnemonic</th>
+              <th scope="col">Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>0x0</td>
+              <td>LDA &lt;operand&gt;</td>
+              <td>Loads byte from memory addressed &lt;operand&gt; into accumulator</td>
+            </tr>
+            <tr>
+              <td>0x1</td>
+              <td>ADD &lt;operand&gt;</td>
+              <td>Add byte from memory addressed &lt;operand&gt; into accumulator</td>
+            </tr>
+            <tr>
+              <td>0x2</td>
+              <td>SUB &lt;operand&gt;</td>
+              <td>Subtract byte from memory addressed &lt;operand&gt; from accumulator</td>
+            </tr>
+            <tr>
+              <td>0xE</td>
+              <td>OUT</td>
+              <td>Copies byte currently in accumulator into output register</td>
+            </tr>
+            <tr>
+              <td>0xF</td>
+              <td>HLT</td>
+              <td>Stop the computer. Computer will not continue execution after this</td>
+            </tr>
+          </tbody>
+        </table>
+        Mnemonic is a understandable name of what the opcode doing. So instead of 0x14 you can say ADD 0x4.
       </p>
       
       <script>
