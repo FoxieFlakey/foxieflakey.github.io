@@ -30,9 +30,9 @@
       
       <div id="error" hidden style="background-color: #dd0000ff;" />
       
-      <table style="width: 100%; border: 2px solid black;">
+      <table style="border: 2px solid black;" role="none">
         <td style="text-align: left; vertical-align: top;">
-          <h2>Computer states:</h2>
+          <h2>Computer states</h2>
           Status: <span id="status">Loading...</span><br />
           Instruction Register: <span id="instruction_reg">Loading...</span><br />
           Memory Address Register: <span id="memory_addr_reg">Loading...</span><br />
@@ -47,43 +47,63 @@
           ALU Output: <span id="alu_output">Loading...</span><br />
           ALU Opcode: <span id="alu_opcode">Loading...</span><br />
           
+          <h2>Output of computer</h2>
+          Out Register: <span id="out_register">Loading...</span>
+        </td>
+        <td style="text-align: left; vertical-align: top;">
+          <h2>Memory of computer</h2>
+          The memory cells supports octal, binary, hex and decimal numbers.
+          <table role="none">
+            <tr>
+              <td>
+                <!-- First half of table -->
+                <table>
+                  <thead>
+                    <tr>
+                      <th scope="col">Address</th>
+                      <th scope="col">Content</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr><td>0x0</td><td><input id="memory_cell_0" type="text" value="..." /></td></tr>
+                    <tr><td>0x1</td><td><input id="memory_cell_1" type="text" value="..." /></td></tr>
+                    <tr><td>0x2</td><td><input id="memory_cell_2" type="text" value="..." /></td></tr>
+                    <tr><td>0x3</td><td><input id="memory_cell_3" type="text" value="..." /></td></tr>
+                    <tr><td>0x4</td><td><input id="memory_cell_4" type="text" value="..." /></td></tr>
+                    <tr><td>0x5</td><td><input id="memory_cell_5" type="text" value="..." /></td></tr>
+                    <tr><td>0x6</td><td><input id="memory_cell_6" type="text" value="..." /></td></tr>
+                    <tr><td>0x7</td><td><input id="memory_cell_7" type="text" value="..." /></td></tr>
+                  </tbody>
+                </table>
+              </td>
+              <td>
+                <!-- Another half of memory -->
+                <table>
+                  <thead>
+                    <tr>
+                      <th scope="col">Address</th>
+                      <th scope="col">Content</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr><td>0x8</td><td><input id="memory_cell_8" type="text" value="..." /></td></tr>
+                    <tr><td>0x9</td><td><input id="memory_cell_9" type="text" value="..." /></td></tr>
+                    <tr><td>0xA</td><td><input id="memory_cell_A" type="text" value="..." /></td></tr>
+                    <tr><td>0xB</td><td><input id="memory_cell_B" type="text" value="..." /></td></tr>
+                    <tr><td>0xC</td><td><input id="memory_cell_C" type="text" value="..." /></td></tr>
+                    <tr><td>0xD</td><td><input id="memory_cell_D" type="text" value="..." /></td></tr>
+                    <tr><td>0xE</td><td><input id="memory_cell_E" type="text" value="..." /></td></tr>
+                    <tr><td>0xF</td><td><input id="memory_cell_F" type="text" value="..." /></td></tr>
+                  </tbody>
+                </table>
+              </td>
+            </tr>
+          </table>
+          
           <button id="step">Step</button>
           <button id="reset">Reset</button>
           <button id="reset_memory">Reset Memory</button>
           <button id="run">Run</button>
-          
-          <h2>Output of computer:</h2>
-          Out Register: <span id="out_register">Loading...</span>
-        </td>
-        <td style="text-align: left; vertical-align: top;">
-          <h2>Memory of computer:</h2>
-          The memory cells supports octal, binary, hex and decimal numbers.
-          <table>
-            <thead>
-              <tr>
-                <th scope="col">Address</th>
-                <th scope="col">Content</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr><td>0x0</td><td><input id="memory_cell_0" type="text" value="..." /></td></tr>
-              <tr><td>0x1</td><td><input id="memory_cell_1" type="text" value="..." /></td></tr>
-              <tr><td>0x2</td><td><input id="memory_cell_2" type="text" value="..." /></td></tr>
-              <tr><td>0x3</td><td><input id="memory_cell_3" type="text" value="..." /></td></tr>
-              <tr><td>0x4</td><td><input id="memory_cell_4" type="text" value="..." /></td></tr>
-              <tr><td>0x5</td><td><input id="memory_cell_5" type="text" value="..." /></td></tr>
-              <tr><td>0x6</td><td><input id="memory_cell_6" type="text" value="..." /></td></tr>
-              <tr><td>0x7</td><td><input id="memory_cell_7" type="text" value="..." /></td></tr>
-              <tr><td>0x8</td><td><input id="memory_cell_8" type="text" value="..." /></td></tr>
-              <tr><td>0x9</td><td><input id="memory_cell_9" type="text" value="..." /></td></tr>
-              <tr><td>0xA</td><td><input id="memory_cell_A" type="text" value="..." /></td></tr>
-              <tr><td>0xB</td><td><input id="memory_cell_B" type="text" value="..." /></td></tr>
-              <tr><td>0xC</td><td><input id="memory_cell_C" type="text" value="..." /></td></tr>
-              <tr><td>0xD</td><td><input id="memory_cell_D" type="text" value="..." /></td></tr>
-              <tr><td>0xE</td><td><input id="memory_cell_E" type="text" value="..." /></td></tr>
-              <tr><td>0xF</td><td><input id="memory_cell_F" type="text" value="..." /></td></tr>
-            </tbody>
-          </table>
         </td>
       </table>
       
