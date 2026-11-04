@@ -7,6 +7,23 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+        with:
+          submodules: recursive
+      
+      - name: Install wasm-bindgen-cli from Binary
+        run: |
+          # Target version (change this to match your project's wasm-bindgen version)
+          VERSION="0.2.130"
+          
+          # Download and extract the precompiled binary
+          curl -L https://github.com/wasm-bindgen/wasm-bindgen/releases/download/${VERSION}/wasm-bindgen-${VERSION}-x86_64-unknown-linux-musl.tar.gz | tar -xz
+          
+          # Move the binary to a directory already in the GitHub Actions PATH
+          mkdir -p ~/.local/bin
+          mv wasm-bindgen-${VERSION}-x86_64-unknown-linux-musl/wasm-bindgen ~/.local/bin
+          
+          # Verify installation
+          wasm-bindgen --version
       
       - name: "Install nightly Rust toolchain"
         uses: dtolnay/rust-toolchain@master
@@ -16,9 +33,6 @@ jobs:
       
       - name: "Enable caching on Rust stuffs"
         uses: Swatinem/rust-cache@v2
-      
-      - name: Install wasm-bingden
-        run: cargo install wasm-bindgen-cli
         
       - name: Build the website!
         # Run my Rust based site generator, which is orchestrated
