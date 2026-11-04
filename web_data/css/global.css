@@ -101,3 +101,40 @@ is too small
   container-type: normal;
 }
 
+button {
+  border-radius: 0px;
+  border: 0px;
+  background-color: #dddddd;
+  padding: 5px;
+  min-width: 100px;
+  font: unset;
+  border: 2px solid black;
+}
+
+button:hover {
+  background-color: #ffffff;
+}
+
+button:active {
+  background-color: #cccccc;
+}
+
+button:disabled {
+  background-color: #bbbbbb;
+  color: initial;
+}
+
+input[type="text"] {
+  border-radius: 0px;
+  border: 2px solid black;
+  font: unset;
+  padding-top: 0px;
+  padding-bottom: 0px;
+  outline: none;
+  background-color: #dddddd;
+}
+
+input[type="text"]:disabled {
+  background-color: #bbbbbb;
+}
+
