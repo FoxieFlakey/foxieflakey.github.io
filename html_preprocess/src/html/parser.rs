@@ -29,6 +29,7 @@ pub struct Element {
     pub name: Either<String, lexer::Replacer>,
     pub attributes: Vec<Attribute>,
     pub childs: Vec<(Span, ElementContent)>,
+    pub is_void: bool,
 }
 
 #[derive(Clone)]
@@ -209,6 +210,7 @@ impl ParseState {
             childs: Vec::new(),
             name,
             name_span,
+            is_void: false,
         };
 
         // part 2: parse attributes
@@ -236,6 +238,7 @@ impl ParseState {
                     // finish parsing and return
                     match self.token_iterator.next() {
                         Some((span, lexer::Token::GreaterThan)) => {
+                            this.is_void = true;
                             return Ok((
                                 self.file
                                     .span

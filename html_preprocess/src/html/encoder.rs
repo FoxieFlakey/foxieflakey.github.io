@@ -5,7 +5,7 @@ use std::io::{self, Write};
 use codemap::Span;
 use either::Either;
 
-use crate::html::{FileContext, parser};
+use crate::html::{FileContext, encoder::EncodeError::Message, parser};
 
 pub enum EncodeError {
     Message(String),
@@ -33,14 +33,16 @@ where
     W: Write + ?Sized,
 {
     let mut stack = Vec::new();
-    stack.push((None, tree.iter()));
+    stack.push((None, true, tree.iter()));
 
     while stack.len() > 0 {
-        let Some((current_span, current)) = stack.last_mut().unwrap().1.next() else {
-            let (name, _) = stack.pop().unwrap();
+        let Some((current_span, current)) = stack.last_mut().unwrap().2.next() else {
+            let (name, write_closing, _) = stack.pop().unwrap();
             // Write closing tag
-            if let Some(name) = name {
-                write!(writer, "</{name}>")?;
+            if write_closing {
+                if let Some(name) = name {
+                    write!(writer, "</{name}>")?;
+                }
             }
             continue;
         };
@@ -81,9 +83,28 @@ where
                     }
                 }
 
-                write!(writer, ">")?;
+                // HTML's void element is different than
+                // "my HTML parser's void". These are hardcoded. This
+                // does not break my parser as my parser works with any
+                // voids
+                //
+                // Source: https://developer.mozilla.org/en-US/docs/Glossary/Void_element
+                let known_voids = [
+                    "area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta",
+                    "param", "source", "track", "wbr",
+                ];
 
-                stack.push((Some(name), element.childs.iter()));
+                if known_voids.binary_search(&name.as_str()).is_ok() {
+                    write!(writer, "/>")?;
+                    if element.childs.len() != 0 {
+                        return Err(Message(format!(
+                            "Encountered HTML void element which has children, it cannot have one"
+                        )));
+                    }
+                } else {
+                    write!(writer, ">")?;
+                    stack.push((Some(name), true, element.childs.iter()));
+                }
             }
 
             parser::ElementContent::Comment(comment) => {
