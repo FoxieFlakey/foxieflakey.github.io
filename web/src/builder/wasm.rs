@@ -110,7 +110,7 @@ impl Wasm {
             cmd.arg("--artifact-dir");
             cmd.arg(&artifacts_dir);
 
-            #[cfg(debug_assertions)]
+            #[cfg(not(debug_assertions))]
             cmd.arg("--release");
 
             let status = cmd
