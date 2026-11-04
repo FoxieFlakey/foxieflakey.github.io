@@ -6,11 +6,11 @@ members = [
   "art_data",
   "server",
   "common-utils",
-  "scripts/art-uploader",
+  "scripts/art-uploader"
 ]
 
 exclude = [
-  "web_data/wasm"
+  "web_data"
 ]
 
 # Turn off all optimizations. For crate that only contain bulk data
