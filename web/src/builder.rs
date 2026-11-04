@@ -18,7 +18,7 @@ use std::str::Utf8Error;
 
 #[cfg(feature = "minify")]
 use lightningcss::{
-    error::{MinifyErrorKind, ParserError, PrinterErrorKind},
+    error::{MinifyErrorKind, PrinterErrorKind},
     printer::PrinterOptions,
     stylesheet::{MinifyOptions, ParserOptions, StyleSheet},
 };
