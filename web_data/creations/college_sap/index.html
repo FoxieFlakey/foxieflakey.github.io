@@ -210,6 +210,8 @@
               reset_button.disabled = false
               reset_memory_button.disabled = false
               run_button.textContent = "Run"
+              is_auto_run = false
+              clearInterval(autorun_intervalid)
             }
             
             run_button.onclick = () => {
@@ -220,11 +222,10 @@
                 reset_button.disabled = true
                 reset_memory_button.disabled = true
                 run_button.textContent = "Stop"
+                is_auto_run = true;
                 
                 autorun_intervalid = setInterval(() => {
                   if (!doStepping() || emulator.is_halted()) {
-                    // Stop stepping because errored or machine halted
-                    clearInterval(autorun_intervalid)
                     stopAutoRun()
                   }
                 }, 500)
