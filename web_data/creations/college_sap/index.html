@@ -34,80 +34,243 @@
       
       <table id="main_table" role="presentation">
         <td>
-          <h2>Computer states</h2>
-          Status: <span id="status">Loading...</span><br />
-          Instruction Register: <span id="instruction_reg">Loading...</span><br />
-          Memory Address Register: <span id="memory_addr_reg">Loading...</span><br />
-          Register A: <span id="register_a">Loading...</span><br />
-          Register B: <span id="register_b">Loading...</span><br />
-          PC Register: <span id="pc_register">Loading...</span><br />
-          Is Halted: <span id="is_halted">Loading...</span><br />
-          Stage: <span id="stage">Loading...</span><br />
-          Decoded Opcode: <span id="decoded_opcode">Loading...</span><br />
-          Decoded Operand: <span id="decoded_operand">Loading...</span><br />
-          Bus: <span id="bus">Loading...</span><br />
-          ALU Output: <span id="alu_output">Loading...</span><br />
-          ALU Opcode: <span id="alu_opcode">Loading...</span><br />
-          Description:<br />
-          <span id="description">Loading...</span>
-          
-          <h2>Output of computer</h2>
-          Out Register: <span id="out_register">Loading...</span>
-        </td>
-        <td>
-          <h2>Memory of computer</h2>
-          The memory cells supports octal, binary, hex and decimal numbers.
-          <table role="presentation">
+          <table id="state_table">
             <tr>
-              <td>
-                <!-- First half of table -->
-                <table>
-                  <thead>
-                    <tr>
-                      <th scope="col">Address</th>
-                      <th scope="col">Content</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr><td>0x0</td><td><input id="memory_cell_0" type="text" value="..." /></td></tr>
-                    <tr><td>0x1</td><td><input id="memory_cell_1" type="text" value="..." /></td></tr>
-                    <tr><td>0x2</td><td><input id="memory_cell_2" type="text" value="..." /></td></tr>
-                    <tr><td>0x3</td><td><input id="memory_cell_3" type="text" value="..." /></td></tr>
-                    <tr><td>0x4</td><td><input id="memory_cell_4" type="text" value="..." /></td></tr>
-                    <tr><td>0x5</td><td><input id="memory_cell_5" type="text" value="..." /></td></tr>
-                    <tr><td>0x6</td><td><input id="memory_cell_6" type="text" value="..." /></td></tr>
-                    <tr><td>0x7</td><td><input id="memory_cell_7" type="text" value="..." /></td></tr>
-                  </tbody>
-                </table>
-              </td>
-              <td>
-                <!-- Another half of memory -->
-                <table>
-                  <thead>
-                    <tr>
-                      <th scope="col">Address</th>
-                      <th scope="col">Content</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr><td>0x8</td><td><input id="memory_cell_8" type="text" value="..." /></td></tr>
-                    <tr><td>0x9</td><td><input id="memory_cell_9" type="text" value="..." /></td></tr>
-                    <tr><td>0xA</td><td><input id="memory_cell_A" type="text" value="..." /></td></tr>
-                    <tr><td>0xB</td><td><input id="memory_cell_B" type="text" value="..." /></td></tr>
-                    <tr><td>0xC</td><td><input id="memory_cell_C" type="text" value="..." /></td></tr>
-                    <tr><td>0xD</td><td><input id="memory_cell_D" type="text" value="..." /></td></tr>
-                    <tr><td>0xE</td><td><input id="memory_cell_E" type="text" value="..." /></td></tr>
-                    <tr><td>0xF</td><td><input id="memory_cell_F" type="text" value="..." /></td></tr>
-                  </tbody>
-                </table>
-              </td>
+              <td colspan="2" class="all_border">Program Counter</td>
+              <td />
+              <td rowspan="23" class="all_border">Bus<br/><span id="bus">Loading...</span></td>
+              <td />
+              <td colspan="3" class="all_border">Memory Address Register</td>
+            </tr>
+            <tr>
+              <td colspan="2" class="all_border"><span id="pc_register">Loading...</span></td>
+              <td>&gt; (8-bit)</td>
+              <td>&gt; (8-bit)</td>
+              <td colspan="3" class="all_border"><span id="memory_addr_reg">Loading...</span></td>
+            </tr>
+            <tr>
+              <td />
+              <td />
+              <td />
+              <td />
+              <td />
+              <td>V (4-bit)</td>
+              <td />
+            </tr>
+            <tr>
+              <td colspan="2" class="all_border">Register A</td>
+              <td>&lt; (8-bit)</td>
+              <td />
+              <td colspan="2" class="all_border">Memory</td>
+              <td />
+            </tr>
+            <tr>
+              <td colspan="2" class="all_border"><span id="register_a">Loading...</span></td>
+              <td>&gt; (8-bit)</td>
+              <td>&lt; (8-bit)</td>
+              <td class="all_border">Address</td>
+              <td class="all_border">Content</td>
+              <td />
+            </tr>
+            <tr>
+              <td colspan="2">V (8-bit)</td>
+              <td />
+              <td />
+              <td class="left_right_border">0x00</td>
+              <td class="left_right_border"><input id="memory_cell_0" type="text" value="..." /></td>
+              <td />
+            </tr>
+            <tr>
+              <td colspan="2" class="all_border">ALU</td>
+              <td />
+              <td />
+              <td class="left_right_border">0x01</td>
+              <td class="left_right_border"><input id="memory_cell_1" type="text" value="..." /></td>
+              <td />
+            </tr>
+            <tr>
+              <td class="all_border">Operation</td>
+              <td class="all_border">Output</td>
+              <td />
+              <td />
+              <td class="left_right_border">0x02</td>
+              <td class="left_right_border"><input id="memory_cell_2" type="text" value="..." /></td>
+              <td />
+            </tr>
+            <tr>
+              <td class="all_border"><span id="alu_opcode">Loading...</span></td>
+              <td class="all_border"><span id="alu_output">Loading...</span></td>
+              <td>&gt; (8-bit)</td>
+              <td />
+              <td class="left_right_border">0x03</td>
+              <td class="left_right_border"><input id="memory_cell_3" type="text" value="..." /></td>
+              <td />
+            </tr>
+            <tr>
+              <td colspan="2">^ (8-bit)</td>
+              <td />
+              <td />
+              <td class="left_right_border">0x04</td>
+              <td class="left_right_border"><input id="memory_cell_4" type="text" value="..." /></td>
+              <td />
+            </tr>
+            <tr>
+              <td colspan="2" class="all_border">Register B</td>
+              <td />
+              <td />
+              <td class="left_right_border">0x05</td>
+              <td class="left_right_border"><input id="memory_cell_5" type="text" value="..." /></td>
+              <td />
+            </tr>
+            <tr>
+              <td colspan="2" class="all_border"><span id="register_b">Loading...</span></td>
+              <td />
+              <td />
+              <td class="left_right_border">0x06</td>
+              <td class="left_right_border"><input id="memory_cell_6" type="text" value="..." /></td>
+              <td />
+            </tr>
+            <tr>
+              <td>V (4-bit)</td>
+              <td>V (4-bit)</td>
+              <td />
+              <td />
+              <td class="left_right_border">0x07</td>
+              <td class="left_right_border"><input id="memory_cell_7" type="text" value="..." /></td>
+              <td />
+            </tr>
+            <tr>
+              <td colspan="2" class="all_border">Instruction Register</td>
+              <td />
+              <td />
+              <td class="left_right_border">0x08</td>
+              <td class="left_right_border"><input id="memory_cell_8" type="text" value="..." /></td>
+              <td />
+            </tr>
+            <tr>
+              <td colspan="2" class="all_border"><span id="instruction_reg">Loading...</span></td>
+              <td />
+              <td />
+              <td class="left_right_border">0x09</td>
+              <td class="left_right_border"><input id="memory_cell_9" type="text" value="..." /></td>
+              <td />
+            </tr>
+            <tr>
+              <td />
+              <td />
+              <td />
+              <td />
+              <td class="left_right_border">0x0A</td>
+              <td class="left_right_border"><input id="memory_cell_A" type="text" value="..." /></td>
+              <td />
+            </tr>
+            <tr>
+              <td colspan="2" class="all_border">Control Unit</td>
+              <td />
+              <td />
+              <td class="left_right_border">0x0B</td>
+              <td class="left_right_border"><input id="memory_cell_B" type="text" value="..." /></td>
+              <td />
+            </tr>
+            <tr>
+              <td class="all_border"><span id="stage">Loading...</span></td>
+              <td class="all_border"><span id="status">Loading...</span></td>
+              <td />
+              <td />
+              <td class="left_right_border">0x0C</td>
+              <td class="left_right_border"><input id="memory_cell_C" type="text" value="..." /></td>
+              <td />
+            </tr>
+            <tr>
+              <td class="all_border">Opcode</td>
+              <td class="all_border">Operand</td>
+              <td />
+              <td />
+              <td class="left_right_border">0x0D</td>
+              <td class="left_right_border"><input id="memory_cell_D" type="text" value="..." /></td>
+              <td />
+            </tr>
+            <tr>
+              <td class="all_border"><span id="decoded_opcode">Loading...</span></td>
+              <td class="all_border"><span id="decoded_operand">Loading...</span></td>
+              <td />
+              <td />
+              <td class="left_right_border">0x0E</td>
+              <td class="left_right_border"><input id="memory_cell_E" type="text" value="..." /></td>
+              <td />
+            </tr>
+            <tr>
+              <td />
+              <td />
+              <td />
+              <td />
+              <td class="left_right_bottom_border">0x0F</td>
+              <td class="left_right_bottom_border"><input id="memory_cell_F" type="text" value="..." /></td>
+              <td />
+            </tr>
+            <tr>
+              <td colspan="2" class="all_border">Output Register</td>
+              <td />
+              <td />
+              <td />
+              <td />
+              <td />
+            </tr>
+            <tr>
+              <td colspan="2" class="all_border"><span id="out_register">Loading...</span></td>
+              <td>&lt; (8-bit)</td>
+              <td />
+              <td />
+              <td />
+              <td />
             </tr>
           </table>
-          
+        </td>
+        <td>
           <button id="step">Step</button>
           <button id="reset">Reset</button>
           <button id="reset_memory">Reset Memory</button>
           <button id="run">Run</button>
+          <h2>Information</h2>
+          <p>
+            You can write binary (0b01100), hex (0x7C), decimal (182), or octal (0o18) into the memory cells.
+          </p>
+          <h2>Quick Reference :3</h2>
+          <table>
+            <thead>
+              <th scope="col">Mnemonic</th>
+              <th scope="col">Opcode</th>
+              <th scope="col">Summary</th>
+            </thead>
+            
+            <tbody>
+              <tr>
+                <td>LDA &lt;address&gt;</td>
+                <td>0x0?</td>
+                <td>Loads byte at 'address' to register A</td>
+              </tr>
+              <tr>
+                <td>ADD &lt;address&gt;</td>
+                <td>0x1?</td>
+                <td>Add byte at 'address' to register A</td>
+              </tr>
+              <tr>
+                <td>SUB &lt;address&gt;</td>
+                <td>0x2?</td>
+                <td>Subtract byte at 'address' from register A</td>
+              </tr>
+              <tr>
+                <td>OUT</td>
+                <td>0xE0</td>
+                <td>Put register A into output register</td>
+              </tr>
+              <tr>
+                <td>HLT</td>
+                <td>0xF0</td>
+                <td>Stops computer</td>
+              </tr>
+            </tbody>
+          </table>
         </td>
       </table>
       

@@ -2,13 +2,38 @@
   background-color: #dd0000ff;
 }
 
-#main_table {
-  border: 2px solid black;
-}
-
 #main_table > tbody > tr > td {
   text-align: left;
   vertical-align: top;
-  width: 400px;
+  width: 600px;
+  padding: 5px;
+}
+
+#state_table {
+  border-collapse: collapse;
+}
+
+#state_table * {
+  font-size: 12px;
+}
+
+#state_table .all_border {
+  border: 2px solid black;
+}
+
+#state_table .left_right_bottom_border {
+  border-left: 2px solid black;
+  border-right: 2px solid black;
+  border-bottom: 2px solid black;
+}
+
+#state_table .left_right_border {
+  border-left: 2px solid black;
+  border-right: 2px solid black;
+}
+
+#state_table > tbody > tr > td {
+  width: 96px;
+  text-align: center;
 }
 
