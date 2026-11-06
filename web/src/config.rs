@@ -84,6 +84,8 @@ pub static RESOURCES: LazyLock<HashMap<String, Resource>> = LazyLock::new(|| {
         html!("/creations/wasm/index.html"),
         wasm!("/creations/college_sap/saps_emulators"),
         html!("/creations/college_sap/index.html"),
+        css!("/creations/college_sap/style.css"),
+        raw!("/creations/college_sap/script.js"),
         // Do not remove this comment too, its for scanning stuffs
     ];
 

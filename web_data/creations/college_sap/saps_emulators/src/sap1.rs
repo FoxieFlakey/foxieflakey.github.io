@@ -22,6 +22,7 @@ pub struct SAP1Emulator {
     alu_output_element: Element,
     alu_opcode_element: Element,
     status_element: Element,
+    description_element: Element,
 }
 
 #[derive(Deserialize, Serialize)]
@@ -42,6 +43,7 @@ pub struct SAP1Config {
     pub alu_opcode_id: String,
     pub status_id: String,
     pub initial_memory: Option<[u8; 16]>,
+    pub description_id: String,
 }
 
 #[wasm_bindgen]
@@ -91,6 +93,7 @@ impl SAP1Emulator {
             alu_output_element: find_elem("alu_output", &config.alu_output_id)?,
             alu_opcode_element: find_elem("alu_opcode", &config.alu_opcode_id)?,
             status_element: find_elem("status", &config.status_id)?,
+            description_element: find_elem("description", &config.description_id)?,
         };
 
         if let Some(memory) = config.initial_memory {
@@ -226,5 +229,49 @@ impl SAP1Emulator {
             } else {
                 "Not halted"
             }));
+
+        let description = match self.emulator.micro_operation_done {
+            libcollege_saps::sap1::MicroOperation::IncrementPC => {
+                format!("The computer incremented PC")
+            }
+            libcollege_saps::sap1::MicroOperation::MoveOperation { src, dest } => {
+                let src = match src {
+                    libcollege_saps::sap1::MoveSource::Accumulator => {
+                        "accumulator register".to_string()
+                    }
+                    libcollege_saps::sap1::MoveSource::ALUOutput => "output of ALU".to_string(),
+                    libcollege_saps::sap1::MoveSource::DecodedOperand => {
+                        "operand part of instruction".to_string()
+                    }
+                    libcollege_saps::sap1::MoveSource::Memory { addr } => {
+                        format!("byte at memory address 0x{addr:02x}")
+                    }
+                };
+
+                let dest = match dest {
+                    libcollege_saps::sap1::Register::A => "accumulator register",
+                    libcollege_saps::sap1::Register::B => "register B",
+                    libcollege_saps::sap1::Register::InstructionRegister => "instruction register",
+                    libcollege_saps::sap1::Register::Output => "output register",
+                    libcollege_saps::sap1::Register::MemoryAddressRegister => {
+                        "memory address register"
+                    }
+                };
+
+                format!("Computer moved data from {src} to {dest}")
+            }
+            libcollege_saps::sap1::MicroOperation::Decoded => {
+                format!("Computer has decoded the fetched instruction")
+            }
+            libcollege_saps::sap1::MicroOperation::Halt => {
+                format!("Computer has halted")
+            }
+            libcollege_saps::sap1::MicroOperation::Nothing => {
+                format!("Computer doing nothing at this cycle")
+            }
+        };
+
+        self.description_element
+            .set_text_content(Some(&description));
     }
 }

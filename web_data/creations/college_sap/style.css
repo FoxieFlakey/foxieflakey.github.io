@@ -1,0 +1,14 @@
+#error {
+  background-color: #dd0000ff;
+}
+
+#main_table {
+  border: 2px solid black;
+}
+
+#main_table > tbody > tr > td {
+  text-align: left;
+  vertical-align: top;
+  width: 400px;
+}
+
