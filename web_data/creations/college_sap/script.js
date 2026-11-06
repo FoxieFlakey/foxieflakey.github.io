@@ -184,7 +184,25 @@ async function load_wasm() {
           write_led_id: "memory_cell_F_write_led",
           status_id: "memory_cell_F_status_text",
         },
-      ]
+      ],
+      mem_status_line_id: [
+        "status_line_memory_cell_0",
+        "status_line_memory_cell_1",
+        "status_line_memory_cell_2",
+        "status_line_memory_cell_3",
+        "status_line_memory_cell_4",
+        "status_line_memory_cell_5",
+        "status_line_memory_cell_6",
+        "status_line_memory_cell_7",
+        "status_line_memory_cell_8",
+        "status_line_memory_cell_9",
+        "status_line_memory_cell_A",
+        "status_line_memory_cell_B",
+        "status_line_memory_cell_C",
+        "status_line_memory_cell_D",
+        "status_line_memory_cell_E",
+        "status_line_memory_cell_F",
+      ],
     });
     
     function doStepping() {

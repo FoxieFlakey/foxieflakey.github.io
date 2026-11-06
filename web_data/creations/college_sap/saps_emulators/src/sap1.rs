@@ -36,6 +36,7 @@ pub struct SAP1Emulator {
     instruction_register_status: CellStatus,
     alu_output_status: CellStatus,
     memory_cell_status: [CellStatus; 16],
+    memory_status_lines: [Element; 16],
 }
 
 struct CellStatus {
@@ -81,6 +82,7 @@ pub struct SAP1Config {
     pub instruction_register_status: SAP1CellStatus,
     pub alu_output_status: SAP1CellStatus,
     pub memory_cell_status: [SAP1CellStatus; 16],
+    pub mem_status_line_id: [String; 16],
 }
 
 #[wasm_bindgen]
@@ -129,6 +131,11 @@ impl SAP1Emulator {
                 format!("Element for memory cell for cell {config_key} is valid status: {e}")
             })?;
             memory_status.push(elem);
+        }
+
+        let mut mem_status_lines = Vec::new();
+        for (idx, id) in config.mem_status_line_id.iter().enumerate() {
+            mem_status_lines.push(find_elem(&format!("mem_status_line_id[{idx}]"), id)?);
         }
 
         let mut this = Self {
@@ -180,6 +187,10 @@ impl SAP1Emulator {
                 .try_into()
                 .ok()
                 .expect("Apparently config.memory_cell_status is not 16"),
+            memory_status_lines: mem_status_lines
+                .try_into()
+                .ok()
+                .expect("Apparently config.mem_status_line_id is not 16"),
         };
 
         if let Some(memory) = config.initial_memory {
@@ -408,6 +419,20 @@ impl SAP1Emulator {
             libcollege_saps::sap1::MicroOperation::Decoded => (),
             libcollege_saps::sap1::MicroOperation::Halt => (),
             libcollege_saps::sap1::MicroOperation::Nothing => (),
+        }
+
+        for line in &self.memory_status_lines {
+            line.set_text_content(None);
+        }
+
+        let mar_addr = usize::from(self.emulator.memory_address_register.value());
+        let pc_addr = usize::from(self.emulator.program_counter.value());
+
+        if mar_addr == pc_addr {
+            self.memory_status_lines[mar_addr].set_text_content(Some("<= PC, MAR"));
+        } else {
+            self.memory_status_lines[pc_addr].set_text_content(Some("<= PC"));
+            self.memory_status_lines[mar_addr].set_text_content(Some("<= MAR"));
         }
     }
 }
