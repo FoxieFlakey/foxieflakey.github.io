@@ -185,12 +185,12 @@ impl SAP1Emulator {
             .set_text_content(Some(&format!("0x{:02x}", self.emulator.program_counter)));
         self.stage_element
             .set_text_content(Some(match self.emulator.stage {
-                libcollege_saps::sap1::Stage::Fetch => "Fetching",
-                libcollege_saps::sap1::Stage::Decode => "Decoding",
+                libcollege_saps::sap1::Stage::Fetch1 => "Fetching (Part 1)",
+                libcollege_saps::sap1::Stage::Fetch2 => "Fetching (Part 2)",
+                libcollege_saps::sap1::Stage::Fetch3 => "Fetching (Part 3)",
                 libcollege_saps::sap1::Stage::Execute1 => "Executing (Part 1)",
                 libcollege_saps::sap1::Stage::Execute2 => "Executing (Part 2)",
                 libcollege_saps::sap1::Stage::Execute3 => "Executing (Part 3)",
-                libcollege_saps::sap1::Stage::Increment => "Incrementing PC",
             }));
         self.decoded_opcode_element
             .set_text_content(Some(match self.emulator.decoded_op {
