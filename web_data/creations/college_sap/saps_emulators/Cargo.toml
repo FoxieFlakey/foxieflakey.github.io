@@ -15,4 +15,4 @@ libcollege_saps = { version = "0.1.0", path = "college_saps/libcollege_saps" }
 serde = { version = "1.0.229", features = ["derive"] }
 serde-wasm-bindgen = "0.6.5"
 wasm-bindgen = "0.2.130"
-web-sys = { version = "0.3.107", features = ["Window", "Document", "Element", "HtmlInputElement"] }
+web-sys = { version = "0.3.107", features = ["Window", "Document", "Element", "HtmlInputElement", "DomTokenList"] }

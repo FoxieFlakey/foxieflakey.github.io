@@ -56,6 +56,135 @@ async function load_wasm() {
         0x00
       ],
       description_id: "description",
+      active_read_led_class: "read_led_active",
+      active_write_led_class: "write_led_active",
+      pc_register_status: {
+        read_led_id: "pc_register_read_led",
+        write_led_id: "pc_register_write_led",
+        status_id: "pc_register_status_text",
+      },
+      memory_addr_reg_status: {
+        read_led_id: "memory_addr_reg_read_led",
+        write_led_id: "memory_addr_reg_write_led",
+        status_id: "memory_addr_reg_status_text",
+      },
+      decoded_operand_status: {
+        read_led_id: "decoded_operand_read_led",
+        write_led_id: "decoded_operand_write_led",
+        status_id: "decoded_operand_status_text",
+      },
+      decoded_opcode_status: {
+        read_led_id: "decoded_opcode_read_led",
+        write_led_id: "decoded_opcode_write_led",
+        status_id: "decoded_opcode_status_text",
+      },
+      register_a_status: {
+        read_led_id: "register_a_read_led",
+        write_led_id: "register_a_write_led",
+        status_id: "register_a_status_text",
+      },
+      register_b_status: {
+        read_led_id: "register_b_read_led",
+        write_led_id: "register_b_write_led",
+        status_id: "register_b_status_text",
+      },
+      output_register_status: {
+        read_led_id: "out_register_read_led",
+        write_led_id: "out_register_write_led",
+        status_id: "out_register_status_text",
+      },
+      instruction_register_status: {
+        read_led_id: "instruction_reg_read_led",
+        write_led_id: "instruction_reg_write_led",
+        status_id: "instruction_reg_status_text",
+      },
+      alu_output_status: {
+        read_led_id: "alu_output_read_led",
+        write_led_id: "alu_output_write_led",
+        status_id: "alu_output_status_text",
+      },
+      memory_cell_status: [
+        {
+          read_led_id: "memory_cell_0_read_led",
+          write_led_id: "memory_cell_0_write_led",
+          status_id: "memory_cell_0_status_text",
+        },
+        {
+          read_led_id: "memory_cell_1_read_led",
+          write_led_id: "memory_cell_1_write_led",
+          status_id: "memory_cell_1_status_text",
+        },
+        {
+          read_led_id: "memory_cell_2_read_led",
+          write_led_id: "memory_cell_2_write_led",
+          status_id: "memory_cell_2_status_text",
+        },
+        {
+          read_led_id: "memory_cell_3_read_led",
+          write_led_id: "memory_cell_3_write_led",
+          status_id: "memory_cell_3_status_text",
+        },
+        {
+          read_led_id: "memory_cell_4_read_led",
+          write_led_id: "memory_cell_4_write_led",
+          status_id: "memory_cell_4_status_text",
+        },
+        {
+          read_led_id: "memory_cell_5_read_led",
+          write_led_id: "memory_cell_5_write_led",
+          status_id: "memory_cell_5_status_text",
+        },
+        {
+          read_led_id: "memory_cell_6_read_led",
+          write_led_id: "memory_cell_6_write_led",
+          status_id: "memory_cell_6_status_text",
+        },
+        {
+          read_led_id: "memory_cell_7_read_led",
+          write_led_id: "memory_cell_7_write_led",
+          status_id: "memory_cell_7_status_text",
+        },
+        {
+          read_led_id: "memory_cell_8_read_led",
+          write_led_id: "memory_cell_8_write_led",
+          status_id: "memory_cell_8_status_text",
+        },
+        {
+          read_led_id: "memory_cell_9_read_led",
+          write_led_id: "memory_cell_9_write_led",
+          status_id: "memory_cell_9_status_text",
+        },
+        {
+          read_led_id: "memory_cell_A_read_led",
+          write_led_id: "memory_cell_A_write_led",
+          status_id: "memory_cell_A_status_text",
+        },
+        {
+          read_led_id: "memory_cell_B_read_led",
+          write_led_id: "memory_cell_B_write_led",
+          status_id: "memory_cell_B_status_text",
+        },
+        {
+          read_led_id: "memory_cell_C_read_led",
+          write_led_id: "memory_cell_C_write_led",
+          status_id: "memory_cell_C_status_text",
+        },
+        {
+          read_led_id: "memory_cell_D_read_led",
+          write_led_id: "memory_cell_D_write_led",
+          status_id: "memory_cell_D_status_text",
+        },
+        {
+          read_led_id: "memory_cell_E_read_led",
+          write_led_id: "memory_cell_E_write_led",
+          status_id: "memory_cell_E_status_text",
+        },
+        {
+          read_led_id: "memory_cell_F_read_led",
+          write_led_id: "memory_cell_F_write_led",
+          status_id: "memory_cell_F_status_text",
+        },
+      ]
     });
     
     function doStepping() {

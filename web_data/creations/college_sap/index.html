@@ -45,10 +45,20 @@
             </tr>
             <tr>
               <td />
-              <td colspan="2" class="all_border"><span id="pc_register">Loading...</span></td>
+              <td colspan="2" class="all_border">
+                <span id="pc_register_read_led" class="read_led">⬤</span>
+                <span id="pc_register_write_led" class="write_led">⬤</span>
+                <span id="pc_register_status_text" class="status_text" />
+                <span id="pc_register">Loading...</span>
+              </td>
               <td>&gt; (8-bit)</td>
               <td>&gt; (8-bit)</td>
-              <td colspan="3" class="all_border"><span id="memory_addr_reg">Loading...</span></td>
+              <td colspan="3" class="all_border">
+                <span id="memory_addr_reg_read_led" class="read_led">⬤</span>
+                <span id="memory_addr_reg_write_led" class="write_led">⬤</span>
+                <span id="memory_addr_reg_status_text" class="status_text" />
+                <span id="memory_addr_reg">Loading...</span>
+              </td>
             </tr>
             <tr>
               <td />
@@ -70,7 +80,12 @@
             </tr>
             <tr>
               <td />
-              <td colspan="2" class="all_border"><span id="register_a">Loading...</span></td>
+              <td colspan="2" class="all_border">
+                <span id="register_a_read_led" class="read_led">⬤</span>
+                <span id="register_a_write_led" class="write_led">⬤</span>
+                <span id="register_a_status_text" class="status_text" />
+                <span id="register_a">Loading...</span>
+              </td>
               <td>&gt; (8-bit)</td>
               <td>&lt; (8-bit)</td>
               <td class="all_border">Address</td>
@@ -83,7 +98,12 @@
               <td />
               <td />
               <td class="left_right_border">0x00</td>
-              <td class="left_right_border"><input id="memory_cell_0" type="text" value="..." /></td>
+              <td class="left_right_border memory_cell">
+                <span id="memory_cell_0_read_led" class="read_led">⬤</span>
+                <span id="memory_cell_0_write_led" hidden class="write_led">⬤</span>
+                <span id="memory_cell_0_status_text" class="status_text" />
+                <input id="memory_cell_0" type="text" value="..." />
+              </td>
               <td />
             </tr>
             <tr>
@@ -92,7 +112,12 @@
               <td />
               <td />
               <td class="left_right_border">0x01</td>
-              <td class="left_right_border"><input id="memory_cell_1" type="text" value="..." /></td>
+              <td class="left_right_border memory_cell">
+                <span id="memory_cell_1_read_led" class="read_led">⬤</span>
+                <span id="memory_cell_1_write_led" hidden class="write_led">⬤</span>
+                <span id="memory_cell_1_status_text" class="status_text" />
+                <input id="memory_cell_1" type="text" value="..." />
+              </td>
               <td />
             </tr>
             <tr>
@@ -102,17 +127,32 @@
               <td />
               <td />
               <td class="left_right_border">0x02</td>
-              <td class="left_right_border"><input id="memory_cell_2" type="text" value="..." /></td>
+              <td class="left_right_border memory_cell">
+                <span id="memory_cell_2_read_led" class="read_led">⬤</span>
+                <span id="memory_cell_2_write_led" hidden class="write_led">⬤</span>
+                <span id="memory_cell_2_status_text" class="status_text" />
+                <input id="memory_cell_2" type="text" value="..." />
+              </td>
               <td />
             </tr>
             <tr>
               <td />
               <td class="all_border"><span id="alu_opcode">Loading...</span></td>
-              <td class="all_border"><span id="alu_output">Loading...</span></td>
+              <td class="all_border">
+                <span id="alu_output_read_led" class="read_led">⬤</span>
+                <span id="alu_output_write_led" hidden class="write_led">⬤</span>
+                <span id="alu_output_status_text" class="status_text" />
+                <span id="alu_output">Loading...</span>
+              </td>
               <td>&gt; (8-bit)</td>
               <td />
               <td class="left_right_border">0x03</td>
-              <td class="left_right_border"><input id="memory_cell_3" type="text" value="..." /></td>
+              <td class="left_right_border memory_cell">
+                <span id="memory_cell_3_read_led" class="read_led">⬤</span>
+                <span id="memory_cell_3_write_led" hidden class="write_led">⬤</span>
+                <span id="memory_cell_3_status_text" class="status_text" />
+                <input id="memory_cell_3" type="text" value="..." />
+              </td>
               <td />
             </tr>
             <tr>
@@ -121,7 +161,12 @@
               <td />
               <td />
               <td class="left_right_border">0x04</td>
-              <td class="left_right_border"><input id="memory_cell_4" type="text" value="..." /></td>
+              <td class="left_right_border memory_cell">
+                <span id="memory_cell_4_read_led" class="read_led">⬤</span>
+                <span id="memory_cell_4_write_led" hidden class="write_led">⬤</span>
+                <span id="memory_cell_4_status_text" class="status_text" />
+                <input id="memory_cell_4" type="text" value="..." />
+              </td>
               <td />
             </tr>
             <tr>
@@ -130,16 +175,31 @@
               <td />
               <td />
               <td class="left_right_border">0x05</td>
-              <td class="left_right_border"><input id="memory_cell_5" type="text" value="..." /></td>
+              <td class="left_right_border memory_cell">
+                <span id="memory_cell_5_read_led" class="read_led">⬤</span>
+                <span id="memory_cell_5_write_led" hidden class="write_led">⬤</span>
+                <span id="memory_cell_5_status_text" class="status_text" />
+                <input id="memory_cell_5" type="text" value="..." />
+              </td>
               <td />
             </tr>
             <tr>
               <td />
-              <td colspan="2" class="all_border"><span id="register_b">Loading...</span></td>
-              <td />
+              <td colspan="2" class="all_border">
+                <span id="register_b_read_led" hidden class="read_led">⬤</span>
+                <span id="register_b_write_led" class="write_led">⬤</span>
+                <span id="register_b_status_text" class="status_text" />
+                <span id="register_b">Loading...</span>
+              </td>
+              <td>&lt; (8-bit)</td>
               <td />
               <td class="left_right_border">0x06</td>
-              <td class="left_right_border"><input id="memory_cell_6" type="text" value="..." /></td>
+              <td class="left_right_border memory_cell">
+                <span id="memory_cell_6_read_led" class="read_led">⬤</span>
+                <span id="memory_cell_6_write_led" hidden class="write_led">⬤</span>
+                <span id="memory_cell_6_status_text" class="status_text" />
+                <input id="memory_cell_6" type="text" value="..." />
+              </td>
               <td />
             </tr>
             <tr>
@@ -149,7 +209,12 @@
               <td />
               <td />
               <td class="left_right_border">0x07</td>
-              <td class="left_right_border"><input id="memory_cell_7" type="text" value="..." /></td>
+              <td class="left_right_border memory_cell">
+                <span id="memory_cell_7_read_led" class="read_led">⬤</span>
+                <span id="memory_cell_7_write_led" hidden class="write_led">⬤</span>
+                <span id="memory_cell_7_status_text" class="status_text" />
+                <input id="memory_cell_7" type="text" value="..." />
+              </td>
               <td />
             </tr>
             <tr>
@@ -158,26 +223,45 @@
               <td />
               <td />
               <td class="left_right_border">0x08</td>
-              <td class="left_right_border"><input id="memory_cell_8" type="text" value="..." /></td>
+              <td class="left_right_border memory_cell">
+                <span id="memory_cell_8_read_led" class="read_led">⬤</span>
+                <span id="memory_cell_8_write_led" hidden class="write_led">⬤</span>
+                <span id="memory_cell_8_status_text" class="status_text" />
+                <input id="memory_cell_8" type="text" value="..." />
+              </td>
               <td />
             </tr>
             <tr>
               <td />
-              <td colspan="2" class="all_border"><span id="instruction_reg">Loading...</span></td>
-              <td />
+              <td colspan="2" class="all_border">
+                <span id="instruction_reg_read_led" hidden class="read_led">⬤</span>
+                <span id="instruction_reg_write_led" class="write_led">⬤</span>
+                <span id="instruction_reg_status_text" class="status_text" />
+                <span id="instruction_reg">Loading...</span>
+              </td>
+              <td>&lt; (8-bit)</td>
               <td />
               <td class="left_right_border">0x09</td>
-              <td class="left_right_border"><input id="memory_cell_9" type="text" value="..." /></td>
+              <td class="left_right_border memory_cell">
+                <span id="memory_cell_9_read_led" class="read_led">⬤</span>
+                <span id="memory_cell_9_write_led" hidden class="write_led">⬤</span>
+                <span id="memory_cell_9_status_text" class="status_text" />
+                <input id="memory_cell_9" type="text" value="..." />
+              </td>
               <td />
             </tr>
             <tr>
               <td />
-              <td />
-              <td />
+              <td colspan="2">V (8-bit)</td>
               <td />
               <td />
               <td class="left_right_border">0x0A</td>
-              <td class="left_right_border"><input id="memory_cell_A" type="text" value="..." /></td>
+              <td class="left_right_border memory_cell">
+                <span id="memory_cell_A_read_led" class="read_led">⬤</span>
+                <span id="memory_cell_A_write_led" hidden class="write_led">⬤</span>
+                <span id="memory_cell_A_status_text" class="status_text" />
+                <input id="memory_cell_A" type="text" value="..." />
+              </td>
               <td />
             </tr>
             <tr>
@@ -185,7 +269,12 @@
               <td />
               <td />
               <td class="left_right_border">0x0B</td>
-              <td class="left_right_border"><input id="memory_cell_B" type="text" value="..." /></td>
+              <td class="left_right_border memory_cell">
+                <span id="memory_cell_B_read_led" class="read_led">⬤</span>
+                <span id="memory_cell_B_write_led" hidden class="write_led">⬤</span>
+                <span id="memory_cell_B_status_text" class="status_text" />
+                <input id="memory_cell_B" type="text" value="..." />
+              </td>
               <td />
             </tr>
             <tr>
@@ -194,7 +283,12 @@
               <td />
               <td />
               <td class="left_right_border">0x0C</td>
-              <td class="left_right_border"><input id="memory_cell_C" type="text" value="..." /></td>
+              <td class="left_right_border memory_cell">
+                <span id="memory_cell_C_read_led" class="read_led">⬤</span>
+                <span id="memory_cell_C_write_led" hidden class="write_led">⬤</span>
+                <span id="memory_cell_C_status_text" class="status_text" />
+                <input id="memory_cell_C" type="text" value="..." />
+              </td>
               <td />
             </tr>
             <tr>
@@ -203,16 +297,36 @@
               <td />
               <td />
               <td class="left_right_border">0x0D</td>
-              <td class="left_right_border"><input id="memory_cell_D" type="text" value="..." /></td>
+              <td class="left_right_border memory_cell">
+                <span id="memory_cell_D_read_led" class="read_led">⬤</span>
+                <span id="memory_cell_D_write_led" hidden class="write_led">⬤</span>
+                <span id="memory_cell_D_status_text" class="status_text" />
+                <input id="memory_cell_D" type="text" value="..." />
+              </td>
               <td />
             </tr>
             <tr>
-              <td class="all_border"><span id="decoded_opcode">Loading...</span></td>
-              <td colspan="2" class="all_border"><span id="decoded_operand">Loading...</span></td>
-              <td />
+              <td class="all_border">
+                <span id="decoded_opcode_read_led" hidden class="read_led">⬤</span>
+                <span id="decoded_opcode_write_led" class="write_led">⬤</span>
+                <span id="decoded_opcode_status_text" class="status_text" />
+                <span id="decoded_opcode">Loading...</span>
+              </td>
+              <td colspan="2" class="all_border">
+                <span id="decoded_operand_read_led" class="read_led">⬤</span>
+                <span id="decoded_operand_write_led" class="write_led">⬤</span>
+                <span id="decoded_operand_status_text" class="status_text" />
+                <span id="decoded_operand">Loading...</span>
+              </td>
+              <td>&gt; (8-bit)</td>
               <td />
               <td class="left_right_border">0x0E</td>
-              <td class="left_right_border"><input id="memory_cell_E" type="text" value="..." /></td>
+              <td class="left_right_border memory_cell">
+                <span id="memory_cell_E_read_led" class="read_led">⬤</span>
+                <span id="memory_cell_E_write_led" hidden class="write_led">⬤</span>
+                <span id="memory_cell_E_status_text" class="status_text" />
+                <input id="memory_cell_E" type="text" value="..." />
+              </td>
               <td />
             </tr>
             <tr>
@@ -222,7 +336,12 @@
               <td />
               <td />
               <td class="left_right_bottom_border">0x0F</td>
-              <td class="left_right_bottom_border"><input id="memory_cell_F" type="text" value="..." /></td>
+              <td class="left_right_bottom_border memory_cell">
+                <span id="memory_cell_F_read_led" class="read_led">⬤</span>
+                <span id="memory_cell_F_write_led" hidden class="write_led">⬤</span>
+                <span id="memory_cell_F_status_text" class="status_text" />
+                <input id="memory_cell_F" type="text" value="..." />
+              </td>
               <td />
             </tr>
             <tr>
@@ -236,7 +355,12 @@
             </tr>
             <tr>
               <td />
-              <td colspan="2" class="all_border"><span id="out_register">Loading...</span></td>
+              <td colspan="2" class="all_border">
+                <span id="out_register_read_led" hidden class="read_led">⬤</span>
+                <span id="out_register_write_led" class="write_led">⬤</span>
+                <span id="out_register_status_text" class="status_text" />
+                <span id="out_register">Loading...</span>
+              </td>
               <td>&lt; (8-bit)</td>
               <td />
               <td />
@@ -253,6 +377,8 @@
           <h2>Information</h2>
           <p>
             You can write binary (0b01100), hex (0x7C), decimal (182), or octal (0o18) into the memory cells.
+            Red color mean the register/cell/content is updated from bus while green color mean the register
+            is placing data into bus
           </p>
           <h2>Quick Reference :3</h2>
           <table>

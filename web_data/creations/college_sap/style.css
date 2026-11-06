@@ -37,3 +37,32 @@
   text-align: center;
 }
 
+#state_table .read_led {
+  color: #006600ff;
+}
+
+#state_table .write_led {
+  color: #660000ff;
+}
+
+#state_table .status_text {
+  width: 15px;
+  display: inline-block;
+}
+
+#state_table .read_led_active {
+  color: #00ee00ff;
+}
+
+#state_table .write_led_active {
+  color: #ee0000ff;
+}
+
+#state_table .memory_cell {
+  width: 170px;
+}
+
+#state_table .memory_cell > input {
+  width: 80px;
+}
+
