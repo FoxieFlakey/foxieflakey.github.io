@@ -114,13 +114,11 @@ async fn upload_impl(data: &mut UploaderData, args: &Args, art_data: &[u8]) -> R
         .text("allow_free_download", "true")
         .text("noai", "true")
         .text("is_ai_generated", "false")
-        .text("itemid", item_id.to_string());
-    
-    for val in &args.keywords {
-        form = form.text("tags", val.to_string());
-    }
-    
-    let response = http_client.post("https://www.deviantart.com/api/v1/oauth2/stash/publish")
+        .text("itemid", item_id.to_string())
+        .text("tags", args.keywords.join(","));
+
+    let response = http_client
+        .post("https://www.deviantart.com/api/v1/oauth2/stash/publish")
         .bearer_auth(access_token)
         .header("dA-minor-version", "20240701")
         .multipart(form)
