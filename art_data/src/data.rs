@@ -1,7 +1,7 @@
 // List of my arts
+use super::Art;
 use chrono::NaiveDate;
 use std::sync::OnceLock;
-use super::Art;
 macro_rules! art {
     ($($field:ident : $val:expr),* $(,)?) => {{
         let mut s = Art {
@@ -29,10 +29,10 @@ pub static ARTS: [Art; 345] = [
         posted_on: NaiveDate::from_ymd_opt(2026, 11, 9).unwrap(),
         data: include_bytes!("data/-w- emote test.png"),
         title: "test",
-        page_id: "teset",
-        description_long: "test 
+        page_id: "test",
+        description_long: "test
 ",
-        keywords: &["one", "two", "three", "four", "five"]
+        keywords: &["one", "two", "three", "four"]
     },
     art! {
         posted_on: NaiveDate::from_ymd_opt(2026, 11, 9).unwrap(),
