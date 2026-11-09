@@ -1,8 +1,4 @@
-use std::{
-    fs,
-    path::Path,
-    process::ExitCode,
-};
+use std::{fs, path::Path, process::ExitCode};
 
 use chrono::NaiveDate;
 use clap::Parser;
@@ -30,6 +26,7 @@ struct Args {
     /// Filename where the art is. In the ./art_data/src/data. Directory.
     /// Why it the case? Its a script only for assisting me, not publically
     /// usable :<
+    #[arg(last = true)]
     filename: String,
 
     /// Keywords associating with art, comma seperated

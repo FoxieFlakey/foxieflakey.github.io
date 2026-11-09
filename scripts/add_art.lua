@@ -47,7 +47,7 @@ local keywords_raw = ask("Keywords (seperate by comma)")
 
 print("Uploading arts to websites")
 assert(os.execute(
-  ("./scripts/art-uploader.sh --title %q --description %q --id %q --keywords %q --post-date %d-%d-%d %q"):format(
+  ("./scripts/art-uploader.sh --title %q --description %q --id %q --keywords %q --post-date %d-%d-%d -- %q"):format(
     title,
     description,
     page_id,
