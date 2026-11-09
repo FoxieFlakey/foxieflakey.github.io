@@ -24,7 +24,16 @@ macro_rules! art {
 }
 #[rustfmt::skip]
 // Dont touch the line next to this, its modified by lua
-pub static ARTS: [Art; 343] = [
+pub static ARTS: [Art; 344] = [
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 11, 9).unwrap(),
+        data: include_bytes!("data/Book Foxie.png"),
+        title: "Book Foxie :3",
+        page_id: "book_foxie",
+        description_long: "So I found this cute book and turn Foxie into one lol https://www.deviantart.com/derpferret/art/Octransfur-2026---Written-1404756748
+",
+        keywords: &["foxieflakey", "the", "cute", "red", "fox", "girl", "transformation", "into", "book", "inanimatetf", "objecttf", "object", "silly"]
+    },
     art! {
         posted_on: NaiveDate::from_ymd_opt(2026, 10, 25).unwrap(),
         data: include_bytes!("data/Kuga, Geo and Floaf tf me in sequence.png"),
