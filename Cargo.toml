@@ -7,7 +7,7 @@ members = [
   "server",
   "common-utils",
   "scripts/art-uploader"
-]
+, "scripts/art-poster"]
 
 exclude = [
   "web_data"
