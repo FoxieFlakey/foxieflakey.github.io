@@ -323,7 +323,7 @@ impl<'a> DeviantArtClient<'a> {
         #[derive(Deserialize)]
         pub struct SuccessResponse {
             status: String,
-            url: String,
+            url: Url,
             deviationid: String,
         }
 
@@ -343,7 +343,7 @@ impl<'a> DeviantArtClient<'a> {
         }
 
         Ok(StashPublishResult {
-            url: Url::parse(&response.url).context("Parsing URL returned by DeviantArt")?,
+            url: response.url,
             deviation_id: response.deviationid,
         })
     }
