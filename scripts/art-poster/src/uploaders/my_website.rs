@@ -166,6 +166,12 @@ pub async fn upload(
         .context("Cannot write to data file")?;
 
     // Make sure its saved
+    data_file
+        .flush()
+        .await
+        .context("Cannot flush data file write")?;
+    file.flush().await.context("Cannot flush art file write")?;
+
     drop(data_file);
     drop(file);
 
