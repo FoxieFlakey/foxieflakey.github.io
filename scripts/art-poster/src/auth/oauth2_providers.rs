@@ -25,7 +25,7 @@ impl Provider for DeviantArt {
     }
 
     fn scope() -> &'static [&'static str] {
-        static SCOPES: [&str; 2] = ["basic", "stash"];
+        static SCOPES: [&str; 3] = ["basic", "stash", "publish"];
         &SCOPES
     }
 
