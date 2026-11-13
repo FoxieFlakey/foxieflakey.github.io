@@ -24,14 +24,30 @@ macro_rules! art {
 }
 #[rustfmt::skip]
 // Dont touch the line next to this, its modified by lua
-pub static ARTS: [Art; 345] = [
+pub static ARTS: [Art; 348] = [
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 11, 13).unwrap(),
+        data: include_bytes!("data/Flatten Foxie.png"),
+        title: "Flatten Foxie",
+        page_id: "flatten_foxie",
+        description_long: "So I flatten her with that chunk of weight x3",
+        keywords: &["flattening", "flat", "foxieflakey", "the", "cute", "red", "fox", "girl", "funny"]
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 11, 13).unwrap(),
+        data: include_bytes!("data/Bucket Foxie.png"),
+        title: "Bucket Foxie",
+        page_id: "bucket_foxie",
+        description_long: "So I turned myself into bucket, this an art from a while ago",
+        keywords: &["inanimatetf", "inanimate", "object", "objecttf", "cute", "foxieflakey", "the", "cute", "red", "fox", "girl", "bucket"]
+    },
     art! {
         posted_on: NaiveDate::from_ymd_opt(2026, 10, 29).unwrap(),
-        data: include_bytes!("data/Doodles.png"),
-        title: "Doodles",
-        page_id: "doodles",
-        description_long: "So its pretty old Doodle from 29th October 2026 that i kinda too lazy to upload :< and now is time to upload when im no longer lazy",
-        keywords: &["foxieflakey", "sleeping", "cattoangelico", "turned", "into", "file", "drawer", "cute", "inanimatetf", "cozy", "inanimate", "object", "objecttf", "transformation", "fox", "cat", "girl", "boy"]
+        data: include_bytes!("data/Foxie and Catto Bubbles.png"),
+        title: "Foxie and Catto Bubbles",
+        page_id: "foxie_and_catto_bubbles",
+        description_long: "So funny thing, Foxie plays with bubbles and Catto, and he doesn\'t look interested at all",
+        keywords: &["foxieflakey", "cattoangelico", "bubbles", "funny", "playful", "cute", "girl", "boy", "digitalart"]
     },
     art! {
         posted_on: NaiveDate::from_ymd_opt(2026, 11, 9).unwrap(),
@@ -39,8 +55,16 @@ pub static ARTS: [Art; 345] = [
         title: "Book Foxie :3",
         page_id: "book_foxie",
         description_long: "So I found this cute book and turn Foxie into one lol https://www.deviantart.com/derpferret/art/Octransfur-2026---Written-1404756748
-",
+        ",
         keywords: &["foxieflakey", "the", "cute", "red", "fox", "girl", "transformation", "into", "book", "inanimatetf", "objecttf", "object", "silly"]
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 10, 29).unwrap(),
+        data: include_bytes!("data/Doodles.png"),
+        title: "Doodles",
+        page_id: "doodles",
+        description_long: "So its pretty old Doodle from 29th October 2026 that i kinda too lazy to upload :< and now is time to upload when im no longer lazy",
+        keywords: &["foxieflakey", "sleeping", "cattoangelico", "turned", "into", "file", "drawer", "cute", "inanimatetf", "cozy", "inanimate", "object", "objecttf", "transformation", "fox", "cat", "girl", "boy"]
     },
     art! {
         posted_on: NaiveDate::from_ymd_opt(2026, 10, 25).unwrap(),
@@ -3283,4 +3307,3 @@ what do you all think?",
         description_long: "A drawing of my OC (which is primary representation of me :3 )",
     },
 ];
-
