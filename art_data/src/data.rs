@@ -24,7 +24,15 @@ macro_rules! art {
 }
 #[rustfmt::skip]
 // Dont touch the line next to this, its modified by lua
-pub static ARTS: [Art; 348] = [
+pub static ARTS: [Art; 349] = [
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 11, 13).unwrap(),
+        data: include_bytes!("data/Blushing Foxie.png"),
+        title: "Blushing Foxie Emote",
+        page_id: "blushing_foxie_emote",
+        description_long: "So a little blushing emote for Foxie (also u all might have seen few times this surfaced as sketch while i was testing, kinda just ignore it :3 and already deleted the tests)",
+        keywords: &["emote", "foxieflakey", "blushing", "cute", "fox", "girl", "silly"]
+    },
     art! {
         posted_on: NaiveDate::from_ymd_opt(2026, 11, 13).unwrap(),
         data: include_bytes!("data/Flatten Foxie.png"),
@@ -3307,3 +3315,4 @@ what do you all think?",
         description_long: "A drawing of my OC (which is primary representation of me :3 )",
     },
 ];
+
