@@ -6,8 +6,8 @@ members = [
   "art_data",
   "server",
   "common-utils",
-  "scripts/art-uploader"
-, "scripts/art-poster"]
+  "scripts/art-poster"
+]
 
 exclude = [
   "web_data"

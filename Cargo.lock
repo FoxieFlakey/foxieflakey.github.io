@@ -125,23 +125,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "art-uploader"
-version = "0.1.0"
-dependencies = [
- "base64 0.23.1",
- "chrono",
- "clap",
- "rand 0.10.3",
- "reqwest",
- "serde",
- "serde_json",
- "sha2",
- "tiny_http",
- "tokio",
- "url",
-]
-
-[[package]]
 name = "art_data"
 version = "0.1.0"
 dependencies = [
