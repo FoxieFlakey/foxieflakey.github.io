@@ -245,7 +245,7 @@ impl<P: Provider> OAuth2State<P> {
         let response = req.send().await.context("Sending token request")?;
 
         let status = response.status();
-        if status != StatusCode::BAD_REQUEST && status != StatusCode::OK {
+        if !status.is_client_error() && status != StatusCode::OK {
             return Err(anyhow!("Unknown status code from server: {status}").into());
         }
 
@@ -260,8 +260,8 @@ impl<P: Provider> OAuth2State<P> {
             #[derive(Deserialize)]
             struct ErrorResponse {
                 error: String,
-                error_description: String,
-                error_uri: String,
+                error_description: Option<String>,
+                error_uri: Option<String>,
             }
 
             let ErrorResponse {
@@ -272,6 +272,7 @@ impl<P: Provider> OAuth2State<P> {
                 .context("Parsing token server response")?;
 
             match code.as_str() {
+                "invalid_request" => return Err(GetTokenError::InvalidGrantData),
                 "invalid_grant" => return Err(GetTokenError::InvalidGrantData),
                 x => {
                     return Err(anyhow!(
