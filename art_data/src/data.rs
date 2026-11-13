@@ -42,14 +42,6 @@ pub static ARTS: [Art; 348] = [
         keywords: &["inanimatetf", "inanimate", "object", "objecttf", "cute", "foxieflakey", "the", "cute", "red", "fox", "girl", "bucket"]
     },
     art! {
-        posted_on: NaiveDate::from_ymd_opt(2026, 10, 29).unwrap(),
-        data: include_bytes!("data/Foxie and Catto Bubbles.png"),
-        title: "Foxie and Catto Bubbles",
-        page_id: "foxie_and_catto_bubbles",
-        description_long: "So funny thing, Foxie plays with bubbles and Catto, and he doesn\'t look interested at all",
-        keywords: &["foxieflakey", "cattoangelico", "bubbles", "funny", "playful", "cute", "girl", "boy", "digitalart"]
-    },
-    art! {
         posted_on: NaiveDate::from_ymd_opt(2026, 11, 9).unwrap(),
         data: include_bytes!("data/Book Foxie.png"),
         title: "Book Foxie :3",
@@ -57,6 +49,14 @@ pub static ARTS: [Art; 348] = [
         description_long: "So I found this cute book and turn Foxie into one lol https://www.deviantart.com/derpferret/art/Octransfur-2026---Written-1404756748
         ",
         keywords: &["foxieflakey", "the", "cute", "red", "fox", "girl", "transformation", "into", "book", "inanimatetf", "objecttf", "object", "silly"]
+    },
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 10, 29).unwrap(),
+        data: include_bytes!("data/Foxie and Catto Bubbles.png"),
+        title: "Foxie and Catto Bubbles",
+        page_id: "foxie_and_catto_bubbles",
+        description_long: "So funny thing, Foxie plays with bubbles and Catto, and he doesn\'t look interested at all",
+        keywords: &["foxieflakey", "cattoangelico", "bubbles", "funny", "playful", "cute", "girl", "boy", "digitalart"]
     },
     art! {
         posted_on: NaiveDate::from_ymd_opt(2026, 10, 29).unwrap(),
