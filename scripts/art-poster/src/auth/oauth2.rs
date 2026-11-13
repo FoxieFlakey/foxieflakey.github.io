@@ -316,10 +316,6 @@ impl<P: Provider> OAuth2State<P> {
         Ok(&self.access_token.as_ref().unwrap().0)
     }
 
-    pub fn forget_access_token(&mut self) {
-        self.access_token = None;
-    }
-
     pub async fn get_access_token<'a>(&'a mut self) -> anyhow::Result<&'a str> {
         if let Some((token, expiry)) = &self.access_token
             && &Utc::now() < expiry

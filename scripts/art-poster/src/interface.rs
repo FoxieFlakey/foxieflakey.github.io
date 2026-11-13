@@ -1,8 +1,9 @@
 use anyhow::Context;
-use chrono::{Local, NaiveDate};
+use chrono::{Datelike, Local, NaiveDate};
 use regex::regex;
 use serde::{Deserialize, Serialize};
 use tokio::{fs::File, io::AsyncReadExt};
+use url::Url;
 
 use crate::ui;
 
@@ -20,11 +21,16 @@ pub struct Parameters {
     pub metadata: Metadata,
 }
 
+// A metadata that will go into sites and be persistent
+// so there has to be documentatioin about changes on this
+// overtime. This only contains informatioin that can be
+// publicized kinda subset of Parameters
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Metadata {
     pub meta_version: u32,
     pub id: String,
     pub post_date: NaiveDate,
+    pub authoritative_url: Url,
 }
 
 impl Parameters {
@@ -114,11 +120,18 @@ impl Parameters {
             .await
             .context("Reading art file content")?;
 
+        let year = post_date.year();
+        let month = post_date.format("%b");
+
         Ok(Parameters {
             filename,
             metadata: Metadata {
                 meta_version: 1,
                 id: id.clone(),
+                authoritative_url: Url::parse(&format!(
+                    "https://foxieflakey.github.io/arts/{year}/{month}/{id}.html"
+                ))
+                .context("Cannot construct original url")?,
                 post_date,
             },
             title,
