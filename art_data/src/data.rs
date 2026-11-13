@@ -24,7 +24,15 @@ macro_rules! art {
 }
 #[rustfmt::skip]
 // Dont touch the line next to this, its modified by lua
-pub static ARTS: [Art; 344] = [
+pub static ARTS: [Art; 345] = [
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 10, 29).unwrap(),
+        data: include_bytes!("data/Doodles.png"),
+        title: "Doodles",
+        page_id: "doodles",
+        description_long: "So its pretty old Doodle from 29th October 2026 that i kinda too lazy to upload :< and now is time to upload when im no longer lazy",
+        keywords: &["foxieflakey", "sleeping", "cattoangelico", "turned", "into", "file", "drawer", "cute", "inanimatetf", "cozy", "inanimate", "object", "objecttf", "transformation", "fox", "cat", "girl", "boy"]
+    },
     art! {
         posted_on: NaiveDate::from_ymd_opt(2026, 11, 9).unwrap(),
         data: include_bytes!("data/Book Foxie.png"),
@@ -3275,3 +3283,4 @@ what do you all think?",
         description_long: "A drawing of my OC (which is primary representation of me :3 )",
     },
 ];
+
