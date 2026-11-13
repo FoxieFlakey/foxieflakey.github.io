@@ -34,9 +34,9 @@ impl NavBarState {
 
     pub fn target_url(&self) -> &'static str {
         match self {
-            NavBarState::Home => "$root",
-            NavBarState::Creations => "$root/creations",
-            NavBarState::Gallery => "$root/arts",
+            NavBarState::Home => "$root/",
+            NavBarState::Creations => "$root/creations/",
+            NavBarState::Gallery => "$root/arts/",
         }
     }
 }
