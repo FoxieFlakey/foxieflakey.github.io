@@ -9,6 +9,7 @@ use regex::regex;
 use tokio::{
     fs::{File, OpenOptions},
     io::{AsyncBufReadExt, AsyncSeekExt, AsyncWriteExt, BufReader},
+    process::Command,
 };
 
 use crate::interface::Parameters;
@@ -163,6 +164,42 @@ pub async fn upload(
             }
         })
         .context("Cannot write to data file")?;
+
+    let status = Command::new("git")
+        .arg("add")
+        .arg("--")
+        .arg("./art_data/src/data.rs")
+        .arg(dest)
+        .status()
+        .await
+        .context("Cannot run git add")?
+        .success();
+    if !status {
+        bail!("Failed to run 'git add'");
+    }
+
+    let status = Command::new("git")
+        .arg("commit")
+        .arg("-m")
+        .arg(format!("Adding art titled '{}'", params.title))
+        .arg(dest)
+        .status()
+        .await
+        .context("Cannot run git commit")?
+        .success();
+    if !status {
+        bail!("Failed to run 'git commit'");
+    }
+
+    let status = Command::new("git")
+        .arg("push")
+        .status()
+        .await
+        .context("Cannot run git push")?
+        .success();
+    if !status {
+        bail!("Failed to run 'git push'");
+    }
 
     Ok(())
 }
