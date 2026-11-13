@@ -26,7 +26,7 @@ pub async fn upload(
             tags: Some(&params.keywords),
             original_url: Some(&params.metadata.authoritative_url),
             is_dirty: None,
-            file: Some((Cow::Owned(params.file.clone()), &params.filename)),
+            file: Some((Cow::Owned(params.file.clone()), &params.full_path)),
             itemid: None,
             stack: None,
             no_ai: Some(true),
@@ -39,7 +39,7 @@ pub async fn upload(
     let result = api
         .publish_stash(StashPublishArgs {
             mature: MatureLevel::None,
-            feature: Some(false),
+            feature: Some(true),
             allow_comments: Some(true),
             display_resolution: Some(DisplayResolution::Original),
             allow_free_download: Some(true),

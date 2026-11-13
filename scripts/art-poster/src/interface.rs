@@ -10,11 +10,9 @@ use crate::ui;
 #[derive(Debug)]
 pub struct Parameters {
     pub title: String,
-    #[expect(unused)]
     pub id: String,
-    pub filename: String,
+    pub full_path: String,
     pub file: Vec<u8>,
-    #[expect(unused)]
     pub post_date: NaiveDate,
     pub keywords: Vec<String>,
     pub description: String,
@@ -59,17 +57,10 @@ impl Parameters {
         .context("Asking art ID")?
         .context("Art ID is required")?;
 
-        let filename = ui::ask_question(
-            "Path to art's file'",
-            false,
-            true,
-            None,
-            None,
-            Some(("./art_data/src/data/", "")),
-        )
-        .await
-        .context("Asking path to art")?
-        .context("File path to art is required")?;
+        let filename = ui::ask_question("Path to art's file'", false, true, None, None, None)
+            .await
+            .context("Asking path to art")?
+            .context("File path to art is required")?;
 
         let post_date = ui::ask_question(
             "Post date",
@@ -124,7 +115,7 @@ impl Parameters {
         let month = post_date.format("%b");
 
         Ok(Parameters {
-            filename,
+            full_path: filename,
             metadata: Metadata {
                 meta_version: 1,
                 id: id.clone(),
