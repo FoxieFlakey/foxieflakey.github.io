@@ -186,9 +186,7 @@ impl<'a> DeviantArtClient<'a> {
         }
 
         if let Some(tags) = args.tags {
-            for tag in tags {
-                form = form.text("tags", tag.to_string());
-            }
+            form = Self::write_array(form, "tags", tags.iter().map(Clone::clone));
         }
 
         let response = self
@@ -261,15 +259,19 @@ impl<'a> DeviantArtClient<'a> {
         }
 
         if let Some(tags) = args.tags {
-            form = form.text("tags", tags.join(","));
+            form = Self::write_array(form, "tags", tags.iter().map(Clone::clone));
         }
 
         if let Some(groups) = args.groups {
-            form = form.text("groups", groups.join(","));
+            form = Self::write_array(form, "groups", groups.iter().map(|&x| str::to_string(x)));
         }
 
         if let Some(group_folders) = args.group_folders {
-            form = form.text("group_folders", group_folders.join(","));
+            form = Self::write_array(
+                form,
+                "group_folders",
+                group_folders.iter().map(|&x| str::to_string(x)),
+            );
         }
 
         match &args.mature {
@@ -294,14 +296,14 @@ impl<'a> DeviantArtClient<'a> {
             let mut classifications = Vec::new();
             for item in mature_classifications {
                 classifications.push(match item {
-                    MatureClassification::Nudity => "nudity",
-                    MatureClassification::Sexual => "sexual",
-                    MatureClassification::Gore => "gore",
-                    MatureClassification::Language => "language",
-                    MatureClassification::Ideology => "ideology",
+                    MatureClassification::Nudity => "nudity".to_string(),
+                    MatureClassification::Sexual => "sexual".to_string(),
+                    MatureClassification::Gore => "gore".to_string(),
+                    MatureClassification::Language => "language".to_string(),
+                    MatureClassification::Ideology => "ideology".to_string(),
                 });
             }
-            form = form.text("mature_classification", classifications.join(","));
+            form = Self::write_array(form, "mature_classification", classifications.into_iter());
         }
 
         let response = self
@@ -374,5 +376,15 @@ impl<'a> DeviantArtClient<'a> {
         };
 
         anyhow!("Error from server: {error:?}")
+    }
+
+    // DeviantArt quirky own listing array??
+    // its not documented anywhere
+    fn write_array(mut form: Form, name: &str, iter: impl Iterator<Item = String>) -> Form {
+        for (idx, item) in iter.enumerate() {
+            form = form.text(format!("{name}[{idx}]"), item);
+        }
+
+        form
     }
 }

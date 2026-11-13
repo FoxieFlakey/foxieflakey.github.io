@@ -11,7 +11,7 @@ use crate::{
 
 pub async fn upload(
     data: &mut crate::Data,
-    // JSON encoded content of params.metadata
+    // JSON encoded which then base64 encoded content of params.metadata
     metadata: &str,
     params: &Parameters,
 ) -> anyhow::Result<()> {
@@ -19,7 +19,10 @@ pub async fn upload(
     let item_id = api
         .submit_stash(StashSubmitArgs {
             title: Some(&params.title),
-            artist_comments: Some(&format!("{}\n\nMetadata:\n{metadata}", params.description)),
+            artist_comments: Some(&format!(
+                "{}\nMetadata (base64):\n{metadata}",
+                params.description
+            )),
             tags: Some(&params.keywords),
             original_url: Some(&params.metadata.authoritative_url),
             is_dirty: None,
