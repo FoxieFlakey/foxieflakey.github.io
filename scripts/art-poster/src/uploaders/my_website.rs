@@ -165,6 +165,10 @@ pub async fn upload(
         })
         .context("Cannot write to data file")?;
 
+    // Make sure its saved
+    drop(data_file);
+    drop(file);
+
     let status = Command::new("git")
         .arg("add")
         .arg("--")
