@@ -3,6 +3,7 @@ use std::{borrow::Cow, collections::HashMap, sync::LazyLock};
 use crate::macros::{css, html, html_dep, raw, wasm};
 
 pub mod arts;
+mod sitemap;
 
 // NOTE: There is no "raw" type here
 // opaque wasm blob can be use raw! macro
@@ -114,6 +115,17 @@ pub static RESOURCES: LazyLock<HashMap<String, Resource>> = LazyLock::new(|| {
             Resource::WasmRustLoader => panic!("DO NOT manually put wasm rust loader manually"),
         }
     }
+
+    // Generate sitemap
+    let sitemap = sitemap::generate_monolithic(&map);
+    assert!(
+        map.insert(
+            "/sitemap.xml".to_string(),
+            Resource::RawBytes(Cow::Owned(sitemap))
+        )
+        .is_none(),
+        "/sitemap.xml must not exist"
+    );
 
     map
 });

@@ -254,6 +254,7 @@ impl<P: Provider> OAuth2State<P> {
             .await
             .context("Getting response bytes from token endpoint")?;
 
+        println!("response: {:?}", str::from_utf8(&response_bytes));
         if status == StatusCode::BAD_REQUEST {
             // Error from server, section 5.2
 
