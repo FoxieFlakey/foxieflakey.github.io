@@ -24,7 +24,15 @@ macro_rules! art {
 }
 #[rustfmt::skip]
 // Dont touch the line next to this, its modified by lua
-pub static ARTS: [Art; 349] = [
+pub static ARTS: [Art; 350] = [
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 11, 16).unwrap(),
+        data: include_bytes!("data/Eclair Foxie.png"),
+        title: "Eclair Foxie",
+        page_id: "eclair_foxie",
+        description_long: "Stupid idea I found about eclair food tf :3 So I tf into one\nPretty cute so far",
+        keywords: &["inanimatetf", "foxieflakey", "the", "cute", "red", "fox", "girl", "transformation", "into", "eclair", "food", "foodtf", "cute", "silly"]
+    },
     art! {
         posted_on: NaiveDate::from_ymd_opt(2026, 11, 13).unwrap(),
         data: include_bytes!("data/Blushing Foxie.png"),
@@ -3315,4 +3323,5 @@ what do you all think?",
         description_long: "A drawing of my OC (which is primary representation of me :3 )",
     },
 ];
+
 
