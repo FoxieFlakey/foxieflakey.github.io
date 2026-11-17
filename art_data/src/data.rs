@@ -24,7 +24,15 @@ macro_rules! art {
 }
 #[rustfmt::skip]
 // Dont touch the line next to this, its modified by lua
-pub static ARTS: [Art; 352] = [
+pub static ARTS: [Art; 353] = [
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 11, 17).unwrap(),
+        data: include_bytes!("data/Magnet Foxie.png"),
+        title: "Magnet Foxie",
+        page_id: "magnet_foxie",
+        description_long: "A small silly emote i drawn from the emoji kitchen mixing fox and magnet. I also forgot to post this .w. its from 14th September 2026",
+        keywords: &["inanimatetf", "objecttf", "object", "inanimate", "foxieflakey", "magnet", "cute"]
+    },
     art! {
         posted_on: NaiveDate::from_ymd_opt(2026, 11, 17).unwrap(),
         data: include_bytes!("data/Innertube Foxie.png"),
@@ -3339,6 +3347,7 @@ what do you all think?",
         description_long: "A drawing of my OC (which is primary representation of me :3 )",
     },
 ];
+
 
 
 
