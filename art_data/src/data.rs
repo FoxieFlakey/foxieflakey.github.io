@@ -24,7 +24,15 @@ macro_rules! art {
 }
 #[rustfmt::skip]
 // Dont touch the line next to this, its modified by lua
-pub static ARTS: [Art; 353] = [
+pub static ARTS: [Art; 354] = [
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 11, 17).unwrap(),
+        data: include_bytes!("data/Goop Foxie.png"),
+        title: "Quirky Goop Foxie",
+        page_id: "quirky_goop_foxie",
+        description_long: "So I ate very weird mix of stuffs and it turned me into this .w.",
+        keywords: &["foxieflakey", "goop", "monster", "transformation", "quirky", "weird"]
+    },
     art! {
         posted_on: NaiveDate::from_ymd_opt(2026, 11, 17).unwrap(),
         data: include_bytes!("data/Magnet Foxie.png"),
@@ -3347,6 +3355,7 @@ what do you all think?",
         description_long: "A drawing of my OC (which is primary representation of me :3 )",
     },
 ];
+
 
 
 
