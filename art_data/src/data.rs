@@ -58,14 +58,6 @@ pub static ARTS: [Art; 355] = [
         keywords: &["inanimatetf", "inanimate", "object", "objecttf", "foxieflakey", "the", "cute", "red", "fox", "girl", "transformation", "into", "innertube", "pooltoy", "pooltoytf"]
     },
     art! {
-        posted_on: NaiveDate::from_ymd_opt(2026, 11, 17).unwrap(),
-        data: include_bytes!("data/Innertube Foxie.png"),
-        title: "Inner Tube Foxie",
-        page_id: "inner_tube_foxie",
-        description_long: "I forgot to upload this ages ago from 25th June 2026",
-        keywords: &["inanimatetf", "inanimate", "object", "objecttf", "foxieflakey", "the", "cute", "red", "fox", "girl", "transformation", "into", "innertube", "pooltoy", "pooltoytf"]
-    },
-    art! {
         posted_on: NaiveDate::from_ymd_opt(2026, 11, 16).unwrap(),
         data: include_bytes!("data/Eclair Foxie.png"),
         title: "Eclair Foxie",
