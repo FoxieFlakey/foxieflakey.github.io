@@ -24,7 +24,15 @@ macro_rules! art {
 }
 #[rustfmt::skip]
 // Dont touch the line next to this, its modified by lua
-pub static ARTS: [Art; 354] = [
+pub static ARTS: [Art; 355] = [
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 11, 17).unwrap(),
+        data: include_bytes!("data/Book Friends.png"),
+        title: "Book Fwends!",
+        page_id: "book_fwends",
+        description_long: "So a drawing and request I made for my fwends :3 now can join Foxie being boooks!",
+        keywords: &["inanimatetf", "inanimate", "object", "objecttf", "kuga", "and", "jyun", "into", "a", "book", "booktf"]
+    },
     art! {
         posted_on: NaiveDate::from_ymd_opt(2026, 11, 17).unwrap(),
         data: include_bytes!("data/Goop Foxie.png"),
@@ -3355,6 +3363,7 @@ what do you all think?",
         description_long: "A drawing of my OC (which is primary representation of me :3 )",
     },
 ];
+
 
 
 
