@@ -176,6 +176,19 @@ pub async fn upload(
     drop(file);
 
     let status = Command::new("git")
+        .arg("add")
+        .arg("--")
+        .arg("./art_data/src/data.rs")
+        .arg(dest)
+        .status()
+        .await
+        .context("Cannot run git add")?
+        .success();
+    if !status {
+        bail!("Failed to run 'git add'");
+    }
+
+    let status = Command::new("git")
         .arg("commit")
         .arg("-m")
         .arg(format!("Adding art titled '{}'", params.title))
