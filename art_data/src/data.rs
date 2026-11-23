@@ -24,7 +24,15 @@ macro_rules! art {
 }
 #[rustfmt::skip]
 // Dont touch the line next to this, its modified by lua
-pub static ARTS: [Art; 355] = [
+pub static ARTS: [Art; 356] = [
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 11, 23).unwrap(),
+        data: include_bytes!("data/Flat Foxie Flakey.png"),
+        title: "Flat Foxie Flakey and new model",
+        page_id: "flat_foxie_flakey_and_new_model",
+        description_long: "THAT ANVIL CAME FROM NOWHERE.... (and also I have new model of myself)",
+        keywords: &["foxieflakey", "the", "cute", "red", "fox", "girl", "flat", "flattening", "flattened", "cute", "minecraft", "anvil", "fell", "on", "her", "new", "model", "fursona", "3d"]
+    },
     art! {
         posted_on: NaiveDate::from_ymd_opt(2026, 11, 23).unwrap(),
         data: include_bytes!("data/Flat Foxie Flakey MC.png"),
@@ -3363,6 +3371,7 @@ what do you all think?",
         description_long: "A drawing of my OC (which is primary representation of me :3 )",
     },
 ];
+
 
 
 
