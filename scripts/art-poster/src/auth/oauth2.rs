@@ -335,7 +335,13 @@ impl<P: Provider> OAuth2State<P> {
                         // Refresh token is probably expired lets re authorize
                     }
                     GetTokenError::Other(error) => {
-                        return Err(error).context("Refreshing access token");
+                        let e = Err::<(), _>(error).context("Refreshing access token");
+                        println!(
+                            "[WARN] Cannot refresh access token, reauthorizing: {}",
+                            e.unwrap_err()
+                        );
+
+                        // Some error, try reauthorize
                     }
                 },
             }
