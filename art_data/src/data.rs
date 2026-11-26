@@ -24,7 +24,15 @@ macro_rules! art {
 }
 #[rustfmt::skip]
 // Dont touch the line next to this, its modified by lua
-pub static ARTS: [Art; 356] = [
+pub static ARTS: [Art; 357] = [
+    art! {
+        posted_on: NaiveDate::from_ymd_opt(2026, 11, 26).unwrap(),
+        data: include_bytes!("data/FozieWag_Fixed_Looped.mp4"),
+        title: "Foxie Wag Wag",
+        page_id: "foxie_wag_wag",
+        description_long: "So I found silly idea to render which is wag my tail",
+        keywords: &["foxieflakey", "the", "cute", "red", "fox", "girl", "in", "minecraft", "blender", "3d", "wags", "her", "tail", "render", "asking", "for", "sweet", "berries", "like", "a", "good", "fox", "heh"]
+    },
     art! {
         posted_on: NaiveDate::from_ymd_opt(2026, 11, 23).unwrap(),
         data: include_bytes!("data/Flat Foxie Flakey.png"),
@@ -3371,6 +3379,7 @@ what do you all think?",
         description_long: "A drawing of my OC (which is primary representation of me :3 )",
     },
 ];
+
 
 
 
