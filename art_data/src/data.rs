@@ -30,7 +30,7 @@ pub static ARTS: [Art; 358] = [
         data: include_bytes!("data/Birthday Cake Foxie outlined rainbow.png"),
         title: "Happy Birthday Foxie :3",
         page_id: "happy_birthday_foxie_3",
-        description_long: "So 27th November 2026, was my birthday :3 so I make this for myself in Blender, also made outline thingy and its rainbow <3",
+        description_long: "So 27th November 2026, was my birthday :3 so I make this for myself in Blender, also made outline thingy and its rainbow ^w^",
         keywords: &["foxieflakey", "the", "cute", "red", "fox", "girl", "happy", "birthday", "cake", "inanimatetf", "inanimate", "object", "objecttf", "cute", "blender", "3d", "outline", "cycles"]
     },
     art! {
@@ -3387,6 +3387,7 @@ what do you all think?",
         description_long: "A drawing of my OC (which is primary representation of me :3 )",
     },
 ];
+
 
 
 
